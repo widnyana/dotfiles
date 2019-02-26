@@ -18,3 +18,9 @@ test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 if [ -d $HOME/.config/composer/vendor ]; then
   export PATH=$PATH:$HOME/.config/composer/vendor/bin
 fi
+
+
+if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
+  source /etc/profile.d/vte.sh
+fi
+

@@ -7,4 +7,4 @@ alias did="vim +'normal Go' +'r!date' ~/did.txt"
 
 
 
-alias paragram='cd /media/wid/development/Paragram'
+alias tmux='direnv exec / tmux'

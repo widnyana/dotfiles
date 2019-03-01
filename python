@@ -1,4 +1,4 @@
 #: load virtualenv
-export WORKON_HOME=/media/${USER}/development/.virtualenvs
-export PROJECT_HOME=/media/${USER}/development/projects/python
+export WORKON_HOME=/media/wid/development/.virtualenvs
+export PROJECT_HOME=/media/wid/development/projects/python
 source $(locate virtualenvwrapper_lazy-3.sh | head -n 1)

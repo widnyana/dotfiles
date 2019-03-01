@@ -15,6 +15,11 @@ fi
 test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
 
 
+#: load nix
+if [ -d /nix ] && [ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
+  source $HOME/.nix-profile/etc/profile.d/nix.sh
+fi
+
 if [ -d $HOME/.config/composer/vendor ]; then
   export PATH=$PATH:$HOME/.config/composer/vendor/bin
 fi

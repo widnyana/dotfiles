@@ -30,11 +30,6 @@ else
     eval "$(direnv hook zsh)"
   fi
 
-  #: load ssh alias
-  for box in ${HOME}/.dotfiles/boxes/*.box; do
-      source "${box}"
-  done 
-
   #: specific per OS
   if [[ $(uname) == "Linux" ]]; then
 

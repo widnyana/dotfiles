@@ -27,7 +27,7 @@ if [[ -d ${HOME}/.cargo ]]; then
 fi
 
 
-LOCALPATH=/usr/local/cuda-8.0/bin:$HOME/Development/bin:$LOCALPATH:/home/wid/.local/bin
+LOCALPATH=/usr/local/cuda-8.0/bin:$HOME/Development/bin:$LOCALPATH:$HOME/.local/bin
 
 #: export new PATH
 export PATH=$PATH:$LOCALPATH

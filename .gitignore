@@ -4,3 +4,6 @@ vps
 vpn/*
 office
 boxes/*.box
+.tmux/plugins/*
+.tmux/resurrect/*
+

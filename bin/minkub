@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+home=/mnt/infra/.minikube
+
+MINIKUBE_HOME=${home} /usr/bin/minikube $@

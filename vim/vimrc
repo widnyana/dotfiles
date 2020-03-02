@@ -192,3 +192,21 @@ set formatoptions=qrnl
 
 " EditorConfig
     let g:EditorConfig_exclude_patterns = ['fugitive://.*']  
+
+
+" Specify a directory for plugins
+" - For Neovim: stdpath('data') . '/plugged'
+" - Avoid using standard Vim directory names like 'plugin'
+call plug#begin('~/.vim/plugged')
+Plug 'editorconfig/editorconfig-vim'
+Plug 'scrooloose/nerdtree', { 'on':  'NERDTreeToggle' }
+Plug 'fatih/vim-go', { 'for': 'go' }
+Plug 'sjl/gundo.vim'
+Plug 'vim-syntastic/syntastic'
+Plug 'majutsushi/tagbar'
+Plug 'tpope/vim-fugitive'
+Plug 'jeetsukumaran/vim-buffergator'
+Plug 'junegunn/vim-easy-align'
+
+" Initialize plugin system
+call plug#end()

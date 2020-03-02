@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+
+
+
+if ! [[ -x $(command -v adb) ]]; then
+    echo "[!] adb could not be found."
+    exit 1
+fi
+
+if [[ -f ~/.mitmproxy/mitmproxy-ca-cert.cer ]]; then
+    echo "[+] pushing ~/.mitmproxy/mitmproxy-ca-cert.cer to /data/local/tmp/cert-der.crt"
+    adb push ~/.mitmproxy/mitmproxy-ca-cert.cer /data/local/tmp/cert-der.crt
+else
+    echo "[!] could not find mitmproxy certificate."
+fi

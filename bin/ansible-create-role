@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+if [[ ! -n $1 ]]; then
+    echo "Please provide role name"
+    exit 1
+fi
+
+mkdir -p roles/${1}/{defaults,tasks,files,templates,vars,handlers,meta}
+for i in defaults tasks vars handlers meta; do
+    if [[ ! -f roles/${1}/${i}/main.yaml ]]; then
+    echo creating file:  roles/${1}/${i}/main.yaml
+    echo "---
+" > roles/${1}/${i}/main.yaml
+    else
+        echo roles/${1}/${i}/main.yaml exists skipping
+    fi
+done
+

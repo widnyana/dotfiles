@@ -1,0 +1,70 @@
+#!/usr/bin/env python2
+
+"""
+A quick and dirty SemVer bump script.
+"""
+
+from __future__ import print_function
+
+import argparse
+from collections import namedtuple
+import re
+import sys
+
+parser = argparse.ArgumentParser(description=__doc__)
+group = parser.add_mutually_exclusive_group(required=True)
+group.add_argument("-m", "--major", action="store_true", default=False, help="Bump the major part.")
+group.add_argument("-n", "--minor", action="store_true", default=False, help="Bump the minor part.")
+group.add_argument("-p", "--patch", action="store_true", default=False, help="Bump the patch part.")
+
+
+class Version(namedtuple('Version', ['major', 'minor', 'patch'])):
+
+  def bump_patch(self):
+    return Version(self.major, self.minor, self.patch + 1)
+
+  def bump_minor(self):
+    return Version(self.major, self.minor + 1, 0)
+
+  def bump_major(self):
+    return Version(self.major + 1, 0, 0)
+
+  def __str__(self):
+    return "{0}.{1}.{2}".format(self.major, self.minor, self.patch)
+
+__INITIAL__ = Version(0, 0, 0)
+
+
+def main(opts):
+  v = None
+  try:
+    with open("VERSION") as f:
+      v = re.split(re.compile("\\.|-"), f.read()) or __INITIAL__
+      v = Version(*map(int, v[0:3]))
+
+  except ValueError:
+    print("failed to parse the existing VERSION file, assuming v0.0.0")
+    v = __INITIAL__
+
+  except IOError:
+    print("failed to find a VERSION file, assuming v0.0.0")
+    v = __INITIAL__
+
+  if opts.major:
+    v = v.bump_major()
+
+  elif opts.minor:
+    v = v.bump_minor()
+
+  elif opts.patch:
+    v = v.bump_patch()
+
+  print(v)
+
+  open("VERSION", 'w').write(str(v))
+
+  sys.exit(0)
+
+
+if __name__ == "__main__":
+  main(parser.parse_args())

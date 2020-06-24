@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+NAMESPACES=$1
+
+if [[ ${NAMESPACES} == "" ]]; then
+    NAMESPACES=$(kubectl get -o json namespaces|jq '.items[].metadata.name'|sed "s/\"//g")
+fi
+
+echo -e "Running in namespace: $(echo $NAMESPACES| sed 's/\ /\, /g'; echo) "
+
+
+# RESOURCES="configmap secret daemonset deployment service hpa statefulset ki kp"
+RESOURCES=$(kubectl api-resources --no-headers=true | awk '{print $1}')
+
+for ns in ${NAMESPACES};do
+  echo -e "Running in namespace ${ns} ..."
+  for resource in ${RESOURCES};do
+    echo "Listing resource: ${resource} ..." 
+    rsrcs=$(kubectl -n ${ns} get -o json ${resource}|jq '.items[].metadata.name'|sed "s/\"//g")
+    for r in ${rsrcs};do
+      echo "Dumping ${resource} - ${r} ..."
+      dir="${ns}/${resource}"
+      mkdir -p "${dir}"
+      kubectl -n ${ns} get -o yaml ${resource} ${r} > "${dir}/${r}.yaml"
+    done
+  done
+done

@@ -4,3 +4,5 @@ if [[ -x "$(command -v minikube)" ]]; then
     export MINIKUBE_IN_STYLE=false
 fi
 
+
+export PATH=$PATH:${HOME}/.krew/bin

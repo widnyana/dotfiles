@@ -1,0 +1,21 @@
+#!/bin/bash
+
+if [[ -z "$1" ]] ;then
+  echo "usage: $0 <username>"
+  exit 1
+fi
+
+user=$1
+
+#####
+kubectl delete ClusterRoleBinding view-${user}-global
+echo "ClusterRoleBinding: view-${user}-global: deleted"
+
+secret=$(kubectl get sa -n default ${user} -o json | jq -r ".secrets[].name")
+kubectl delete -n default $secret
+echo "Secret ${user}: deleted"
+
+kubectl delete sa -n default ${user}
+echo "ServiceAccount ${user}: deleted"
+
+echo "Done"

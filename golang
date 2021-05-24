@@ -1,6 +1,7 @@
+GOCACHE=$HOME/Development/.cache/go-build
+
 alias goget='go get -x'
 alias gop='export GOPATH=$GOPATH:$(pwd)'
 alias gor='go run'
 
-
-[[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"
+[[ -s "${HOME}/Development/.gvm/scripts/gvm" ]] && source "${HOME}/Development/.gvm/scripts/gvm"

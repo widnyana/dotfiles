@@ -1,0 +1,4 @@
+#!/usr/bin/env bash 
+set -euo pipefail
+
+kubectl get pods -n ${1} | grep Evicted | awk '{print $1}' | xargs kubectl delete pod --grace-period 0 --force

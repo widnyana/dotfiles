@@ -13,5 +13,5 @@ NUM_NODES=$3
 gcloud container clusters resize "${CLUSTER_NAME}" \
     --node-pool "${POOL_NAME}" \
     --num-nodes ${NUM_NODES} \
-    --region="${GCLOUD_COMPUTE_REGION}"
+    --region="${GCLOUD_COMPUTE_REGION}" \
     --async

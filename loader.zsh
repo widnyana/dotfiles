@@ -67,4 +67,8 @@ export PATH=${FINAL_PATH}
 #: clean up
 unset _BOXES _DOT_DIR FINAL_PATH
 
+if [[ -x "$(command -v starship)" ]]; then
+  eval "$(starship init zsh)"
+fi
+
 echo "loader.zsh finished!"

@@ -6,5 +6,5 @@ alias tlf='tail -F'
 alias did="vim +'normal Go' +'r!date' ~/did.txt"
 
 
-
+alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 alias tmux='direnv exec / tmux'

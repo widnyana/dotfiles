@@ -83,6 +83,9 @@ export CLOUDSDK_HOME=/usr/share/google-cloud-sdk
 # NextJS
 NEXT_TELEMETRY_DISABLED=1
 
+### GitLab
+eval "$(register-python-argcomplete gitlab)"
+
 
 export PATH="${PATH}:$HOME/.istioctl/bin"
 

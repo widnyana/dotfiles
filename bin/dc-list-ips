@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+## This script will list all services and their IP addressess
+
+docker inspect -f '{{.Name}} - {{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' $(docker ps -aq)
+

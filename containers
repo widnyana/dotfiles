@@ -1,6 +1,30 @@
+
+#   _    ___                          _        _                        _       
+#  | | _( _ ) ___      ___ ___  _ __ | |_ __ _(_)_ __   ___ _ __    ___| |_ ___ 
+#  | |/ / _ \/ __|    / __/ _ \| '_ \| __/ _` | | '_ \ / _ \ '__|  / _ \ __/ __|
+#  |   < (_) \__ \_  | (_| (_) | | | | || (_| | | | | |  __/ |_   |  __/ || (__ 
+#  |_|\_\___/|___( )  \___\___/|_| |_|\__\__,_|_|_| |_|\___|_( )   \___|\__\___|
+#                |/                                          |/                 
+
+#: kubectl autocomplete
+source <(kubectl completion zsh)
+
+#: krew - https://github.com/kubernetes-sigs/krew
+LOCALPATH=${LOCALPATH}:${KREW_ROOT:-$HOME/.krew}/bin
+
+#: fubectl - https://github.com/kubermatic/fubectl
+if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then 
+  wget https://raw.githubusercontent.com/kubermatic/fubectl/master/fubectl.source -O $HOME/.dotfiles/sources/fubectl.source
+
+  #: fix conflicted alias
+  sed -i "s#ked() {#kedit() {#g" $HOME/.dotfiles/sources/fubectl.source
+  sed -i "s#kdel() {#kdelete() {#g" $HOME/.dotfiles/sources/fubectl.source
+fi
+[ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
+
 ### Minikube
 if [[ -x "$(command -v minikube)" ]]; then
-    export MINIKUBE_HOME=/mnt/infra/.minikube
+    export MINIKUBE_HOME=$HOME/Infrastructure/labs/minikube
     export MINIKUBE_IN_STYLE=false
 fi
 

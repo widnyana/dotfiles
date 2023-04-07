@@ -15,15 +15,15 @@ if [ ! -f ${_DOT_DIR}/auth_keys ]; then
   exit 1
 fi
 source ${_DOT_DIR}/auth_keys
-
 source ${_DOT_DIR}/functions.sh
+source ${_DOT_DIR}/paths
+
 source ${_DOT_DIR}/android
 source ${_DOT_DIR}/blockchain
 source ${_DOT_DIR}/devs
 source ${_DOT_DIR}/golang
 source ${_DOT_DIR}/infrastructure
 source ${_DOT_DIR}/nodejs
-source ${_DOT_DIR}/paths
 source ${_DOT_DIR}/python
 source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases

@@ -1,16 +1,6 @@
 export LOCALPATH
 LOCALPATH=$HOME/Development/bin:${HOME}/.dotfiles/bin
 
-#                   _           _     _   __    ___      
-#    __ _ _ __   __| |_ __ ___ (_) __| | / _\  /   \/\ /\
-#   / _` | '_ \ / _` | '__/ _ \| |/ _` | \ \  / /\ / //_/
-#  | (_| | | | | (_| | | | (_) | | (_| | _\ \/ /_// __ \ 
-#   \__,_|_| |_|\__,_|_|  \___/|_|\__,_| \__/___,'\/  \/ 
-#                                                        
-if [[ -d "${HOME}/Development/sdks/android" ]]; then 
-    export ANDROID_HOME; ANDROID_HOME=${HOME}/Development/sdks/android
-    LOCALPATH=${LOCALPATH}:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
-fi
 
 #                _  __ _                  
 #   _____      _(_)/ _| |_ ___ _ ____   __
@@ -35,17 +25,6 @@ if [[ -x $(command -v direnv) ]]; then
 fi
 
 
-#   ___.__._____ _______  ____  
-#  <   |  |\__  \\_  __ \/    \ 
-#   \___  | / __ \|  | \/   |  \
-#   / ____|(____  /__|  |___|  /
-#   \/          \/           \/ 
-#                               
-if [[ -d "${HOME}/.yarn/bin" ]]; then 
-    LOCALPATH=${LOCALPATH}:${HOME}/.yarn/bin
-fi
-
-
 #: export new PATH
-LOCALPATH=/usr/local/cuda-8.0/bin:$HOME/Development/bin:$LOCALPATH:$HOME/.local/bin:$HOME/bin
+LOCALPATH=/usr/local/cuda-8.0/bin:$HOME/Development/bin:$HOME/.local/bin:$HOME/bin:$LOCALPATH
 export PATH=$PATH:$LOCALPATH

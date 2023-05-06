@@ -1,0 +1,179 @@
+
+[begin] (Fluxbox)
+	[exec] (Web Browser) {google-chrome}
+	[exec] (Email) {thunderbird}
+	[exec] (Terminal) {lxterminal}
+	[exec] (Irc) {xchat}
+	[separator]
+
+	[submenu] (Applications) </usr/share/icons/Faience/categories/96/applications-other.png> 
+		[submenu] (Accessories) </usr/share/icons/gnome/48x48/categories/applications-accessories.png> 
+		#	[exec] (ClipIt) {clipit} </usr/share/icons/hicolor/scalable/apps/clipit-trayicon.svg> 
+		#	[exec] (Conky Manager) {conky-manager} </usr/share/pixmaps/conky-manager.png> 
+			[exec] (Disks) {gnome-disks} </usr/share/icons/Faience/apps/48/gnome-disks.png> 
+			[exec] (Docky) {docky} </usr/share/icons/hicolor/48x48/apps/docky.svg> 
+			[exec] (Engrampa Archive Manager) {engrampa} </usr/share/icons/hicolor/22x22/apps/engrampa.png> 
+			[exec] (File Manager PCManFM) {pcmanfm} </usr/share/icons/Faience/apps/48/system-file-manager.png> 
+			[exec] (Galculator) {galculator} </usr/share/icons/Faience/apps/48/galculator.png> 
+		#	[exec] (Icon Browser) {yad-icon-browser} </usr/share/icons/hicolor/48x48/apps/yad.png> 
+			[exec] (KeePassX) {keepassx} </usr/share/icons/Faience/apps/48/keepassx.png> 
+			[exec] (Leafpad) {leafpad} </usr/share/icons/hicolor/22x22/apps/leafpad.png> 
+			[exec] (Light Table) {LightTable} </usr/share/icons/hicolor/256x256/apps/lticon.png> 
+			[exec] (MATE Calculator) {mate-calc} </usr/share/icons/Faience/apps/48/accessories-calculator.png> 
+			[exec] (Plank) {plank} </usr/share/icons/hicolor/48x48/apps/plank.svg> 
+			[exec] (Pluma) {pluma} </usr/share/icons/Faience/apps/48/accessories-text-editor.png> 
+			[exec] (Shortcut Editor) {lxshortcut} </usr/share/icons/Faience/categories/96/applications-other.png> 
+			[exec] (Vi IMproved) {gvim} </usr/share/icons/hicolor/48x48/apps/gvim.png> 
+			[exec] (Xarchiver) {xarchiver} </usr/share/icons/Faience/apps/48/xarchiver.png> 
+			[exec] (Xpad) {xpad} </usr/share/icons/Faience/apps/48/xpad.png> 
+			[exec] (nitrogen) {nitrogen} </usr/share/icons/hicolor/48x48/apps/nitrogen.png> 
+			[exec] (xCHM) {xchm} </usr/share/icons/hicolor/48x48/apps/xchm.xpm> 
+		[end]
+		[submenu] (Chrome Apps) </usr/local/share/icons/hicolor/48x48/apps/google-chrome.png> 
+			[exec] (Any.do) {/opt/google/chrome/google-chrome} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/chrome-ocgddccilgpeepgglnlpchkpgamkgmld-Default.png> 
+			[exec] (Postman - REST Client (Packaged app)) {/opt/google/chrome/google-chrome} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/chrome-fhbjgbiflinjbdggehcddcbncdddomop-Default.png> 
+		[end]
+		[submenu] (Games) </usr/share/icons/Faience/categories/96/applications-games.png> 
+			[exec] (FlightGear) {fgfs-wrapper} </usr/share/icons/hicolor/48x48/apps/FlightGear.png> 
+			[exec] (Steam) {/usr/bin/steam} </usr/share/icons/hicolor/48x48/apps/steam.png> 
+		#	[exec] (WineMine) {winemine} </usr/share/icons/hicolor/scalable/apps/winemine.svg> 
+			[exec] (Winetricks) {winetricks} </usr/share/icons/winetricks.png> 
+		[end]
+		[submenu] (Graphics) </usr/share/icons/gnome/48x48/categories/applications-graphics.png> 
+			[exec] (Atril Document Viewer) {atril} </usr/share/icons/hicolor/48x48/apps/atril.png> 
+			[exec] (Document Viewer) {evince} </usr/share/icons/Faience/apps/48/evince.png> 
+			[exec] (Eye of MATE Image Viewer) {eom} </usr/share/icons/hicolor/22x22/apps/eom.png> 
+			[exec] (GNU Image Manipulation Program) {gimp-2.8} </usr/share/icons/hicolor/48x48/apps/gimp.png> 
+			[exec] (Image Viewer) {gpicview} </usr/share/icons/Faience/apps/48/gpicview.png> 
+			[exec] (Simple Scan) {simple-scan} </usr/share/icons/gnome/48x48/devices/scanner.png> 
+			[exec] (feh) {feh} </usr/share/feh/images/feh.png> 
+		[end]
+		[submenu] (Internet) </usr/share/icons/gnome/48x48/categories/applications-internet.png> 
+			[exec] (Browse Mirrored Websites) {webhttrack} </usr/share/icons/hicolor/48x48/apps/httrack.png> 
+		#	[exec] (Claws Mail) {claws-mail} </usr/share/icons/Faience/apps/48/claws-mail.png> 
+			[exec] (Dropbox) {dropbox} </usr/share/icons/hicolor/48x48/apps/dropbox.png> 
+			[exec] (FileZilla) {filezilla} </usr/share/icons/hicolor/48x48/apps/filezilla.png> 
+			[exec] (Firefox) {firefox} </usr/share/icons/hicolor/48x48/apps/firefox.png> 
+			[exec] (Google Chrome) {/usr/bin/google-chrome-stable} </usr/local/share/icons/hicolor/48x48/apps/google-chrome.png> 
+		#	[exec] (HexChat) {hexchat} </usr/share/icons/hicolor/48x48/apps/hexchat.png> 
+			[exec] (Pidgin Internet Messenger) {pidgin} </usr/share/icons/hicolor/48x48/apps/pidgin.png> 
+		#	[exec] (Steam) {/usr/bin/steam} </usr/share/icons/hicolor/48x48/apps/steam.png> 
+			[exec] (Thunderbird) {thunderbird} </usr/share/icons/hicolor/48x48/apps/thunderbird.png> 
+			[exec] (TigerVNC Viewer) {/usr/bin/vncviewer} </usr/share/icons/hicolor/48x48/apps/tigervnc.png> 
+			[exec] (Transmission) {transmission-gtk} </usr/share/icons/Faience/apps/48/transmission.png> 
+			[exec] (WebHTTrack Website Copier) {webhttrack} </usr/share/icons/hicolor/48x48/apps/httrack.png> 
+			[exec] (uGet) {uget-gtk} </usr/share/icons/hicolor/48x48/apps/uget-icon.png> 
+		[end]
+		[submenu] (Office) </usr/share/icons/gnome/48x48/categories/applications-office.png> 
+		#	[exec] (Claws Mail) {claws-mail} </usr/share/icons/Faience/apps/48/claws-mail.png> 
+			[exec] (Document Viewer) {evince} </usr/share/icons/Faience/apps/48/evince.png> 
+			[exec] (Kingsoft Presentation) {/usr/bin/wpp} </usr/share/icons/hicolor/48x48/apps/wps-office-wppmain.png> 
+			[exec] (Kingsoft Spreadsheets) {/usr/bin/et} </usr/share/icons/hicolor/48x48/apps/wps-office-etmain.png> 
+			[exec] (Kingsoft Writer) {/usr/bin/wps} </usr/share/icons/hicolor/48x48/apps/wps-office-wpsmain.png> 
+		[end]
+		[submenu] (Programming) </usr/share/icons/gnome/48x48/categories/applications-development.png> 
+		#	[exec] (Chainsaw) {chainsaw} </usr/share/pixmaps/chainsaw.png> 
+		#	[exec] (Devhelp) {devhelp} </usr/share/icons/hicolor/48x48/apps/devhelp.png> 
+			[exec] (Eclipse) {eclipse} </usr/share/icons/hicolor/48x48/apps/eclipse.png> 
+			[exec] (Geany) {geany} </usr/share/icons/Faience/apps/48/geany.png> 
+		#	[exec] (Giggle) {giggle} </usr/share/icons/hicolor/48x48/apps/giggle.png> 
+			[exec] (Git GUI) {git} </usr/share/git-gui/lib/git-gui.ico> 
+			[exec] (Light Table) {LightTable} </usr/share/icons/hicolor/256x256/apps/lticon.png> 
+			[exec] (LogFactor5) {logfactor5} </usr/share/pixmaps/logfactor5.png> 
+			[exec] (OpenJDK Monitoring & Management Console x86_64-2.4.7.4.fc20) {/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.7.4.fc20.x86_64/bin//jconsole} </usr/share/icons/hicolor/48x48/apps/java-1.7.0.png> 
+			[exec] (OpenJDK Policy Tool x86_64-2.4.7.4.fc20) {/usr/lib/jvm/java-1.7.0-openjdk-1.7.0.60-2.4.7.4.fc20.x86_64/bin//policytool} </usr/share/icons/hicolor/48x48/apps/java-1.7.0.png> 
+			[exec] (PyCharm) {"/opt/pycharm-3.4/bin/pycharm.sh"} </opt/pycharm-3.4/bin/pycharm.png> 
+			[exec] (Qt4 Designer) {designer-qt4} </usr/share/icons/hicolor/128x128/apps/designer.png> 
+			[exec] (Qt4 Linguist) {linguist-qt4} </usr/share/icons/hicolor/48x48/apps/linguist.png> 
+			[exec] (VStudio) {/opt/VStudio/vstudio} </opt/VStudio/Resources/vstudio.png> 
+			[exec] (gitg) {gitg} </usr/share/icons/hicolor/48x48/apps/gitg.png> 
+		[end]
+		[submenu] (Sound & Video) </usr/share/icons/gnome/48x48/categories/applications-multimedia.png> 
+			[exec] (Arista Transcoder) {arista-gtk} </usr/share/arista/ui/icon.svg> 
+			[exec] (Audacious) {audacious} </usr/share/icons/Faience/apps/48/audacious.png> 
+			[exec] (Audacity) {audacity} </usr/local/share/icons/hicolor/48x48/apps/audacity.png> 
+			[exec] (Cheese) {cheese} </usr/share/icons/Faience/apps/48/cheese.png> 
+			[exec] (Clementine) {clementine} </usr/share/icons/Faience/apps/48/application-x-clementine.png> 
+			[exec] (ISO Master) {isomaster} </usr/share/isomaster/icons/isomaster.png> 
+			[exec] (LASH Panel) {lash_panel} </usr/share/icons/hicolor/48x48/apps/lash.png> 
+			[exec] (Mixxx) {pasuspender} </usr/share/pixmaps/mixxx-icon.png> 
+			[exec] (PulseAudio Volume Control) {pavucontrol} </usr/share/icons/gnome/48x48/apps/multimedia-volume-control.png> 
+			[exec] (VLC media player) {/usr/bin/vlc} </usr/share/icons/Faience/apps/48/vlc.png> 
+		[end]
+		[submenu] (System Tools) </usr/share/icons/Faience/categories/96/applications-system.png> 
+			[exec] (Automatic Bug Reporting Tool) {gnome-abrt} </usr/share/icons/hicolor/48x48/status/gnome-abrt.png> 
+			[exec] (Cairo-Dock) {cairo-dock} </usr/share/pixmaps/cairo-dock.svg> 
+			[exec] (Cairo-Dock (Fallback Mode)) {cairo-dock} </usr/share/pixmaps/cairo-dock.svg> 
+			[exec] (Compiz Fusion Icon) {fusion-icon} </usr/share/icons/hicolor/48x48/apps/fusion-icon.png> 
+			[exec] (Disk Management) {usermount} </usr/share/pixmaps/disks.png> 
+			[exec] (Fedora LiveUSB Creator) {liveusb-creator} </usr/share/pixmaps/fedorausb.png> 
+			[exec] (Fedy) {fedy} </usr/share/icons/hicolor/scalable/apps/fedy.svg> 
+			[exec] (GParted) {/usr/bin/gparted_polkit} </usr/share/icons/Faience-Azur/apps/64/gparted.png> 
+			[exec] (Gigolo) {gigolo} </usr/share/icons/Faience/places/96/gtk-network.png> 
+			[exec] (Hardware Lister) {/usr/bin/lshw-gui} </usr/share/pixmaps/lshw-logo.svg> 
+			[exec] (LXTerminal) {lxterminal} </usr/share/icons/Faience/apps/48/lxterminal.png> 
+			[exec] (MATE Terminal) {mate-terminal} </usr/share/icons/Faience/apps/48/utilities-terminal.png> 
+		#	[exec] (PostIntallerF) {postinstaller} </usr/share/icons/Postinstaller1.svg> 
+			[exec] (Release Notes) {xdg-open} </usr/share/icons/hicolor/48x48/apps/fedora-release-notes.png> 
+			[exec] (SELinux Troubleshooter) {/usr/bin/sealert} </usr/share/icons/hicolor/48x48/apps/setroubleshoot_icon.png> 
+			[exec] (Task Manager) {lxtask} </usr/share/icons/Faience/apps/48/utilities-system-monitor.png> 
+			[exec] (Terminator) {terminator} </usr/share/icons/hicolor/48x48/apps/terminator.png> 
+			[exec] (XTerm) {xterm} </usr/share/icons/hicolor/48x48/apps/xterm-color.png> 
+			[exec] (dconf Editor) {dconf-editor} </usr/share/icons/Faience/apps/48/dconf-editor.png> 
+		[end]
+		[submenu] (Wine) </usr/share/icons/hicolor/scalable/apps/wine.svg> 
+			[submenu] (Programs) </usr/share/icons/Faience-Azur/places/16/folder.png> 
+				[submenu] (LINE) </usr/share/icons/Faience-Azur/places/16/folder.png> 
+					[exec] (LINE) {env} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/08A7_line.0.png> 
+					[exec] (LINE Uninstall) {env} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/C4E1_LineUnInst.0.png> 
+				[end]
+				[submenu] (Picasa 3) </usr/share/icons/Faience-Azur/places/16/folder.png> 
+					[exec] (Configure Picasa Photo Viewer) {env} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/1DF1_PicasaPhotoViewer.0.png> 
+					[exec] (Picasa 3) {env} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/66C5_Picasa3.0.png> 
+					[exec] (Uninstall) {env} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/2AA9_Uninstall.0.png> 
+				[end]
+			[end]
+			[exec] (LINE) {env} </home/wdnyn/.local/share/icons/hicolor/48x48/apps/08A7_line.0.png> 
+		#	[exec] (Notepad) {notepad} </usr/share/icons/hicolor/scalable/apps/notepad.svg> 
+			[exec] (Regedit) {regedit} </usr/share/icons/hicolor/scalable/apps/regedit.svg> 
+			[exec] (Wine Boot) {wineboot} </usr/share/icons/hicolor/scalable/apps/wine.svg> 
+			[exec] (Wine Configuration) {winecfg} </usr/share/icons/hicolor/scalable/apps/winecfg.svg> 
+			[exec] (Wine File) {winefile} </usr/share/icons/hicolor/scalable/apps/winefile.svg> 
+		#	[exec] (Wine Help) {wine} </usr/share/icons/hicolor/scalable/apps/winhelp.svg> 
+		#	[exec] (Wine OLE View) {wine} </usr/share/icons/hicolor/scalable/apps/wine.svg> 
+			[exec] (Wine Software Uninstaller) {wine} </usr/share/icons/hicolor/scalable/apps/msiexec.svg> 
+		#	[exec] (Wine Wordpad) {wine} </usr/share/icons/hicolor/scalable/apps/wordpad.svg> 
+		[end]
+	[end]
+
+	[submenu] (Fluxbox Menu)
+		[config] (Configure)
+		[submenu] (System Styles) {Choose a style...}
+			[stylesdir] (/usr/share/fluxbox/styles)
+			[stylesdir] (/usr/share/commonbox/styles/)
+		[end]
+		[submenu] (User Styles) {Choose a style...}
+			[stylesdir] (~/.fluxbox/styles)
+		[end]
+		[workspaces]   (Workspace List)
+		[submenu] (Tools)
+			[exec] (Window name) {xprop WM_CLASS|cut -d " -f 2|xmessage -file - -center}
+			[exec] (Screenshot - JPG) {import screenshot.jpg && display -resize 50% screenshot.jpg}
+			[exec] (Screenshot - PNG) {import screenshot.png && display -resize 50% screenshot.png}
+			[exec] (Run) {fbrun }
+			[exec] (Regen Menu) {fluxbox-generate_menu --with-icons}
+		[end]
+		[submenu] (Window)
+			[restart] (kde) {startkde}
+			[restart] (openbox) {openbox}
+			[restart] (gnome) {gnome-session}
+		[end]
+		[exec] (Lock screen) {xscreensaver-command -lock}
+		[commanddialog] (Fluxbox Command)
+		[reconfig] (Reload config)
+		[restart] (Restart)
+		[separator]
+		[exit] (Exit)
+	[end]
+[end]
+

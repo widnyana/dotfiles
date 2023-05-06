@@ -1,0 +1,36 @@
+#!/bin/sh
+#
+# fluxbox startup-script:
+#
+# Lines starting with a '#' are ignored.
+
+# Change your keymap:
+xmodmap "/home/wdnyn/.Xmodmap"
+
+# Applications you want to run with fluxbox.
+# MAKE SURE THAT APPS THAT KEEP RUNNING HAVE AN ''&'' AT THE END.
+#
+# unclutter -idle 2 &
+# wmnd &
+# wmsmixer -w &
+# idesk &
+fbsetbg -f ~/Pictures/tumblr_mt6j4iOlZO1srxzsgo1_1280_.jpg
+/usr/bin/xscreensaver &
+/usr/bin/start-pulseaudio-x11 &
+/usr/bin/xcompmgr -f -c -n -C -F &
+docky &
+conky -c "/home/wdnyn/conky-manager/themes/Conky MIUI/config/miui" &
+conky -c "/home/wdnyn/conky-manager/themes/Gold&Grey/config/cpu" &
+conky -c "/home/wdnyn/conky-manager/themes/Gold&Grey/config/disk" &
+conky -c "/home/wdnyn/conky-manager/themes/Gold&Grey/config/mem" &
+conky -c "/home/wdnyn/conky-manager/themes/Gold&Grey/config/net" &
+conky -c "/home/wdnyn/conky-manager/themes/Gold&Grey/config/time" &
+# wireless client
+wicd
+wicd-client -n
+# And last but not least we start fluxbox.
+# Because it is the last app you have to run it with ''exec'' before it.
+
+exec fluxbox
+# or if you want to keep a log:
+# exec fluxbox -log "/home/wdnyn/.fluxbox/log"

@@ -47,5 +47,5 @@ fi
 
 
 #: export new PATH
-LOCALPATH=/usr/local/cuda-8.0/bin:$HOME/Development/bin:$LOCALPATH:$HOME/.local/bin
+LOCALPATH=/usr/local/cuda-8.0/bin:$HOME/Development/bin:$LOCALPATH:$HOME/.local/bin:$HOME/bin
 export PATH=$PATH:$LOCALPATH

@@ -26,6 +26,8 @@ source ${_DOT_DIR}/devs
 source ${_DOT_DIR}/android
 
 source ${_DOT_DIR}/containers
+source ${_DOT_DIR}/completions/minikube.completions
+source ${_DOT_DIR}/completions/_istioctl
 
 if [[ -x "$(command -v direnv)" ]]; then
   eval "$(direnv hook zsh)"
@@ -39,12 +41,24 @@ elif [[ $(uname) == "Darwin" ]]; then
 fi
 
 # office stuff
-if [[ -d "${_DOT_DIR}/office" ]]; then
+__OFFICE_DIR="${_DOT_DIR}/office"
+if [[ -d "${__OFFICE_DIR}" ]]; then
   # Specific variable for golang usage in the office
-  if [[ -f "${_DOT_DIR}/office/golang" ]]; then
-      source "${_DOT_DIR}/office/golang"
+  if [[ -f "${__OFFICE_DIR}/golang" ]]; then
+      source "${__OFFICE_DIR}/golang"
+  fi
+
+  # Specific variable for development stuff used in the office
+  if [[ -f "${__OFFICE_DIR}/devs" ]]; then
+      source "${__OFFICE_DIR}/devs"
   fi
 fi
+
+
+
+source "${_DOT_DIR}/completions/helm.zsh"
+
+
 
 #: finalize $PATH
 echo -e "Finalizing \$PATH"

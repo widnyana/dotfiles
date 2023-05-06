@@ -1,7 +1,11 @@
+PIPENV_CACHE_DIR=$HOME/Development/.cache/pipenv
+PIP_CACHE_DIR=$HOME/Development/.cache/pip
+
+
 #: load virtualenv
 export WORKON_HOME=$HOME/Development/.virtualenvs
 export PROJECT_HOME=$HOME/Development/projects/python
-venvl=$(locate virtualenvwrapper_lazy-3.sh | head -n 1)
+venvl="/usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh"
 if [ ! -z "$venvl" ]; then
-  source venvl
+  source $venvl
 fi

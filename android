@@ -1,4 +1,5 @@
 export ANDROID_SDK=$HOME/Development/sdks/android
+export ANDROID_AVD_HOME=$HOME/Development/.android
 ANDROID_PATH=$HOME/Development/sdks/android/platform-tools:$HOME/Development/sdks/android/tools:$HOME/Development/sdks/android/tools/bin:$HOME/Development/sdks/android/build-tools/29.0.2
 export ANDROID_SDK_HOME=$HOME/Development/.android
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/Development/sdks/android/emulator/lib64/qt/lib:$HOME/Development/sdks/android/emulator/lib64

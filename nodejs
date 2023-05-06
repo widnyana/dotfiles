@@ -3,4 +3,15 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
 
 
-export PATH=$PATH:$HOME/Development/sdks/nodejs/bin
+
+#   ___.__._____ _______  ____  
+#  <   |  |\__  \\_  __ \/    \ 
+#   \___  | / __ \|  | \/   |  \
+#   / ____|(____  /__|  |___|  /
+#   \/          \/           \/ 
+#                               
+if [[ -d "${HOME}/.yarn/bin" ]]; then 
+    LOCALPATH=${LOCALPATH}:${HOME}/.yarn/bin
+fi
+
+export PATH=$PATH:$HOME/Development/sdks/nodejs/bin:$LOCALPATH

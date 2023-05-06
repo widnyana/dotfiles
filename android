@@ -1,5 +1,6 @@
-ANDROID_PATH=$HOME/Development/sdks/android/platform-tools:$HOME/Development/sdks/android/tools
+ANDROID_PATH=$HOME/Development/sdks/android/platform-tools:$HOME/Development/sdks/android/tools:$HOME/Development/sdks/android/tools/bin
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/Development/sdks/android/emulator/lib64/qt/lib:$HOME/Development/sdks/android/emulator/lib64
+
 
 export PATH=$PATH:$ANDROID_PATH

@@ -70,6 +70,9 @@ fi
 [ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
 
 
+## FLutter
+export PATH=$PATH:$HOME/Development/sdks/flutter/bin
+
 
 ### Telepresence
 export SCOUT_DISABLE=1
@@ -82,3 +85,8 @@ NEXT_TELEMETRY_DISABLED=1
 
 
 export PATH="${PATH}:$HOME/.istioctl/bin"
+
+
+export CC=clang
+export CXX=clang++
+

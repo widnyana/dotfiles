@@ -1,5 +1,5 @@
 export LOCALPATH
-LOCALPATH=/media/${USER}/development/bin:${HOME}.dotfiles/bin
+LOCALPATH=/media/${USER}/development/bin:${HOME}/.dotfiles/bin
 
 #: android SDK
 if [[ -d "${HOME}/sdk/android" ]]; then 

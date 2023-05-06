@@ -1,0 +1,17 @@
+### Erlang & Elixir
+if [ -f ~/.kerlrc ]; then
+  source ~/.kerlrc
+else
+  export KERL_BASE_DIR=/media/wid/development/bin/.kerl
+  export KERL_DEFAULT_INSTALL_DIR=$KERL_BASE_DIR/installs
+  export KERL_BUILD_BACKEND=git
+  export KERL_CONFIGURE_OPTIONS="--enable-smp-support --enable-threads --enable-kernel-poll --enable-m64-build"
+  export KERL_BUILD_DOCS=yes
+  export OTP_GITHUB_URL="https://github.com/erlang/otp"
+fi 
+test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
+
+
+if [ -d $HOME/.config/composer/vendor ]; then
+  export PATH=$PATH:$HOME/.config/composer/vendor/bin
+fi

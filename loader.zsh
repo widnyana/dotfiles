@@ -7,9 +7,15 @@ source ${_DOT_DIR}/python
 source ${_DOT_DIR}/nodejs
 source ${_DOT_DIR}/golang
 source ${_DOT_DIR}/paths
+source ${_DOT_DIR}/devs
+
+if [[ -x "$(command -v foo)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+
 
 #: load ssh alias
-for box in $(pwd)/boxes/*.box; do
+for box in ${HOME}/.dotfiles/boxes/*.box; do
     source "${box}"
 done 
 
@@ -22,9 +28,7 @@ fi
 
 #: finalize $PATH
 FINAL_PATH=$(python ${_DOT_DIR}/bin/_pathnodupe.py)
-echo $FINAL_PATH
-echo "====="
 export PATH=${FINAL_PATH}
-echo $PATH
+
 #: clean up
 unset _BOXES _DOT_DIR FINAL_PATH

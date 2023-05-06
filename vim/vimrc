@@ -1,6 +1,11 @@
 set nocompatible
 let mapleader = ","
-set filetype
+
+syntax enable
+filetype on             " enable filetype detection
+filetype plugin on      " load file-specific plugins
+filetype indent on      " load file-specific indentation
+
 
 " Visual and Motion 
     set ruler           " Display current cursor position on lower right corner
@@ -18,8 +23,11 @@ set filetype
     set showcmd         " Show command in bottom right of the screen
     set title           " set terminal title
 
-    set backspace=indent,eol,start      " Allow backspacing in insert mode
-    set virtualedit=all                 " allow the cursor to go in to 'invalid' places
+    "  set backspace   = indent,eol,start  " Allow backspacing in insert mode
+    "  set virtualedit = all               " allow the cursor to go in to 'invalid' places
+    set wildmenu                        "tab completion
+    "  set wildmode    = longest:full,full " First tab brings up options, second tab cycles
+
 
 " all about Tab 
     set tabstop=4
@@ -121,9 +129,17 @@ if v:version >= 730
     set undodir=~/.vim/.undo,~/tmp,/tmp
 endif
 
-" Custom Functions 
+" As-you-type autocomplete
+set completeopt=menu,menuone,preview,noselect,noinsert
 
-" SetWrap For Markdown 
+" Custom Functions 
+    " used by itchyny/lightline.vim
+    if !has('gui_running')
+        set t_Co=256
+    endif
+  
+
+    " SetWrap For Markdown 
     function! SetWrap()
       setlocal wrap linebreak nolist
       set virtualedit=
@@ -138,19 +154,28 @@ endif
       inoremap <buffer> <silent> <End>  <C-o>g<End>
     endfunction
 
-    " au BufNewFile,BufRead *.markdown,*.md,*.mdown,*.mkd,*.mkdn call SetWrap()
+    " vim modeline
+    function! AppendModeline()
+        let l:modeline = printf(" vim: set ts=%d sw=%d tw=%d %set :",
+            \ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
+        let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
+        call append(line("$"), l:modeline)
+    endfunction
+    nnoremap <silent> <Leader>ml :call AppendModeline()<CR>
 
-" EditorConfig
-    let g:EditorConfig_exclude_patterns = ['fugitive://.*']  
+" Plugin specific pre-init configuration
+    " Enable completion where available.
+    " This setting must be set before ALE is loaded.
+    " You should not turn this setting on if you wish to use ALE as a completion
+    " source for other completion plugins, like Deoplete.
+    let g:ale_completion_enabled = 1
 
-" vim modeline
-function! AppendModeline()
-    let l:modeline = printf(" vim: set ts=%d sw=%d tw=%d %set :",
-          \ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
-    let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
-    call append(line("$"), l:modeline)
-  endfunction
-  nnoremap <silent> <Leader>ml :call AppendModeline()<CR>
+    " EasyAlign
+    " Start interactive EasyAlign in visual mode (e.g. vipga)
+    xmap ga <Plug>(EasyAlign)
+
+    " Start interactive EasyAlign for a motion/text object (e.g. gaip)
+    nmap ga <Plug>(EasyAlign)
 
 
 
@@ -162,8 +187,11 @@ call plug#begin('~/.vim/plugged')
     Plug 'editorconfig/editorconfig-vim'
     Plug 'junegunn/fzf', { 'dir': '~/.fzf', 'do': './install --all' }
     Plug 'preservim/nerdtree', { 'on': 'NERDTreeToggle' }
+    
+    " A Git wrapper so awesome, it should be illegal
     Plug 'tpope/vim-fugitive'
-    Plug 'jeetsukumaran/vim-buffergator'
+
+    " A Vim alignment plugin
     Plug 'junegunn/vim-easy-align'
 
     " Vim plugin to list, select and switch between buffers.
@@ -173,7 +201,7 @@ call plug#begin('~/.vim/plugged')
     Plug 'dense-analysis/ale'
 
     " Nodejs extension host for vim & neovim, load extensions like VSCode and host language servers.    
-    Plug 'neoclide/coc.nvim', {'branch': 'release'}
+    "  Plug 'neoclide/coc.nvim', {'branch': 'release'}
 
     " Vim plugin that displays tags in a window, ordered by scope
     Plug 'preservim/tagbar'
@@ -182,6 +210,55 @@ call plug#begin('~/.vim/plugged')
     Plug 'rust-lang/rust.vim', { 'for': ['rust'] }
 
     " Golang
-    Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries' }
+    Plug 'fatih/vim-go', { 'do': ':GoInstallBinaries', 'for': ['go'] }
+
+    " Status line
+    Plug 'itchyny/lightline.vim'
 
 call plug#end()
+
+" Plugin specific post-init configuration
+    
+    " ALE 
+        let g:ale_linters = { 
+        \   'rust': ['analyzer'] 
+        \ }
+
+        " automatic import
+        let g:ale_completion_autoimport = 1
+
+        " Equivalent to the above.
+        let b:ale_linters = {'javascript': ['eslint']}
+
+        " enabling running the linters when files are saved
+        let g:ale_lint_on_text_changed = 'never'
+        let g:ale_lint_on_insert_leave = 0
+        
+        " Set this variable to 1 to fix files when you save them.
+        let g:ale_fix_on_save = 1
+
+        let g:ale_fixers = { 'rust': ['rustfmt', 'trim_whitespace', 'remove_trailing_lines'] }
+
+        
+        " ctrl + left-click shortcut to go to the definition for a symbol
+        nnoremap <C-LeftMouse> :ALEGoToDefinition<CR>
+
+    " EditorConfig
+        let g:EditorConfig_exclude_patterns = ['fugitive://.*']  
+
+    " Lightline
+        set laststatus=2
+        let g:lightline = {
+        \   'colorscheme': 'wombat',
+        \   'active': {
+        \     'left': [ [ 'mode', 'paste' ],
+        \               [ 'readonly', 'filename', 'modified'] 
+        \     ],
+        \     'right': [ ['lineinfo', 'percent' ],
+        \                [ 'gitbranch', 'fileencoding', 'filetype' ]
+        \     ]
+        \   },
+        \   'component_function': {
+        \     'gitbranch': 'FugitiveHead'
+        \   }
+        \ }

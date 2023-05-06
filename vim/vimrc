@@ -5,6 +5,7 @@ syntax enable
 filetype on             " enable filetype detection
 filetype plugin on      " load file-specific plugins
 filetype indent on      " load file-specific indentation
+set paste
 
 
 " Visual and Motion 
@@ -214,6 +215,9 @@ call plug#begin('~/.vim/plugged')
 
     " Status line
     Plug 'itchyny/lightline.vim'
+
+    " Terraform
+    Plug 'hashivim/vim-terraform', { 'for': ['terraform'] }
 
 call plug#end()
 

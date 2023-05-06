@@ -27,8 +27,7 @@ source ${_DOT_DIR}/android
 source ${_DOT_DIR}/rust
 
 source ${_DOT_DIR}/containers
-source ${_DOT_DIR}/completions/minikube.completions
-source ${_DOT_DIR}/completions/_istioctl
+
 
 if [[ -x "$(command -v starship)" ]]; then
   eval "$(starship init zsh)"
@@ -59,21 +58,25 @@ if [[ -d "${__OFFICE_DIR}" ]]; then
   fi
 fi
 
-source "${_DOT_DIR}/completions/helm.zsh"
-source "${_DOT_DIR}/completions/helm-gcs.zsh"
-
-
-
 #: finalize $PATH
 echo -e "Finalizing \$PATH"
 FINAL_PATH=$(python ${_DOT_DIR}/bin/_pathnodupe.py)
 export PATH=${FINAL_PATH}
 
-#: clean up
-unset _BOXES _DOT_DIR FINAL_PATH
-
 if [[ -x "$(command -v starship)" ]]; then
   eval "$(starship init zsh)"
 fi
 
-echo "loader.zsh finished!"
+## Completions
+export FPATH="$FPATH:${_DOT_DIR}/completions/"
+# source ${_DOT_DIR}/completions/minikube.completions
+# source ${_DOT_DIR}/completions/_istioctl
+# source "${_DOT_DIR}/completions/helm.zsh"
+# source "${_DOT_DIR}/completions/helm-gcs.zsh"
+
+
+
+#: clean up
+unset _BOXES _DOT_DIR FINAL_PATH
+
+echo "loader.zsh finished! "

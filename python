@@ -1,4 +1,7 @@
 #: load virtualenv
-export WORKON_HOME=/media/wid/development/.virtualenvs
-export PROJECT_HOME=/media/wid/development/projects/python
-source $(locate virtualenvwrapper_lazy-3.sh | head -n 1)
+export WORKON_HOME=$HOME/Development/.virtualenvs
+export PROJECT_HOME=$HOME/Development/projects/python
+venvl=$(locate virtualenvwrapper_lazy-3.sh | head -n 1)
+if [ ! -z "$venvl" ]; then
+  source venvl
+fi

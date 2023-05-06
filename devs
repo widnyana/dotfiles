@@ -1,11 +1,11 @@
 ### Vagrant
-export VAGRANT_HOME=/media/wid/development/.vagrant.d
+export VAGRANT_HOME=$HOME/Development/.vagrant.d
 
 ### Erlang & Elixir
 if [ -f ~/.kerlrc ]; then
   source ~/.kerlrc
 else
-  export KERL_BASE_DIR=/media/wid/development/bin/.kerl
+  export KERL_BASE_DIR=$HOME/Development/bin/.kerl
   export KERL_DEFAULT_INSTALL_DIR=$KERL_BASE_DIR/installs
   export KERL_BUILD_BACKEND=git
   export KERL_CONFIGURE_OPTIONS="--enable-smp-support --enable-threads --enable-kernel-poll --enable-m64-build"

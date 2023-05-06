@@ -1,0 +1,6 @@
+### Minikube
+if [[ -x "$(command -v minikube)" ]]; then
+    export MINIKUBE_HOME=/mnt/infra/.minikube
+    export MINIKUBE_IN_STYLE=false
+fi
+

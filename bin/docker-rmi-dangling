@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+docker rmi -f $(docker image ls --filter "dangling=true" --format "{{.ID}}")

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+PESKY_NAMESPACE=$1
+
+if [[ "${PESKY_NAMESPACE}" == '' ]]; then
+    echo "Please define the namespace!"
+    exit 2
+fi
+
+
+read -r -p "Are you sure? [y/N] " response
+if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
+then
+    kubectl delete namespace ${PESKY_NAMESPACE} --now=true 2>&1 &
+    
+    kubectl get namespace "${PESKY_NAMESPACE}" -o json \
+        | tr -d "\n" | sed "s/\"finalizers\": \[[^]]\+\]/\"finalizers\": []/" \
+        | kubectl replace --raw /api/v1/namespaces/${PESKY_NAMESPACE}/finalize -f -
+else
+    echo "Exitting because user is coward ~"
+    exit 1
+fi

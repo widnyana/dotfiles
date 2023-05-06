@@ -194,6 +194,20 @@ set formatoptions=qrnl
     let g:EditorConfig_exclude_patterns = ['fugitive://.*']  
 
 
+" YAML stuff
+au! BufNewFile,BufReadPost *.{yaml,yml} set filetype=yaml
+autocmd FileType yaml setlocal ts=2 sts=2 sw=2 expandtab
+
+" vim modeline
+function! AppendModeline()
+  let l:modeline = printf(" vim: set ts=%d sw=%d tw=%d %set :",
+        \ &tabstop, &shiftwidth, &textwidth, &expandtab ? '' : 'no')
+  let l:modeline = substitute(&commentstring, "%s", l:modeline, "")
+  call append(line("$"), l:modeline)
+endfunction
+nnoremap <silent> <Leader>ml :call AppendModeline()<CR>
+
+
 " Specify a directory for plugins
 " - For Neovim: stdpath('data') . '/plugged'
 " - Avoid using standard Vim directory names like 'plugin'
@@ -207,6 +221,7 @@ Plug 'majutsushi/tagbar'
 Plug 'tpope/vim-fugitive'
 Plug 'jeetsukumaran/vim-buffergator'
 Plug 'junegunn/vim-easy-align'
+Plug 'mrk21/yaml-vim', { 'for': 'yaml,yml'}
 
 " Initialize plugin system
 call plug#end()

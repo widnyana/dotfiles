@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ "$#" -lt 3 ]]; then
+    echo "Illegal number of parameters"
+    exit 2
+fi
+
+CLUSTER_NAME=$1
+POOL_NAME=$2
+NUM_NODES=$3
+
+gcloud container clusters resize "${CLUSTER_NAME}" \
+    --node-pool "${POOL_NAME}" \
+    --num-nodes ${NUM_NODES} \
+    --async

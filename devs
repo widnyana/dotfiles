@@ -1,3 +1,6 @@
+### Vagrant
+export VAGRANT_HOME=/media/wid/development/.vagrant.d
+
 ### Erlang & Elixir
 if [ -f ~/.kerlrc ]; then
   source ~/.kerlrc

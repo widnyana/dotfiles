@@ -1,9 +1,21 @@
 #!/bin/bash
+set -e
+source ~/.dotfiles/auth_keys
+source ~/.dotfiles/common/colors
+
 
 get_latest_release() {
-  curl --silent "https://api.github.com/repos/$1/releases/latest" | # Get latest release from GitHub api
+  ver=$(curl --silent "https://api.github.com/repos/$1/releases/latest?access_token=${GITHUB_PERSONAL_TOKEN}" | # Get latest release from GitHub api
     grep '"tag_name":' |                                            # Get tag line
-    sed -E 's/.*"([^"]+)".*/\1/'                                    # Pluck JSON value
+    sed -E 's/.*"([^"]+)".*/\1/')                                    # Pluck JSON value
+
+ if [ -z $ver ]; then
+   echo -e "${RED}Failed to fetch version of ${1}, unknown error${NC}"
+ else
+   echo -e "latest version of ${CYAN}${1}${NC} is ${LIGHTCYAN}$ver${NC}"
+ fi
+
+ echo -e "\n"
 }
 
 if [ -z $1 ]; then

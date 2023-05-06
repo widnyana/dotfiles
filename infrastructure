@@ -10,7 +10,7 @@
 source <(kubectl completion zsh)
 
 #: krew - https://github.com/kubernetes-sigs/krew
-LOCALPATH=${LOCALPATH}:${KREW_ROOT:-$HOME/.krew}/bin
+PATH=${PATH}:${KREW_ROOT:-$HOME/.krew}/bin
 
 #: fubectl - https://github.com/kubermatic/fubectl
 if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then 
@@ -28,13 +28,25 @@ if [[ -x "$(command -v minikube)" ]]; then
     export MINIKUBE_IN_STYLE=false
 fi
 
-
-export PATH=$PATH:${HOME}/.krew/bin
-
 ### Podman
-#alias docker=podman
-#alias docker-compose=podman-compose
-
+alias docker=podman
+alias docker-compose=podman-compose
 
 . $(pack completion --shell zsh)
+
+
+
+### tfenv - Terraform version manager 
+if ! [[ -f ${HOME}/Infrastructure/.tfenv/bin/tfenv ]]; then 
+  echo "tfenv does not exist, installing..."
+  git clone https://github.com/tfutils/tfenv.git ${HOME}/Infrastructure/.tfenv --depth=1
+fi
+PATH="${HOME}/Infrastructure/.tfenv/bin:${PATH}"
+
+### tgenv - Terragrunt version manager 
+if ! [[ -f ${HOME}/Infrastructure/.tgenv/bin/tgenv ]]; then 
+  echo "tgenv does not exist, installing..."
+  git clone https://github.com/cunymatthieu/tgenv ${HOME}/Infrastructure/.tgenv --depth=1
+fi
+PATH="${HOME}/Infrastructure/.tgenv/bin:${PATH}"
 

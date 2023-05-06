@@ -1,1 +1,12 @@
-docker run -p 80:8080 --name swagger-editor swaggerapi/swagger-editor
+#!/usr/bin/env bash
+
+if [[ "$(docker inspect "swaggerapi/swagger-editor" >> /dev/null 2>&1)" ]]; then
+  echo -e "Pulling swaggerapi/swagger-editor from docker hub"
+  docker pull "swaggerapi/swagger-editor:latest"
+fi
+
+echo -e "Running swagger-editor..."
+docker run -p 80:8080  swaggerapi/swagger-editor
+
+#echo -e "Opening new tab on your browser"
+#xdg-open "http://localhost:8080"

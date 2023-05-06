@@ -30,6 +30,10 @@ source ${_DOT_DIR}/containers
 source ${_DOT_DIR}/completions/minikube.completions
 source ${_DOT_DIR}/completions/_istioctl
 
+if [[ -x "$(command -v starship)" ]]; then
+  eval "$(starship init zsh)"
+fi
+
 if [[ -x "$(command -v direnv)" ]]; then
   eval "$(direnv hook zsh)"
 fi
@@ -56,6 +60,7 @@ if [[ -d "${__OFFICE_DIR}" ]]; then
 fi
 
 source "${_DOT_DIR}/completions/helm.zsh"
+source "${_DOT_DIR}/completions/helm-gcs.zsh"
 
 
 

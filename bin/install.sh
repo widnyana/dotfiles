@@ -1,0 +1,10 @@
+mkdir -p \
+    ~/.config \
+    ~/.local/bin
+
+# install fzf 
+git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf
+~/.fzf/install --all --xdg --no-bash --no-fish
+
+
+

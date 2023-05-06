@@ -10,5 +10,5 @@ if [[ "${NAMESPACE}" == "" ]]; then
 fi
 
 
-kubectl get pods -n "${NAMESPACE}" | grep -i evicted | awk '{print $1}' | xargs kubectl delete pod --grace-period 0 --force || echo "Fail removing Evicted pods"
-kubectl get pods -n "${NAMESPACE}" | grep -i completed | awk '{print $1}' | xargs kubectl delete pod --grace-period 0 --force || echo "Fail removing Completed pods"
+kubectl get pods -n "${NAMESPACE}" | grep -i evicted | awk '{print $1}' | xargs kubectl delete pod -n "${NAMESPACE}" --grace-period 0 --force || echo "Fail removing Evicted pods"
+kubectl get pods -n "${NAMESPACE}" | grep -i completed | awk '{print $1}' | xargs kubectl delete pod -n "${NAMESPACE}" --grace-period 0 --force || echo "Fail removing Completed pods"

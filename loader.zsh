@@ -25,6 +25,7 @@ else
   source ${_DOT_DIR}/devs
   source ${_DOT_DIR}/android
 
+
   if [[ -x "$(command -v direnv)" ]]; then
     eval "$(direnv hook zsh)"
   fi

@@ -1,0 +1,4 @@
+source $HOME/Development/sdks/.cargo/env
+
+export RUSTUP_HOME=$HOME/Development/sdks/rustup
+export PATH=$PATH:$HOME/Development/sdks/.cargo/bin

@@ -24,6 +24,7 @@ source ${_DOT_DIR}/golang
 source ${_DOT_DIR}/paths
 source ${_DOT_DIR}/devs
 source ${_DOT_DIR}/android
+source ${_DOT_DIR}/rust
 
 source ${_DOT_DIR}/containers
 source ${_DOT_DIR}/completions/minikube.completions

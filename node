@@ -1,4 +1,0 @@
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh" # This loads nvm
-
-alias yarn='/usr/local/Cellar/yarn/0.20.3/bin/yarn'

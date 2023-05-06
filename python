@@ -1,5 +1,4 @@
-export WORKON_HOME=$HOME/.virtualenvs
-export PROJECT_HOME=$HOME/Development/python
-source /usr/local/bin/virtualenvwrapper.sh
-
-export PATH=/Users/wid/bin/anaconda3/bin:$PATH
+#: load virtualenv
+export WORKON_HOME=${HOME}/.virtualenvs
+export PROJECT_HOME=/media/${wid}/development/projects/python
+source $(locate virtualenvwrapper_lazy.sh | head -n 1)

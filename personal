@@ -1,0 +1,17 @@
+alias tailf="tail -f"
+
+export LOCALPATH
+LOCALPATH=/Volumes/development/bin:/Users/wid/.dotfiles/bin
+
+
+#: ANDROID
+export ANDROID_HOME; ANDROID_HOME=/Volumes/development/android
+LOCALPATH=${LOCALPATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+
+#: swiftenv
+export SWIFTENV_ROOT="$HOME/.swiftenv"
+export PATH="$SWIFTENV_ROOT/bin:$PATH"
+eval "$(swiftenv init -)"
+
+#: export new PATH
+export PATH=$PATH:$LOCALPATH

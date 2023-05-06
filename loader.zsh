@@ -8,6 +8,7 @@ source ${_DOT_DIR}/nodejs
 source ${_DOT_DIR}/golang
 source ${_DOT_DIR}/paths
 source ${_DOT_DIR}/devs
+source ${_DOT_DIR}/android
 
 if [[ -x "$(command -v foo)" ]]; then
   eval "$(direnv hook zsh)"

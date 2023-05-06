@@ -31,6 +31,8 @@ fi
 ### Podman
 alias docker=podman
 alias docker-compose=podman-compose
+export DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+
 
 . $(pack completion --shell zsh)
 
@@ -50,3 +52,7 @@ if ! [[ -f ${HOME}/Infrastructure/.tgenv/bin/tgenv ]]; then
 fi
 PATH="${HOME}/Infrastructure/.tgenv/bin:${PATH}"
 
+
+if type "glab" > /dev/null; then
+  source <(glab completion -s zsh); compdef _glab glab
+fi

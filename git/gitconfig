@@ -1,0 +1,77 @@
+[alias]
+	# all commits that aren't merges on all branches
+	all = !git log --pretty=oneline --abbrev-commit --all --no-merges
+	br = branch --format='%(HEAD) %(color:yellow)%(refname:short)%(color:reset) - %(contents:subject) %(color:green)(%(committerdate:relative)) [%(authorname)]' --sort=-committerdate
+	cm = commit -m
+	co = checkout
+	cob = checkout -b
+	d = diff
+	del = branch -D
+	gr = log --graph --decorate --oneline
+	last = log -1 HEAD --stat
+	lg = !git log --pretty=format:\"%C(magenta)%h%Creset -%C(red)%d%Creset %s %C(dim green)(%cr) [%an]\" --abbrev-commit -30
+	ll = log --oneline
+	lol = log --graph --pretty=format:'%C(auto)%h%d%Creset %C(cyan)(%cr)%Creset %C(green)%cn <%ce>%Creset %s'
+	lold = log --graph --pretty=format:\"%C(auto)%h%d%Creset %C(cyan)(%ci)%Creset %C(green)%cn <%ce>%Creset %s\"
+	rso = remote show origin
+	rv = remote -v
+	s = status
+	se = !git rev-list --all | xargs git grep -F
+	st = status -sb
+	# find the top level of current repository
+	top = !git rev-parse --show-toplevel
+	unstage = reset HEAD
+	undo-commit = reset --soft HEAD^
+
+[init]
+	defaultBranch = main
+
+[color]
+	diff = auto
+	status = auto
+	branch = auto
+	interactive = auto
+	ui = true
+	pager = true
+
+[color "status"]
+	added = green
+	changed = blue
+	untracked = magenta
+	deleted = red
+
+[filter "lfs"]
+	clean = git-lfs clean %f
+	smudge = git-lfs smudge %f
+	required = true
+
+[core]
+	excludesfile = /home/widnyana/.gitignore
+
+[fetch]
+	parallel = 32
+
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+
+[help]
+	autocorrect = 1
+
+[gpg]
+	program = /usr/bin/gpg
+
+[init]
+	defaultBranch = main
+	templateDir = /home/widnyana/.git-template
+
+[url "ssh://git@github.com/"]
+	insteadOf = https://github.com/
+
+[user]
+	useConfigOnly = true
+
+#[includeIf "gitdir:/home/widnyana/Development/personal/"]
+#    path = /home/widnyana/Development/personal/.gitconfig

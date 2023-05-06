@@ -22,7 +22,7 @@ else
   export KERL_BUILD_DOCS=yes
   export OTP_GITHUB_URL="https://github.com/erlang/otp"
 fi 
-test -s "$HOME/.kiex/scripts/kiex" && source "$HOME/.kiex/scripts/kiex"
+test -s "$HOME/Development/.kiex/scripts/kiex" && source "$HOME/Development/.kiex/scripts/kiex"
 
 
 #       __ _      
@@ -65,3 +65,17 @@ if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then
   sed -i "s#kdel() {#kdelete() {#g" $HOME/.dotfiles/sources/fubectl.source
 fi
 [ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
+
+
+
+### Telepresence
+export SCOUT_DISABLE=1
+
+### Google Cloud SDK
+export CLOUDSDK_HOME=/usr/share/google-cloud-sdk
+
+# NextJS
+NEXT_TELEMETRY_DISABLED=1
+
+
+export PATH="${PATH}:$HOME/.istioctl/bin"

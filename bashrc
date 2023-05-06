@@ -6,6 +6,6 @@ if [ -f /etc/bashrc ]; then
 fi
 
 # User specific aliases and functions
-down4me() {
+isup() {
     wget -qO - "http://www.downforeveryoneorjustme.com/$1" | sed '/just you/!d;s/<[^>]*>//g' ;
 }

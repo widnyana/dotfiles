@@ -1,4 +1,5 @@
 #!/bin/bash
+set -xeuo pipefail
 
 # This may be out of date, check at https://github.com/docker/compose/releases
 
@@ -18,25 +19,25 @@ DOCKER_COMPOSE_BASEURL=https://github.com/${DOCKER_PROJECT_USER}/${DOCKER_COMPOS
 DOCKER_COMPOSE_VERSION=${DOWNLOAD_VERSION:-$(gh_latest_release "${DOCKER_PROJECT_USER}/${DOCKER_COMPOSE_REPO}")}
 DOCKER_COMPOSE_BASENAME=docker-compose-`uname -s`-`uname -m`
 
-echo "Downloading '${DOCKER_PROJECT_USER}/${DOCKER_COMPOSE_REPO}' version  ${DOCKER_COMPOSE_VERSION}"
+echo "Downloading '${DOCKER_PROJECT_USER}/${DOCKER_COMPOSE_REPO}' version  ${DOCKER_COMPOSE_VERSION} from ${DOCKER_COMPOSE_BASEURL}"
 
-TARGET_BIN="${_DOT_DIR}/bin"
+TARGET_BIN="${_DOT_DIR}bin"
 TARGET_FILE=${TARGET_BIN}/docker-compose
 
 # Be sure you have curl installed.
-curl --version >> /dev/null || __NO_CURL=1
+curl --version >> /dev/null && __NO_CURL="0" || __NO_CURL="1"
 
-if [ -z "${__NO_CURL}" ]; then
+if [ "${__NO_CURL}" -eq "0" ]; then
   curl -L ${DOCKER_COMPOSE_BASEURL}/${DOCKER_COMPOSE_VERSION}/${DOCKER_COMPOSE_BASENAME} -o $TARGET_FILE && \
   chmod +x ${TARGET_FILE} && \
-  ( echo -n "Installed " && ${TARGET_FILE} --version ) || __NOT_INSTALLED=1
+  ( echo -n "Installed " && ${TARGET_FILE} --version ) && __NOT_INSTALLED="0" || __NOT_INSTALLED="1"
 else
   echo "Error: Can't find 'curl'" >&2
   echo "You need to install 'curl'.   Use apt-get, or yum, or whatever method you need for your OS."
   exit 3
 fi
 
-if [ ! -z "${__NOT_INSTALLED}" ]; then
+if [ "${__NOT_INSTALLED}" -eq "1" ]; then
   echo "Error: failed to properly or fully install docker-compose" >&2
   echo "Failed to install, either the URL is wrong or you don't have permission to write/create ${TARGET_FILE}"
   exit 3

@@ -1,0 +1,36 @@
+
+module xdm 1.0;
+
+require {
+	type dnsmasq_var_run_t;
+	type lvm_var_run_t;
+	type efivarfs_t;
+	type avahi_t;
+	type firewalld_var_run_t;
+	type dhcpc_var_run_t;
+	type sssd_var_run_t;
+	type plymouthd_t;
+	type alsa_var_run_t;
+	type xdm_t;
+	type virt_var_run_t;
+	type gssproxy_var_run_t;
+	class dbus send_msg;
+	class file getattr;
+	class sock_file getattr;
+	class dir getattr;
+}
+
+#============= plymouthd_t ==============
+allow plymouthd_t efivarfs_t:dir getattr;
+
+#============= xdm_t ==============
+allow xdm_t alsa_var_run_t:file getattr;
+allow xdm_t avahi_t:dbus send_msg;
+allow xdm_t dhcpc_var_run_t:file getattr;
+allow xdm_t dnsmasq_var_run_t:file getattr;
+allow xdm_t firewalld_var_run_t:file getattr;
+allow xdm_t gssproxy_var_run_t:file getattr;
+allow xdm_t gssproxy_var_run_t:sock_file getattr;
+allow xdm_t lvm_var_run_t:file getattr;
+allow xdm_t sssd_var_run_t:file getattr;
+allow xdm_t virt_var_run_t:file getattr;

@@ -1,0 +1,27 @@
+[submodule "vim/pack/widnyana/start/nerdtree"]
+	path = vim/pack/widnyana/start/nerdtree
+	url = git@github.com:scrooloose/nerdtree.git
+[submodule "vim/pack/widnyana/start/nerdtree-git-plugin"]
+	path = vim/pack/widnyana/start/nerdtree-git-plugin
+	url = git@github.com:Xuyuanp/nerdtree-git-plugin.git
+[submodule "vim/pack/widnyana/start/fugitive"]
+	path = vim/pack/widnyana/start/fugitive
+	url = git@github.com:tpope/vim-fugitive.git
+[submodule "vim/pack/widnyana/start/syntastic"]
+	path = vim/pack/widnyana/start/syntastic
+	url = git@github.com:scrooloose/syntastic.git
+[submodule "vim/pack/widnyana/opt/vim-json"]
+	path = vim/pack/widnyana/opt/vim-json
+	url = git@github.com:elzr/vim-json
+[submodule "vim/pack/widnyana/opt/vim-indent-guides"]
+	path = vim/pack/widnyana/opt/vim-indent-guides
+	url = git@github.com:nathanaelkane/vim-indent-guides
+[submodule "vim/pack/widnyana/opt/vim-go"]
+	path = vim/pack/widnyana/opt/vim-go
+	url = git@github.com:fatih/vim-go
+[submodule "vim/pack/widnyana/start/tagbar"]
+	path = vim/pack/widnyana/start/tagbar
+	url = git@github.com:majutsushi/tagbar
+[submodule "vim/pack/widnyana/start/ultisnips"]
+	path = vim/pack/widnyana/start/ultisnips
+	url = git@github.com:SirVer/ultisnips

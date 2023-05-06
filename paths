@@ -1,0 +1,35 @@
+export LOCALPATH
+LOCALPATH=/media/${USER}/development/bin:${HOME}.dotfiles/bin
+
+#: android SDK
+if [[ -d "${HOME}/sdk/android" ]]; then 
+    export ANDROID_HOME; ANDROID_HOME=${HOME}/sdk/android
+    LOCALPATH=${LOCALPATH}:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
+fi
+
+#: swiftenv
+if [[ -x $(command -v swiftenv) ]]; then
+    export SWIFTENV_ROOT="${HOME}/.swiftenv"
+    LOCALPATH="$SWIFTENV_ROOT/bin:$LOCALPATH"
+    eval "$(swiftenv init -)"
+fi
+
+#: direnv
+if [[ -x $(command -v direnv) ]]; then 
+    eval "$(direnv hook ${SHELL})"
+fi
+
+#: load rust cargo
+if [[ -d ${HOME}/.cargo ]]; then
+    export RUSTUP_HOME=${HOME}/.rustup
+    export CARGO_HOME=${HOME}/.cargo
+    source "${HOME}/.cargo/env"
+fi
+
+
+LOCALPATH=/usr/local/cuda-8.0/bin:/media/${USER}/development/bin:$LOCALPATH
+
+#: export new PATH
+export PATH=$PATH:$LOCALPATH
+
+

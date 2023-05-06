@@ -1,3 +1,6 @@
+# Gitlab CLI
+eval "$(register-python-argcomplete gitlab)"
+
 #                                     _   
 #   /\   /\__ _  __ _ _ __ __ _ _ __ | |_ 
 #   \ \ / / _` |/ _` | '__/ _` | '_ \| __|

@@ -1,0 +1,14 @@
+[app] (name=fbrun)
+  [Position]	(CENTER)	{0 0}
+  [Layer]	{2}
+[end]
+[app] (name=lxterminal) (class=Lxterminal)
+  [Shaded]	{no}
+  [Alpha]	{255}
+[end]
+[app] (name=mate-terminal) (class=Mate-terminal) (role=mate-terminal-window-3602--1804433742-1403558224)
+  [Position]	(UPPERLEFT)	{1% 2%}
+  [Layer]	{12}
+  [Close]	{yes}
+  [Alpha]	{227 254}
+[end]

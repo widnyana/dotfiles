@@ -1,3 +1,5 @@
+auth_keys
+bin/docker-compose
 vps
 vpn/*
 office

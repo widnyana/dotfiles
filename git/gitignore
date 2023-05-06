@@ -1,0 +1,12 @@
+.idea
+.envrc
+.envrc.local
+.envrc.prod
+.envrc.staging
+.env
+.vscode
+vendor
+node_modules
+sample-data
+temp
+junkdata

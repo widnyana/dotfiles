@@ -55,8 +55,6 @@ if [[ -d "${__OFFICE_DIR}" ]]; then
   fi
 fi
 
-
-
 source "${_DOT_DIR}/completions/helm.zsh"
 
 

@@ -1,4 +1,14 @@
 #!/usr/bin/env bash 
 set -euo pipefail
 
-kubectl get pods -n ${1} | grep Evicted | awk '{print $1}' | xargs kubectl delete pod --grace-period 0 --force
+NAMESPACE=${1:-""}
+
+
+if [[ "${NAMESPACE}" == "" ]]; then
+    echo "Mau ngapain?"
+    exit 1
+fi
+
+
+kubectl get pods -n "${NAMESPACE}" | grep -i evicted | awk '{print $1}' | xargs kubectl delete pod --grace-period 0 --force || echo "Fail removing Evicted pods"
+kubectl get pods -n "${NAMESPACE}" | grep -i completed | awk '{print $1}' | xargs kubectl delete pod --grace-period 0 --force || echo "Fail removing Completed pods"

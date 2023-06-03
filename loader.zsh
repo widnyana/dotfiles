@@ -1,10 +1,14 @@
 #!/usr/bin/env zsh
-_DOT_DIR=$0:a:h
+export _DOT_DIR=$0:a:h
 
 
 create_auth_keys() {
   cat <<EOF > "${_DOT_DIR}/auth_keys" 
-GITHUB_PERSONAL_TOKEN=
+export GITHUB_PERSONAL_TOKEN=
+
+### gitlab
+export GITLAB_PERSONAL_USERNAME=""
+export GITLAB_PERSONAL_TOKEN=""
 EOF
 }
 
@@ -14,9 +18,10 @@ if [ ! -f ${_DOT_DIR}/auth_keys ]; then
   echo "please configure your token here: ${_DOT_DIR}/auth_keys"
   exit 1
 fi
+source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
 source ${_DOT_DIR}/functions.sh
-source ${_DOT_DIR}/paths
+source ${_DOT_DIR}/paths          ### declare $PATH here
 
 source ${_DOT_DIR}/android
 source ${_DOT_DIR}/blockchain

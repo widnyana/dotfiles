@@ -1,0 +1,15 @@
+#!/usr/bin/env bash 
+set -euo pipefail
+REPO_PATH=${1:-""}
+
+
+if [[ "${REPO_PATH}" == "" ]]; then
+    echo -e "missing repo path. \nrequested format: 'user/reponame'"
+    exit 1
+fi
+
+
+gh actions-cache list -R "${REPO_PATH}" --limit 100 \
+    | awk '{print $1}' \
+    | tr '\n' '\0' \
+    | xargs -0 -n1 gh actions-cache delete --confirm -R "${REPO_PATH}"

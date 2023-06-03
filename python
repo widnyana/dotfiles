@@ -1,5 +1,9 @@
-PIPENV_CACHE_DIR=$HOME/Development/.cache/pipenv
-PIP_CACHE_DIR=$HOME/Development/.cache/pip
+
+#: https://pipenv.pypa.io/en/latest/
+if type "pipenv" > /dev/null; then
+    PIPENV_CACHE_DIR=$HOME/Development/.cache/pipenv
+    PIP_CACHE_DIR=$HOME/Development/.cache/pip
+fi
 
 #: load virtualenv
 export WORKON_HOME=$HOME/Development/.virtualenvs

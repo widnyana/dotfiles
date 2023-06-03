@@ -16,7 +16,7 @@ removecontainers() {
     docker rm $(docker ps -aq)
 }
 
-armageddon() {
+docker_armageddon() {
     removecontainers
     docker network prune -f
     docker rmi -f $(docker images --filter dangling=true -qa)

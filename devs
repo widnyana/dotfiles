@@ -5,6 +5,7 @@
 #     \_/ \__,_|\__, |_|  \__,_|_| |_|\__|
 #               |___/                     
 export VAGRANT_HOME=$HOME/Development/.vagrant.d
+export VAGRANT_DEFAULT_PROVIDER=libvirt
 
 #     __     _                      ___       __ _ _      _      
 #    /__\ __| | __ _ _ __   __ _   ( _ )     /__\ (_)_  _(_)_ __ 
@@ -47,23 +48,17 @@ fi
 
 
 
-## FLutter
+#: FLutter
 export PATH=$PATH:$HOME/Development/bin/flutter/bin
 
 
-### Telepresence
+#: Telepresence
 export SCOUT_DISABLE=1
-
-### Google Cloud SDK
-export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-export CLOUDSDK_PYTHON_SITEPACKAGES=1
-export CLOUDSDK_HOME=/usr/share/google-cloud-sdk
-source "${CLOUDSDK_HOME}/completion.zsh.inc"
 
 # NextJS
 NEXT_TELEMETRY_DISABLED=1
 
-### GitLab
+#: GitLab
 eval "$(register-python-argcomplete gitlab)"
 
 

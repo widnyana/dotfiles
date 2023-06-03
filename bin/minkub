@@ -2,4 +2,4 @@
 
 home=$HOME/Infrastructure/labs/minikube
 
-MINIKUBE_HOME=${home} /usr/bin/minikube $@
+MINIKUBE_HOME=${home} /usr/bin/minikube -p labs $@

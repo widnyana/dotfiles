@@ -75,3 +75,7 @@
 
 #[includeIf "gitdir:/home/widnyana/Development/personal/"]
 #    path = /home/widnyana/Development/personal/.gitconfig
+[pull]
+	rebase = true
+[diff]
+	submodule = log

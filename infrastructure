@@ -6,8 +6,18 @@
 #  |_|\_\___/|___( )  \___\___/|_| |_|\__\__,_|_|_| |_|\___|_( )   \___|\__\___|
 #                |/                                          |/                 
 
+#: Google Cloud SDK
+if type "gcloud" > /dev/null; then
+  export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+  export CLOUDSDK_PYTHON_SITEPACKAGES=1
+  export CLOUDSDK_HOME=/usr/share/google-cloud-sdk
+  source "${CLOUDSDK_HOME}/completion.zsh.inc"
+fi 
+
 #: kubectl autocomplete
-source <(kubectl completion zsh)
+if type "kubectl" > /dev/null; then
+  source <(kubectl completion zsh)
+fi
 
 #: krew - https://github.com/kubernetes-sigs/krew
 PATH=${PATH}:${KREW_ROOT:-$HOME/.krew}/bin
@@ -22,30 +32,38 @@ if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then
 fi
 [ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
 
-### Minikube
+#: Minikube
 if [[ -x "$(command -v minikube)" ]]; then
     export MINIKUBE_HOME=$HOME/Infrastructure/labs/minikube
     export MINIKUBE_IN_STYLE=false
 fi
 
-### Podman
-alias docker=podman
-alias docker-compose=podman-compose
-export DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+#: Podman
+if type "podman" > /dev/null; then
+  alias docker=podman
+  alias docker-compose=podman-compose
+  export DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+fi
 
-
+#: https://github.com/buildpacks/pack
+if type "pack" > /dev/null; then
 . $(pack completion --shell zsh)
+fi
+
+#: Helm.sh
+if type "helm" > /dev/null; then
+  source <(helm completion zsh)
+fi
 
 
-
-### tfenv - Terraform version manager 
+#: tfenv - Terraform version manager 
 if ! [[ -f ${HOME}/Infrastructure/.tfenv/bin/tfenv ]]; then 
   echo "tfenv does not exist, installing..."
   git clone https://github.com/tfutils/tfenv.git ${HOME}/Infrastructure/.tfenv --depth=1
 fi
 PATH="${HOME}/Infrastructure/.tfenv/bin:${PATH}"
 
-### tgenv - Terragrunt version manager 
+#: tgenv - Terragrunt version manager 
 if ! [[ -f ${HOME}/Infrastructure/.tgenv/bin/tgenv ]]; then 
   echo "tgenv does not exist, installing..."
   git clone https://github.com/cunymatthieu/tgenv ${HOME}/Infrastructure/.tgenv --depth=1
@@ -55,4 +73,10 @@ PATH="${HOME}/Infrastructure/.tgenv/bin:${PATH}"
 
 if type "glab" > /dev/null; then
   source <(glab completion -s zsh); compdef _glab glab
+fi
+
+
+#: Hashicorp Vault
+if type "vault" > /dev/null; then
+  complete -o nospace -C $(which vault) vault
 fi

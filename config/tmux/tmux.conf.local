@@ -328,5 +328,5 @@ set -g @tpm_plugins '                  \
 '
 
 # Initialize TMUX plugin manager (keep this line at the very bottom of tmux.conf)
-run -b '~/.dotfiles/submodule/tmux-tpm/tpm'
+run -b '~/.config/tmux/plugins/tpm/tpm'
 

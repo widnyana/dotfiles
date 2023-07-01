@@ -10,5 +10,5 @@ alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 alias tmux='direnv exec / tmux'
 
 alias tg='$HOME/Development/bin/terragrunt'
-alias tf='/usr/bin/terraform'
+alias tf='$HOME/Infrastructure/.tfenv/bin/terraform'
 alias tfer='$HOME/Development/bin/terraformer'

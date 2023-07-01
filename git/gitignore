@@ -5,7 +5,6 @@
 .envrc.staging
 .env
 .vscode
-vendor
 node_modules
 sample-data
 temp

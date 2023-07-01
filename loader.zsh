@@ -33,6 +33,10 @@ source ${_DOT_DIR}/python
 source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases
 
+if [[ -x "$(command -v kubectl)" ]]; then
+  export KUBE_TMUX_BINARY="$(which kubectl)"
+fi
+
 if [[ -x "$(command -v starship)" ]]; then
   eval "$(starship init zsh)"
 fi

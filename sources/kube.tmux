@@ -3,7 +3,7 @@
 # Kubernetes status line for tmux
 # Displays current context and namespace
 
-# Copyright 2018 Jon Mosco
+# Copyright 2023 Jon Mosco
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -30,6 +30,9 @@ KUBE_TMUX_NS_COLOR="${KUBE_TMUX_NS_COLOR-cyan}"
 KUBE_TMUX_KUBECONFIG_CACHE="${KUBECONFIG}"
 KUBE_TMUX_UNAME=$(uname)
 KUBE_TMUX_LAST_TIME=0
+
+KUBE_TMUX_CLUSTER_FUNCTION="${KUBE_TMUX_CLUSTER_FUNCTION}"
+KUBE_TMUX_NAMESPACE_FUNCTION="${KUBE_TMUX_NAMESPACE_FUNCTION}"
 
 _kube_tmux_binary_check() {
   command -v $1 >/dev/null
@@ -81,7 +84,7 @@ _kube_tmux_file_newer_than() {
 _kube_tmux_update_cache() {
   if ! _kube_tmux_binary_check "${KUBE_TMUX_BINARY}"; then
     # No ability to fetch context/namespace; display N/A.
-    KUBE_TMUX_CONTEXT="BINARY-N/A"
+    KUBE_TMUX_CONTEXT="KUBECTL-N/A"
     KUBE_TMUX_NAMESPACE="N/A"
     return
   fi
@@ -124,6 +127,16 @@ _kube_tmux_get_context_ns() {
     KUBE_TMUX_NAMESPACE="$(${KUBE_TMUX_BINARY} config view --minify --output 'jsonpath={..namespace}' 2>/dev/null)"
     # Set namespace to 'default' if it is not defined
     KUBE_TMUX_NAMESPACE="${KUBE_TMUX_NAMESPACE:-default}"
+  fi
+  _kube_tmux_format_context_ns
+}
+
+_kube_tmux_format_context_ns() {
+  if [[ -n "${KUBE_TMUX_CLUSTER_FUNCTION}" ]]; then
+    KUBE_TMUX_CONTEXT=$($KUBE_TMUX_CLUSTER_FUNCTION $KUBE_TMUX_CONTEXT)
+  fi
+  if [[ -n "${KUBE_TMUX_NAMESPACE_FUNCTION}" ]]; then
+    KUBE_TMUX_CONTEXT=$($KUBE_TMUX_NAMESPACE_FUNCTION $KUBE_TMUX_NAMESPACE)
   fi
 }
 

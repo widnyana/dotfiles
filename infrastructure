@@ -78,6 +78,12 @@ if type "glab" > /dev/null; then
   source <(glab completion -s zsh); compdef _glab glab
 fi
 
+#: Velero.io
+if type "velero" > /dev/null; then
+  source <(velero completion zsh)
+  alias v=velero
+  complete -F __start_velero v
+fi
 
 #: Hashicorp Vault
 if type "vault" > /dev/null; then

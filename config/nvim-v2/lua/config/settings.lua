@@ -227,4 +227,8 @@ M.telescope_file_ignore_patterns = {
     "vendor/*",
 }
 
+M.disable_builtin_plugins = {
+    
+}
+
 return M

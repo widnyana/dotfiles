@@ -1,46 +1,96 @@
--- disable netrw at the very start of your init.lua
-vim.g.loaded_netrw = 1
-vim.g.loaded_netrwPlugin = 1
+local cmd = vim.cmd
+local opt = vim.opt
+local g = vim.g
+local indent = 2
+
+cmd([[
+	filetype plugin indent on
+]])
+
 
 -- Remap , as leader key
 -- Must be before lazy.nvim
-vim.g.mapleader = ","
-vim.g.maplocalleader = ","
+g.mapleader = ";"
+g.maplocalleader = ","
 
-vim.opt.clipboard = "unnamedplus"
-vim.opt.undofile = true
-vim.opt.pumheight = 10 -- pop up menu height
-vim.opt.swapfile = false
-vim.opt.ignorecase = true
-vim.opt.smartcase = true   -- smart case
-vim.opt.smartindent = true -- smart indent
-vim.opt.showmode = false   -- we don't need to see things like -- INSERT -- anymore
-vim.opt.sidescrolloff = 5  -- how many lines to scroll when using the scrollbar
-vim.opt.autoindent = true
-vim.opt.signcolumn = "yes"
-vim.opt.sessionoptions = "buffers,curdir,folds,help,tabpages,terminal,globals"
--- vim.opt.completeopt = { "menu", "menuone", "noselect" }
-vim.opt.expandtab = true
-vim.opt.swapfile = false
-vim.opt.termguicolors = true -- set termguicolors to enable highlight groups
-vim.opt.updatetime = 100
-vim.opt.writebackup = false
-vim.opt.number = true
-vim.opt.jumpoptions = "view"
-vim.opt.shiftwidth = 4
-vim.opt.tabstop = 4
-vim.opt.cmdheight = 0
-vim.opt.list = true
-vim.opt.splitkeep = "screen"
--- vim.opt.syntax = "on"
-vim.opt.spelloptions = "camel,noplainbuffer"
-vim.opt.foldlevel = 99
-vim.o.foldcolumn = "1"
+
+-- misc
+opt.backspace = { 'eol', 'start', 'indent' }
+opt.clipboard = "unnamedplus"
+opt.encoding = 'utf-8'
+opt.syntax = 'enable'
+
+-- indention
+opt.autoindent = true
+opt.expandtab = true
+opt.smartindent = true -- smart indent
+opt.shiftwidth = indent
+opt.softtabstop = indent
+opt.tabstop = indent
+
+-- search
+opt.ignorecase = true
+opt.smartcase = true -- smart case
+
+-- UI
+opt.cursorline = true
+opt.laststatus = 2
+opt.list = true
+opt.listchars = {
+	tab = '❘-',
+	trail = '·',
+	lead = '·',
+	extends = '»',
+	precedes = '«',
+	nbsp = '×',
+}
+opt.number = true
+opt.rnu = true
+opt.scrolloff = 18
+opt.sidescrolloff = 5 -- how many lines to scroll when using the scrollbar
+opt.showmode = true  -- we don't need to see things like -- INSERT -- anymore
+opt.signcolumn = "yes"
+opt.wrap = false
+
+
+-- mouse
+opt.mouse = 'a'
+opt.mousemoveevent = true
+
+-- backups
+opt.backup = false
+opt.swapfile = false
+opt.writebackup = false
+
+
+-- autocomplete
+opt.completeopt = { "menu", "menuone", "noselect" }
+opt.shortmess = opt.shortmess + { c = true }
+
+-- performance
+opt.redrawtime = 1500
+opt.timeoutlen = 200
+opt.ttimeoutlen = 10
+opt.updatetime = 100
+
+
+-- theme
+opt.termguicolors = true -- set termguicolors to enable highlight groups
+
 -- vim.o.foldlevelstart = 99
-vim.opt.foldmethod = "expr"
-vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
-vim.opt.foldenable = true
-vim.opt.fillchars = {
+opt.cmdheight = 0
+opt.foldenable = true
+opt.foldexpr = "nvim_treesitter#foldexpr()"
+opt.foldlevel = 99
+opt.foldmethod = "expr"
+opt.jumpoptions = "view"
+opt.pumheight = 10 -- pop up menu height
+opt.sessionoptions = "buffers,curdir,folds,help,tabpages,terminal,globals"
+opt.spelloptions = "camel,noplainbuffer"
+opt.splitkeep = "screen"
+opt.undofile = true
+vim.o.foldcolumn = "1"
+opt.fillchars = {
 	foldopen = "",
 	foldclose = "",
 	fold = " ",
@@ -48,8 +98,24 @@ vim.opt.fillchars = {
 	diff = "/",
 	eob = " ",
 }
-vim.opt.mousemoveevent = true
+
 
 -- command completion
-vim.opt.wildmode = "longest:full:full"
-vim.opt.wildignore = "*.docx,*.jpg,*.png,*.gif,*.pdf,*.pyc,*.exe,*.flv,*.img,*.xlsx,*DS_STORE,*.db"
+opt.wildmode = "longest:full:full"
+opt.wildignore = opt.wildignore + {
+	'*/node_modules/*',
+	'*/.git/*',
+	'*/vendor/*',
+	'*.docx',
+	'*.jpg',
+	'*.png',
+	'*.gif',
+	'*.pdf',
+	'*.pyc',
+	'*.exe',
+	'*.flv',
+	'*.img',
+	'*.xlsx',
+	'*DS_STORE',
+	'*.db'
+}

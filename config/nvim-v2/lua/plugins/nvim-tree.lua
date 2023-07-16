@@ -1,50 +1,74 @@
--- local function natural_cmp(left, right)
---   left = left.name:lower()
---   right = right.name:lower()
+local user_config = require("config.settings")
+local icons = require("utils.icons")
 
---   if left == right then
---     return false
---   end
+local args = {
+  diagnostics = {
+    enable = true,
+    icons = {
+      hint = icons.Hint,
+      info = icons.Information,
+      warning = icons.Warning,
+      error = icons.Error,
+    },
+  },
 
---   for i = 1, math.max(string.len(left), string.len(right)), 1 do
---     local l = string.sub(left, i, -1)
---     local r = string.sub(right, i, -1)
+  view = {
+    width = 30,
+    number = true,
+    relativenumber = true,
+  },
+  update_focused_file = {
+    enable = true,
+  },
+  respect_buf_cwd = true,
+  git = {
+    ignore = true,
+  },
 
---     if type(tonumber(string.sub(l, 1, 1))) == "number" and type(tonumber(string.sub(r, 1, 1))) == "number" then
---       local l_number = tonumber(string.match(l, "^[0-9]+"))
---       local r_number = tonumber(string.match(r, "^[0-9]+"))
+  filters = {
+    dotfiles = true,
+  },
+  renderer = {
+    group_empty = false,
+    highlight_git = true,
+    special_files = {},
+    icons = {
+      glyphs = {
+        default = '',
+        symlink = icons.symlink,
+        git = icons.git_state,
+        folder = icons.folder,
+      },
+    },
+  },
 
---       if l_number ~= r_number then
---         return l_number < r_number
---       end
---     elseif string.sub(l, 1, 1) ~= string.sub(r, 1, 1) then
---       return l < r
---     end
---   end
--- end
+}
+
 
 return {
   "nvim-tree/nvim-tree.lua",
+  enabled = not vim.tbl_contains(user_config.disable_builtin_plugins, 'nvim-tree'),
   version = "*",
   lazy = false,
   dependencies = {
     "nvim-tree/nvim-web-devicons",
   },
-  config = function()
-    require("nvim-tree").setup {
-      -- sort_by = function(nodes)
-      --   table.sort(nodes, natural_cmp)
-      -- end,
+  init = function()
+    local map = require('utils').keymap
 
-      view = {
-        width = 30,
-      },
-      renderer = {
-        group_empty = true,
-      },
-      filters = {
-        dotfiles = true,
-      },
-    }
+    map('n', '<C-n>', ':NvimTreeToggle<CR>', { desc = 'Toggle Tree' })
+    map('n', '<leader>nt', ':NvimTreeToggle<CR>', { desc = 'Toggle Tree' })
+    map('n', '<leader>nr', ':NvimTreeRefresh<CR>', { desc = 'Refresh Tree' })
   end,
+  config = function()
+    require("nvim-tree").setup(args)
+  end,
+  cmd = {
+    'NvimTreeClipboard',
+    'NvimTreeFindFile',
+    'NvimTreeOpen',
+    'NvimTreeRefresh',
+    'NvimTreeToggle',
+  },
+
 }

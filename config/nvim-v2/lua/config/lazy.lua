@@ -14,9 +14,9 @@ vim.opt.runtimepath:prepend(lazypath)
 
 require("lazy").setup("plugins", {
     install = {
-        colorscheme = { 
+        colorscheme = {
             "catppuccin",
-            "tokyonight", 
+            "tokyonight",
             "habamax"
         },
         missing = true
@@ -24,6 +24,7 @@ require("lazy").setup("plugins", {
     defaults = { lazy = false },
     ui = {
         border = "rounded",
+        size = { width = 0.7, height = 0.7 },
         icons = {
             cmd = "⌘",
             config = "🛠 ",
@@ -47,11 +48,23 @@ require("lazy").setup("plugins", {
         },
         rtp = {
             disabled_plugins = {
+                '2html_plugin',
+                'gzip',
+                'logipat',
+                'matchit',
+                'netrw',
+                'netrwFileHandlers',
+                'netrwPlugin',
+                'netrwSettings',
+                'rrhelper',
+                'spellfile_plugin',
+                'tar',
+                'tarPlugin',
+                'zip',
+                'zipPlugin',
                 "gzip",
                 "toHtml",
                 "tutor",
-                "tarPlugin",
-                "zipPlugin"
             }
         }
     },

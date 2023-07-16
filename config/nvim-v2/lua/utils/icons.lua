@@ -1,4 +1,5 @@
 return {
+  symlink = '',
   arrows = {
     ArrowRight = "❯",
     ArrowLeft = "❮",
@@ -8,6 +9,16 @@ return {
     DoubleArrowRight = "»",
     SmallArrowRight = "➜",
     Diamond = "<>",
+  },
+  folder = {
+    arrow_open = '',
+    arrow_closed = '',
+    default = '',
+    open = '',
+    empty = '',
+    empty_open = '',
+    symlink = '',
+    symlink_open = '',
   },
   ui = {
     BigCircle = " ",
@@ -57,4 +68,13 @@ return {
     Rename = " ",
     Repo = " ",
   },
+  git_state = {
+    unstaged = '✗',
+    staged = '✓',
+    unmerged = '',
+    renamed = '➜',
+    untracked = '★',
+    deleted = '',
+    ignored = '◌',
+  }
 }

@@ -1,6 +1,31 @@
 local M = {}
 
 -- functions
+function M.create_buf_map(bufnr, opts)
+    return function(mode, lhs, rhs, map_opts)
+      M.keymap(
+        mode,
+        lhs,
+        rhs,
+        M.merge({
+          buffer = bufnr,
+        }, opts or {}, map_opts or {})
+      )
+    end
+  end
+  
+function M.merge(...)
+    return vim.tbl_deep_extend('force', ...)
+end
+
+function M.keymap(mode, lhs, rhs, opts)
+    local defaults = {
+        silent = true,
+        noremap = true,
+    }
+    vim.keymap.set(mode, lhs, rhs, M.merge(defaults, opts or {}))
+end
+
 function M.on_attach(on_attach)
     vim.api.nvim_create_autocmd("LspAttach", {
         callback = function(args)
@@ -43,6 +68,5 @@ function M.toggle(option, silent, values)
         end
     end
 end
-
 
 return M

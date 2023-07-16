@@ -6,28 +6,28 @@ return {
     { "norcalli/nvim-colorizer.lua" },                            -- The fastest Neovim colorizer.
     
     -- colorschemes
+    { "catppuccin/nvim" },
     { "EdenEast/nightfox.nvim" },
-    { "neanias/everforest-nvim" },
-    { "sam4llis/nvim-tundra" },
     { "folke/tokyonight.nvim" },
-    { "rebelot/kanagawa.nvim" },
+    { "neanias/everforest-nvim" },
     { "nyoom-engineering/oxocarbon.nvim" },
-    { "catppuccin/nvim" }
+    { "rebelot/kanagawa.nvim" },
+    { "sam4llis/nvim-tundra" },
 
     -- Utilities
-    -- {
-    -- 	"folke/persistence.nvim",
-    -- 	lazy = false,
-    -- 	keys = {
-    -- 		{
-    -- 			"<leader>ls",
-    -- 			function()
-    -- 				require("persistence").load()
-    -- 			end,
-    -- 		},
-    -- 	},
-    -- 	opts = { options = { "buffers", "curdir", "folds", "help", "tabpages", "terminal", "globals" } },
-    -- },
+    {
+    	"folke/persistence.nvim",
+    	lazy = false,
+    	keys = {
+    		{
+    			"<leader>ls",
+    			function()
+    				require("persistence").load()
+    			end,
+    		},
+    	},
+    	opts = { options = { "buffers", "curdir", "folds", "help", "tabpages", "terminal", "globals" } },
+    },
     -- {
     --     "rmagatti/auto-session",
     --     lazy = false,

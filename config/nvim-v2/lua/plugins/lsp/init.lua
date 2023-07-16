@@ -2,7 +2,8 @@
 return {
     {
         "neovim/nvim-lspconfig",
-        event = "BufReadPre",
+        event = { "BufReadPost", "BufNewFile", "BufReadPre" },
+        cmd = { "LspInfo", "LspInstall", "LspUninstall" },
         dependencies = {
             "hrsh7th/cmp-nvim-lsp",              -- nvim-cmp source for neovim builtin LSP client, nvim-cmp is A completion plugin for neovim coded in Lua.
             "williamboman/mason-lspconfig.nvim", -- Extension to mason.nvim that makes it easier to use lspconfig with mason.nvim.
@@ -34,6 +35,8 @@ return {
                     })
                 end,
             })
+
+
         end
     },
     {

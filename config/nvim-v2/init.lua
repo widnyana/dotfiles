@@ -20,8 +20,6 @@ for _, mod in ipairs(config_modules) do
   -- cosmic.config files may or may not be present
   if not ok and not mod:find('config') then
     error(('Error loading %s...\n\n%s'):format(mod, err))
-  else 
-    print(("loaded %s\n\n%s"):format(mod, err))
   end
 end
 

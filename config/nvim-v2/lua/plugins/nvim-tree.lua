@@ -15,7 +15,7 @@ local args = {
   view = {
     width = 30,
     number = true,
-    relativenumber = true,
+    relativenumber = user_config.relative_number,
   },
   update_focused_file = {
     enable = true,

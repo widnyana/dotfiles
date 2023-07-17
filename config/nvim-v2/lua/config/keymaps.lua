@@ -26,9 +26,36 @@ keymap('n', '<leader>pl', ':Lazy logs<cr>', { desc = 'Logs' })
 keymap('n', '<leader>px', ':Lazy clear<cr>', { desc = 'Clear uninstalled plugins' })
 keymap('n', '<leader>pr', ':Lazy restore<cr>', { desc = 'Restore plugins from lockfile' })
 
+-- Hop
+keymap("n", "<leader>H", "<cmd>HopAnywhere<CR>", { silent = true })
+keymap("n", "<leader>h", "<cmd>HopWord<CR>", { silent = true })
+
+-- romgrk/barbar.nvim
+-- -- Move to previous/next
+keymap('n', '<A-,>', '<Cmd>BufferPrevious<CR>', { silent = true })
+keymap('n', '<A-.>', '<Cmd>BufferNext<CR>', { silent = true })
+-- -- Re-order to previous/next
+keymap('n', '<A-<>', '<Cmd>BufferMovePrevious<CR>', { silent = true })
+keymap('n', '<A->>', '<Cmd>BufferMoveNext<CR>', { silent = true })
+-- -- Goto buffer in position...
+keymap('n', '<A-1>', '<Cmd>BufferGoto 1<CR>', { silent = true })
+keymap('n', '<A-2>', '<Cmd>BufferGoto 2<CR>', { silent = true })
+keymap('n', '<A-3>', '<Cmd>BufferGoto 3<CR>', { silent = true })
+keymap('n', '<A-4>', '<Cmd>BufferGoto 4<CR>', { silent = true })
+keymap('n', '<A-5>', '<Cmd>BufferGoto 5<CR>', { silent = true })
+keymap('n', '<A-6>', '<Cmd>BufferGoto 6<CR>', { silent = true })
+keymap('n', '<A-7>', '<Cmd>BufferGoto 7<CR>', { silent = true })
+keymap('n', '<A-8>', '<Cmd>BufferGoto 8<CR>', { silent = true })
+keymap('n', '<A-9>', '<Cmd>BufferGoto 9<CR>', { silent = true })
+keymap('n', '<A-0>', '<Cmd>BufferLast<CR>', { silent = true })
+-- -- Pin/unpin buffer
+keymap('n', '<A-p>', '<Cmd>BufferPin<CR>', { silent = true })
+-- -- Close buffer
+keymap('n', '<A-c>', '<Cmd>BufferClose<CR>', { silent = true })
+
 
 -- Nvim-Tree
-vim.keymap.set('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { silent = true, noremap = true })
+keymap('n', '<leader>e', '<cmd>NvimTreeToggle<cr>', { silent = true, noremap = true })
 local nvtree_api = require("nvim-tree.api")
-vim.keymap.set("n", "h", nvtree_api.tree.close)
-vim.keymap.set("n", "H", nvtree_api.tree.collapse_all)
+keymap("n", "h", nvtree_api.tree.close)
+keymap("n", "H", nvtree_api.tree.collapse_all)

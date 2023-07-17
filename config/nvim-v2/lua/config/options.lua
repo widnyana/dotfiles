@@ -2,6 +2,7 @@ local cmd = vim.cmd
 local opt = vim.opt
 local g = vim.g
 local indent = 2
+local user_config = require("config.settings")
 
 cmd([[
 	filetype plugin indent on
@@ -10,7 +11,7 @@ cmd([[
 
 -- Remap , as leader key
 -- Must be before lazy.nvim
-g.mapleader = ";"
+g.mapleader = " "
 g.maplocalleader = ","
 
 
@@ -44,8 +45,8 @@ opt.listchars = {
 	precedes = '«',
 	nbsp = '×',
 }
-opt.number = true
-opt.rnu = true
+opt.number = user_config.number
+opt.rnu = user_config.relative_number
 opt.scrolloff = 18
 opt.sidescrolloff = 5 -- how many lines to scroll when using the scrollbar
 opt.showmode = true  -- we don't need to see things like -- INSERT -- anymore
@@ -54,7 +55,7 @@ opt.wrap = false
 
 
 -- mouse
-opt.mouse = 'a'
+opt.mouse = user_config.mouse
 opt.mousemoveevent = true
 
 -- backups
@@ -86,6 +87,7 @@ opt.foldmethod = "expr"
 opt.jumpoptions = "view"
 opt.pumheight = 10 -- pop up menu height
 opt.sessionoptions = "buffers,curdir,folds,help,tabpages,terminal,globals"
+opt.spell = false
 opt.spelloptions = "camel,noplainbuffer"
 opt.splitkeep = "screen"
 opt.undofile = true

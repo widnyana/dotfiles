@@ -12,7 +12,7 @@ M.git_colors = {
 
 -- theme: nightfox, tokyonight, tundra, kanagawa, oxocarbon; default is catppuccin
 -- refer to the themes settings file for different styles
-M.colorscheme = "nightfox"
+M.colorscheme = "catppuccin"
 
 -- Toggle global status line
 M.global_statusline = true
@@ -23,7 +23,7 @@ M.number = true
 -- enable mouse see :h mouse
 M.mouse = "nv"
 -- set relative numbered lines
-M.relative_number = true
+M.relative_number = false
 -- always show tabs; 0 never, 1 only if at least two tab pages, 2 always
 M.showtabline = 1
 -- enable or disable listchars
@@ -121,7 +121,6 @@ M.lsp_servers = {
     "gopls",
     "ltex",
     "marksman",
-    "nil_ls",
     "pyright",
     "lua_ls",
     "rust_analyzer",
@@ -148,15 +147,18 @@ M.mason_packages = {
     "clang-format",
     "shfmt",
     "prettier",
+    "cueimports",
+    "gofumpt",
+    'golines',
+    "markdownlint",
+    "stylua",
 
     -- Linter
     "editorconfig-checker",
     "eslint_d",
-    "markdownlint",
     "pyright",
     "ruff",
     "shellcheck",
-    "stylua",
     "tflint",
     "yamllint",
 

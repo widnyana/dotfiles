@@ -5,9 +5,9 @@
 #  |_|   \__,_|___/\__|  \___\__,_|_|  \__, |\___/ 
 #                                      |___/       
 if [[ -d "${HOME}/Development/sdks/.cargo" ]]; then
-    export RUSTUP_HOME="${HOME}/Development/sdks/rustup"
     export CARGO_HOME="${HOME}/Development/sdks/.cargo"
+    export RUSTUP_HOME="${HOME}/Development/sdks/rustup" 
+    
     source "${HOME}/Development/sdks/.cargo/env"
-
     export PATH="${PATH}":"${HOME}/Development/sdks/.cargo/bin"
 fi

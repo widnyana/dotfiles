@@ -68,8 +68,8 @@
 	defaultBranch = main
 	templateDir = /home/widnyana/.git-template
 
-[url "ssh://git@github.com/"]
-	insteadOf = https://github.com/
+#[url "ssh://git@github.com/"]
+#	insteadOf = https://github.com/
 
 [user]
 	useConfigOnly = true

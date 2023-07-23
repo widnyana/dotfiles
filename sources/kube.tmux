@@ -16,6 +16,7 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+export PATH=$PATH:$HOME/.local/bin
 
 # Default values for the plugin
 KUBE_TMUX_BINARY="${KUBE_TMUX_BINARY:-kubectl}"

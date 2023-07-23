@@ -6,11 +6,10 @@ end
 -- Check prerequisites
 require("config.checks")
 
-
 local config_modules = {
   "config.options",
   "config.lazy",   -- Plugin management via lazy
-  "config.keymaps" -- load mappings only after editor configs are loaded
+  "config.keymaps", -- load mappings only after editor configs are loaded
 }
 
 

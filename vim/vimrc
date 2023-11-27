@@ -5,7 +5,7 @@ syntax enable
 filetype on             " enable filetype detection
 filetype plugin on      " load file-specific plugins
 filetype indent on      " load file-specific indentation
-set paste
+set nopaste
 
 
 " Visual and Motion 

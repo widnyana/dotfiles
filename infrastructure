@@ -36,16 +36,17 @@ fi
 [ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
 
 #: Minikube
-if [[ -x "$(command -v minikube)" ]]; then
+if type "minikube" >> /dev/null; then
     export MINIKUBE_HOME=$HOME/Infrastructure/labs/minikube
     export MINIKUBE_IN_STYLE=false
+    source <(minikube completion zsh)
 fi
 
 #: Podman
 if type "podman" > /dev/null; then
   alias docker=podman
   alias docker-compose=podman-compose
-  export DOCKER_HOST=unix:///run/user/1000/podman/podman.sock
+  export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
 fi
 
 #: https://github.com/buildpacks/pack
@@ -89,3 +90,10 @@ fi
 if type "vault" > /dev/null; then
   complete -o nospace -C $(which vault) vault
 fi
+
+# VMWare Tanzu - Pinniped
+if type "pinniped" > /dev/null; then
+  source <(pinniped completion zsh)
+fi
+
+

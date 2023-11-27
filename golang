@@ -1,7 +1,18 @@
 GOCACHE=$HOME/Development/.cache/go-build
+export GOPRIVATE=pkg.damarseta.id/*,$GOPRIVATE
 
 alias goget='go get -x'
 alias gop='export GOPATH=$GOPATH:$(pwd)'
 alias gor='go run'
 
 [[ -s "${HOME}/.gvm/scripts/gvm" ]] && source "${HOME}/.gvm/scripts/gvm"
+
+
+## Use goenv - https://github.com/go-nv/goenv/blob/master/INSTALL.md
+export GOENV_ROOT="$HOME/Development/.goenv"
+export PATH="$GOENV_ROOT/bin:$PATH"
+export GOENV_AUTO_INSTALL=1
+export GOENV_GOPATH_PREFIX=$HOME/Development/gopath
+export GOENV_APPEND_GOPATH=1
+export GOENV_GOMOD_VERSION_ENABLE=0
+eval "$(goenv init -)"

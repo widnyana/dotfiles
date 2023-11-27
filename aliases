@@ -13,3 +13,5 @@ alias tg='$HOME/Development/bin/terragrunt'
 alias tf='$HOME/Infrastructure/.tfenv/bin/terraform'
 alias tfer='$HOME/Development/bin/terraformer'
 alias nv=$(which nvim) $@
+
+alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""

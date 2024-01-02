@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# List CloudSQL Instances from every project on your Google Cloud Platform,
+# and present it on the screen
+#
+# (c) 2024 - wid/at/widnyana.web.id
+
+
+PROJECTID=${1:-none}
+if [[ ${PROJECTID} == "none" ]]; then
+    echo "ProjectID not specified. Fetching all project ID(s)..."
+    PROJECTID=$(gcloud projects list --format="value(project_id)" | sort | uniq | grep -v "sys-")
+fi
+
+echo "Begin listing CloudSQL instance(s) on each projects..."
+echo -e "================================================\n"
+
+
+for PROJECT in $PROJECTID
+do
+    echo "[+] Project Name: ${PROJECT}"
+    if [[ $(gcloud services list --project="${PROJECT}" --format="table(NAME)" | sed '1d') =~ "sqladmin.googleapis.com" ]];then
+        echo -e "[>] CloudSQL instances:\n"
+        gcloud sql instances list --project="${PROJECT}" --quiet
+    else
+        echo "[!] No CloudSQL instances found"
+    fi
+
+    echo -e "================================================\n\n"
+    # break
+done

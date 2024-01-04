@@ -1,0 +1,32 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# List Compute Engine Instances from every project on your Google Cloud Platform,
+# and present it on the screen
+#
+# (c) 2024 - wid/at/widnyana.web.id
+
+
+PROJECTID=${1:-none}
+if [[ ${PROJECTID} == "none" ]]; then
+    echo "ProjectID not specified. Fetching all project ID(s)..."
+    PROJECTID=$(gcloud projects list --format="value(project_id)" | sort | uniq | grep -v "sys-")
+fi
+
+echo "Begin listing Compute Engine instance(s) ..."
+echo -e "================================================\n"
+
+
+for PROJECT in $PROJECTID
+do
+    echo "[+] Project Name: ${PROJECT}"
+    if [[ $(gcloud services list --project="${PROJECT}" --format="table(NAME)" | sed '1d') =~ "compute.googleapis.com" ]];then
+        echo -e "[>] Compute Engine instances:\n"
+        gcloud compute instances list --project="${PROJECT}" --quiet
+    else
+        echo "[!] No Compute Engine instances found"
+    fi
+
+    echo -e "================================================================================================\n\n"
+    # break
+done

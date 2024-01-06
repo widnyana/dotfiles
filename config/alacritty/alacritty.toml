@@ -1,0 +1,62 @@
+live_config_reload = true
+
+[env]
+TERMINAL = "alacritty"
+TERM = "xterm-256color"
+
+[shell]
+program = "/usr/bin/zsh"
+
+[window]
+dynamic_padding = false
+opacity = 0.75
+startup_mode = "Windowed"
+
+[font]
+size = 10.0
+
+[font.normal]
+family = "FiraCode Nerd Font"
+style = "Regular"
+
+[colors]
+draw_bold_text_with_bright_colors = true
+indexed_colors = [
+    { color = "#FAB387", index = 16 },
+    { color = "#F5E0DC", index = 17 },
+]
+
+[colors.bright]
+black = "#598489"
+blue = "#009AFB"
+cyan = "#5FFFFF"
+green = "#00FF9A"
+magenta = "#FF578F"
+red = "#E65029"
+white = "#D9FBFF"
+yellow = "#E89440"
+
+[colors.normal]
+black = "#6A787A"
+blue = "#44AAE6"
+cyan = "#3DD5E7"
+green = "#39E9A8"
+magenta = "#E17599"
+red = "#E9653B"
+white = "#C3DDE1"
+yellow = "#E5B684"
+
+[colors.primary]
+background = "#1E1E1E"
+foreground = "#CCCCCC"
+
+[cursor]
+style = { shape = "Underline", blinking = "On" }
+thickness = 0.3
+
+[scrolling]
+history = 5000
+
+
+[mouse]
+hide_when_typing = true

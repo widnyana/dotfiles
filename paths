@@ -1,3 +1,5 @@
+export XDG_CONFIG_HOME="${HOME}/.config"
+
 export LOCALPATH
 LOCALPATH=$HOME/Development/bin:${HOME}/.dotfiles/bin
 

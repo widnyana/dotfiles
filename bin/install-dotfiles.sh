@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-OMZ_PATH="${HOME}/oh-my-zsh"
+OMZ_PATH="${HOME}/.oh-my-zsh"
 FZF_PATH="${HOME}/.fzf"
 
 
@@ -33,15 +33,15 @@ fi
 ### pull the submodules
 # git submodule update --init --recursive --rebase -f
 
-### Golang
-bash < <(curl -s -S -L https://raw.githubusercontent.com/moovweb/gvm/master/binscripts/gvm-installer)
-$HOME/.gvm/bin/gvm install go1 --prefer-binary --with-build-tools
-
 ### Rust
 export CARGO_HOME="${HOME}/Development/sdks/.cargo"
 export RUSTUP_HOME="${HOME}/Development/sdks/rustup" 
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --profile minimal
 
+if [[ ! -d "${CARGO_HOME}" ]]; then
+    mkdir -p "${CARGO_HOME}"
+    mkdir -p "${RUSTUP_HOME}"
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- --profile minimal
+fi
 
 ### VIM and NeoVIm
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
@@ -50,15 +50,20 @@ ln -sfn "${HOME}/.dotfiles/nvim-v2"         "${HOME}/.config/nvim"
 ### Alacritty
 mkdir -p        "${CONFIG_DIR}/alacritty"
 mkdir -p        "${CONFIG_DIR}/alacritty/themes"
-ln    -sfn      "${DOT_DIR}/config/alacritty/alacritty.yml"         "${CONFIG_DIR}/alacritty/alacritty.yml"
 
-
+### mkcert
+if [[ ! -f "/usr/local/bin/mkcert" ]]; then
+    echo -e "installing FiloSottile/mkcert..."
+    sudo dnf install nss-tools -y
+    curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+    chmod +x "mkcert-v*-linux-amd64"
+    sudo cp "mkcert-v*-linux-amd64" /usr/local/bin/mkcert
+fi
 
 ### Tmux
 mkdir -p    "${CONFIG_DIR}/tmux"
 mkdir -p    "${CONFIG_DIR}/tmux/plugins/"
-ln -sn -f   "${DOT_DIR}/vendor/.tmux/.tmux.conf"      "${HOME}/.tmux.conf"
-ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${HOME}/.tmux.conf.local"
+ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
 
 ## kube-tmux: kubernetes-context integration for tmux
 go install "github.com/go-tmux/kube-tmux@latest"

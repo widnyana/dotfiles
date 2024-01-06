@@ -1,7 +1,6 @@
 #!/usr/bin/env zsh
 export _DOT_DIR=$0:a:h
 
-
 create_auth_keys() {
   cat <<EOF > "${_DOT_DIR}/auth_keys" 
 export GITHUB_PERSONAL_TOKEN=
@@ -18,6 +17,7 @@ if [ ! -f ${_DOT_DIR}/auth_keys ]; then
   echo "please configure your token here: ${_DOT_DIR}/auth_keys"
   exit 1
 fi
+
 source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
 source ${_DOT_DIR}/functions.sh

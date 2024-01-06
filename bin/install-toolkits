@@ -17,23 +17,29 @@ htop \
 iotop \
 iftop \
 tmux \
+the_silver_searcher \
 "
 
-
-echo -e "dnf install ${PACKAGES}"
+sudo dnf install ${PACKAGES} -y
 
 #: vscode
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 sudo dnf update; sudo dnf install code -y
 
-#: facebook path picker
+### facebook path picker
 FPP_DEST="${LOCAL_BIN}/path_picker"
-git clone https://github.com/facebook/PathPicker.git    "${FPP_DEST}"
+git clone --depth=1 https://github.com/facebook/PathPicker.git    "${FPP_DEST}"
 ln -s "${FPP_DEST}/fpp"                                 "${LOCAL_BIN}/fpp"
 
-#: terracognita
+### terracognita
 curl -L https://github.com/cycloidio/terracognita/releases/latest/download/terracognita-linux-amd64.tar.gz -o terracognita-linux-amd64.tar.gz
 tar -xf terracognita-linux-amd64.tar.gz
 chmod u+x terracognita-linux-amd64
 sudo mv terracognita-linux-amd64 $HOME/.local/bin/terracognita
+
+
+### VIm
+mkdir ~/.vim
+curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

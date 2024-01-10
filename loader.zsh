@@ -1,5 +1,6 @@
 #!/usr/bin/env zsh
 export _DOT_DIR=$0:a:h
+export SDK_DIR="${HOME}/Development/sdks"
 
 create_auth_keys() {
   cat <<EOF > "${_DOT_DIR}/auth_keys" 

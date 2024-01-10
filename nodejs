@@ -1,8 +1,11 @@
-#: load Node Version Manager
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && . "$NVM_DIR/nvm.sh"
-
-
+# fnm - https://github.com/Schniz/fnm
+if [ -d "$HOME/.local/share/fnm" ]; then
+  export PATH="$HOME/.local/share/fnm:$PATH"
+  eval "`fnm env`"
+  source <(fnm completions --shell zsh)
+else
+  echo -e "fnm (https://github.com/Schniz/fnm) is missing"
+fi
 
 #   ___.__._____ _______  ____  
 #  <   |  |\__  \\_  __ \/    \ 
@@ -14,4 +17,11 @@ if [[ -d "${HOME}/.yarn/bin" ]]; then
     LOCALPATH=${LOCALPATH}:${HOME}/.yarn/bin
 fi
 
-export PATH=$PATH:$HOME/Development/sdks/nodejs/bin:$LOCALPATH
+export PATH="${PATH}:${SDK_DIR}/nodejs/bin:${LOCALPATH}"
+
+# bun completions
+[ -s "${HOME}/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# bun
+export BUN_INSTALL="${HOME}/.bun"
+export PATH="${BUN_INSTALL}/bin:${PATH}"

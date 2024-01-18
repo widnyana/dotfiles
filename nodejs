@@ -1,10 +1,8 @@
-# fnm - https://github.com/Schniz/fnm
+# fnm: Fast and simple Node.js version manager, built in Rust - https://github.com/Schniz/fnm
 if [ -d "$HOME/.local/share/fnm" ]; then
   export PATH="$HOME/.local/share/fnm:$PATH"
   eval "`fnm env`"
   source <(fnm completions --shell zsh)
-else
-  echo -e "fnm (https://github.com/Schniz/fnm) is missing"
 fi
 
 #   ___.__._____ _______  ____  
@@ -19,9 +17,22 @@ fi
 
 export PATH="${PATH}:${SDK_DIR}/nodejs/bin:${LOCALPATH}"
 
-# bun completions
-[ -s "${HOME}/.bun/_bun" ] && source "$HOME/.bun/_bun"
+#  ┓       ┓ 
+#  ┣┓┓┏┏┓ ┏┣┓
+#  ┗┛┗┻┛┗•┛┛┗
+#            
+#########################################
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
-# bun
-export BUN_INSTALL="${HOME}/.bun"
-export PATH="${BUN_INSTALL}/bin:${PATH}"
+# bun completions
+[ -s "${BUN_INSTALL}/_bun" ] && source "${BUN_INSTALL}/_bun"
+
+
+
+#  ┳┓     ┏┳┏┓
+#  ┃┃┏┓┓┏╋ ┃┗┓
+#  ┛┗┗ ┛┗┗┗┛┗┛
+#             
+#########################################
+export NEXT_TELEMETRY_DISABLED=1

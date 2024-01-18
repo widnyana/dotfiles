@@ -48,23 +48,6 @@ export PATH=$PATH:$HOME/Development/bin/flutter/bin
 #: Telepresence
 export SCOUT_DISABLE=1
 
-# NextJS
-NEXT_TELEMETRY_DISABLED=1
-
-#  ┓       ┓ 
-#  ┣┓┓┏┏┓ ┏┣┓
-#  ┗┛┗┻┛┗•┛┛┗
-#            
-#########################################
-
-# bun
-export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-# bun completions
-[ -s "${BUN_INSTALL}/_bun" ] && source "${BUN_INSTALL}/_bun"
-
-
 #export CC=clang
 #export CXX=clang++
 

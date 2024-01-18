@@ -1,20 +1,23 @@
-export NC="\033[0m" # No Color
-export BLACK="\033[0;30m"
-export BLUE="\033[0;34m"
-export BROWN="\033[0;33m"
-export CYAN="\033[0;36m"
-export DARKGRAY="\033[1;30m"
-export GREEN="\033[0;32m"
-export LIGHTBLUE="\033[1;34m"
-export LIGHTCYAN="\033[1;36m"
-export LIGHTGRAY="\033[0;37m"
-export LIGHTGREEN="\033[1;32m"
-export LIGHTPURPLE="\033[1;35m"
-export LIGHTRED="\033[1;31m"
-export PURPLE="\033[0;35m"
-export RED="\033[0;31m"
-export WHITE="\033[1;37m"
-export YELLOW="\033[1;33m"
+#!/usr/bin/bash
+
+NC="\e[0m" # No Color
+BLACK="\e[30m"
+BLUE="\e[34m"
+BROWN="\e[33m"
+CYAN="\e[36m"
+DARKGRAY="\e[30m"
+GREEN="\e[32m"
+LIGHTBLUE="\e[34m"
+LIGHTCYAN="\e[36m"
+LIGHTGRAY="\e[37m"
+LIGHTGREEN="\e[32m"
+LIGHTPURPLE="\e[35m"
+LIGHTRED="\e[31m"
+PURPLE="\e[35m"
+RED="\e[31m"
+WHITE="\e[37m"
+YELLOW="\e[33m"
 
 
-export BOLD="\e[1m"
+BOLD="\e[1m"
+NORMAL=$(tput sgr0)

@@ -11,7 +11,6 @@ LOCAL_BIN="${HOME}/.local/bin"
 DEPENDENCIES=""
 
 PACKAGES="zsh \
-fzf \
 podman \
 podman-compose \
 podman-docker \
@@ -28,39 +27,43 @@ the_silver_searcher \
 
 sudo dnf install ${PACKAGES} -y
 
+#: ensure we have pip
+python3 -m ensurepip
+
 #: vscode
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
 sudo dnf update; sudo dnf install code -y
 
-### facebook path picker
+#: facebook path picker
 FPP_DEST="${LOCAL_BIN}/path_picker"
 git clone --depth=1 https://github.com/facebook/PathPicker.git    "${FPP_DEST}"
 ln -s "${FPP_DEST}/fpp"                                 "${LOCAL_BIN}/fpp"
 
-### terracognita
+#: terracognita
 curl -L https://github.com/cycloidio/terracognita/releases/latest/download/terracognita-linux-amd64.tar.gz -o terracognita-linux-amd64.tar.gz
 tar -xf terracognita-linux-amd64.tar.gz
 chmod u+x terracognita-linux-amd64
 sudo mv terracognita-linux-amd64 $HOME/.local/bin/terracognita
+rm -rf terracognita-linux-amd64.tar.gz
 
-
-### VIm
+#: VIm
 mkdir ~/.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
-
-### K9S
+#: K9S
 K9S_INSTALL_PATH="${LOCAL_BIN}/k9s"
 K9S_LATEST_VERSION=$(gh_latest_release derailed/k9s)
-
 echo -e "${CYAN}Installing k9s version: ${BOLD}${K9S_LATEST_VERSION}${NORMAL} ${CYAN}to ${K9S_INSTALL_PATH} ...${NORMAL}"
-
 curl -L https://github.com/derailed/k9s/releases/download/${K9S_LATEST_VERSION}/k9s_Linux_amd64.tar.gz -o /tmp/k9s-linux-amd64.tar.gz
 tar -xf /tmp/k9s-linux-amd64.tar.gz -C /tmp
 chmod u+x /tmp/k9s
 mv /tmp/k9s ${K9S_INSTALL_PATH}
 rm -fr /tmp/k9s-linux-amd64.tar.gz
 
+#: pre-commit - A framework for managing and maintaining multi-language pre-commit hooks - https://pre-commit.com/
+pip install pre-commit --user
+
+#: that's all, folks!
 echo -e "${CYAN}Done!${NORMAL}"

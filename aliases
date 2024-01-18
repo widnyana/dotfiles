@@ -7,9 +7,6 @@ alias did="vim +'normal Go' +'r!date' ~/did.txt"
 alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 alias tmux='direnv exec / tmux'
 
-alias tg="$(which terragrunt)"
-alias tf="$(which terraform)"
-alias tfer="$(which terraformer)"
 alias nv=$(which nvim) $@
 
 alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""

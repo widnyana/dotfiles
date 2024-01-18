@@ -309,7 +309,7 @@ bind C-n next-window
 set -g status-interval 5
 
 #: tmux net-speed
-set -g @net_speed_interfaces "wlo1"
+set -g @net_speed_interfaces "wlp0s20f3"
 
 
 # -- tpm -----------------------------------------------------------------------

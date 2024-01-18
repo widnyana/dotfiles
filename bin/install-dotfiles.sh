@@ -21,6 +21,7 @@ if [[ ! -d "${OMZ_PATH}" ]]; then
     echo "installing oh-my-zsh..."
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
     echo "source ${DOT_DIR}/loader.zsh" > "${OMZ_PATH}/custom/loader.zsh"
+    source ~/.zshrc
 fi
 
 ### fzf - A command-line fuzzy finder
@@ -65,10 +66,8 @@ mkdir -p    "${CONFIG_DIR}/tmux"
 mkdir -p    "${CONFIG_DIR}/tmux/plugins/"
 ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
 
-## kube-tmux: kubernetes-context integration for tmux
+### kube-tmux: kubernetes-context integration for tmux
 go install "github.com/go-tmux/kube-tmux@latest"
 
 
 popd
-
-

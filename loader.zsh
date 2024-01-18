@@ -22,7 +22,7 @@ fi
 source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
 source ${_DOT_DIR}/functions.sh
-source ${_DOT_DIR}/paths          ### declare $PATH here
+source ${_DOT_DIR}/paths                      ### declare $PATH here
 
 source ${_DOT_DIR}/android
 source ${_DOT_DIR}/blockchain
@@ -33,18 +33,6 @@ source ${_DOT_DIR}/nodejs
 source ${_DOT_DIR}/python
 source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases
-
-if [[ -x "$(command -v kubectl)" ]]; then
-  export KUBE_TMUX_BINARY="$(which kubectl)"
-fi
-
-if [[ -x "$(command -v starship)" ]]; then
-  eval "$(starship init zsh)"
-fi
-
-if [[ -x "$(command -v direnv)" ]]; then
-  eval "$(direnv hook zsh)"
-fi
 
 #: specific per OS
 if [[ $(uname) == "Linux" ]]; then
@@ -72,10 +60,6 @@ echo -e "Finalizing \$PATH"
 FINAL_PATH=$(python ${_DOT_DIR}/bin/_pathnodupe.py)
 export PATH=${FINAL_PATH}
 
-if [[ -x "$(command -v starship)" ]]; then
-  eval "$(starship init zsh)"
-fi
-
 ## Completions
 export FPATH="$FPATH:${_DOT_DIR}/completions/"
 # source ${_DOT_DIR}/completions/minikube.completions
@@ -83,9 +67,7 @@ export FPATH="$FPATH:${_DOT_DIR}/completions/"
 # source "${_DOT_DIR}/completions/helm.zsh"
 # source "${_DOT_DIR}/completions/helm-gcs.zsh"
 
-
-
 #: clean up
 unset _BOXES _DOT_DIR FINAL_PATH
 
-echo "loader.zsh finished! "
+echo "loader.zsh finished!"

@@ -1,11 +1,12 @@
-#                                     _   
-#   /\   /\__ _  __ _ _ __ __ _ _ __ | |_ 
-#   \ \ / / _` |/ _` | '__/ _` | '_ \| __|
-#    \ V / (_| | (_| | | | (_| | | | | |_ 
-#     \_/ \__,_|\__, |_|  \__,_|_| |_|\__|
-#               |___/                     
-export VAGRANT_HOME=$HOME/Development/.vagrant.d
-export VAGRANT_DEFAULT_PROVIDER=libvirt
+
+#   ┓•              
+#  ┏┫┓┏┓┏┓┏┓┓┏ ┏┓┏┓╋
+#  ┗┻┗┛ ┗ ┛┗┗┛•┛┗┗ ┗
+#                   
+if [[ -x "$(command -v direnv)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+
 
 #     __     _                      ___       __ _ _      _      
 #    /__\ __| | __ _ _ __   __ _   ( _ )     /__\ (_)_  _(_)_ __ 
@@ -36,21 +37,13 @@ if [ -d /nix ] && [ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
   source $HOME/.nix-profile/etc/profile.d/nix.sh
 fi
 
-if [ -d $HOME/.config/composer/vendor ]; then
-  export PATH=$PATH:$HOME/.config/composer/vendor/bin
-fi
-
 
 if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   source /etc/profile.d/vte.sh
 fi
 
-
-
-
 #: FLutter
 export PATH=$PATH:$HOME/Development/bin/flutter/bin
-
 
 #: Telepresence
 export SCOUT_DISABLE=1
@@ -58,11 +51,18 @@ export SCOUT_DISABLE=1
 # NextJS
 NEXT_TELEMETRY_DISABLED=1
 
-#: GitLab
-eval "$(register-python-argcomplete gitlab)"
+#  ┓       ┓ 
+#  ┣┓┓┏┏┓ ┏┣┓
+#  ┗┛┗┻┛┗•┛┛┗
+#            
+#########################################
 
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
 
-export PATH="${PATH}:$HOME/.istioctl/bin"
+# bun completions
+[ -s "${BUN_INSTALL}/_bun" ] && source "${BUN_INSTALL}/_bun"
 
 
 #export CC=clang

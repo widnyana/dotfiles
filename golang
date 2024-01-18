@@ -1,5 +1,5 @@
 GOCACHE=$HOME/Development/.cache/go-build
-export GOPRIVATE=pkg.damarseta.id/*,$GOPRIVATE
+export GOPRIVATE="$GOPRIVATE,pkg.damarseta.id/*,github.com/koinworks/*"
 
 alias goget='go get -x'
 alias gop='export GOPATH=$GOPATH:$(pwd)'
@@ -19,3 +19,6 @@ fi
 
 mkdir -p $GOENV_GOPATH_PREFIX
 eval "$(goenv init -)"
+
+
+export GOPROXY="https://proxy.golang.org,direct"

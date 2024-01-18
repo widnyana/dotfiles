@@ -25,6 +25,14 @@ fi
 #: krew - https://github.com/kubernetes-sigs/krew
 PATH=${PATH}:${KREW_ROOT:-$HOME/.krew}/bin
 
+if command 'kubectl' 'ouctl' >> /dev/null; then
+  source <(kubectl ouctl completion zsh)
+else
+  echo -e "kubectl ouctl not found"
+fi
+
+
+
 #: fubectl - https://github.com/kubermatic/fubectl
 if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then 
   wget https://raw.githubusercontent.com/kubermatic/fubectl/master/fubectl.source -O $HOME/.dotfiles/sources/fubectl.source
@@ -97,3 +105,14 @@ if type "pinniped" > /dev/null; then
 fi
 
 
+#   _____ _ _ _ _____ 
+#  |  _  | | | |   __|
+#  |     | | | |__   |
+#  |__|__|_____|_____|
+
+# aws command autocomplete
+if type "aws" > /dev/null; then
+  if type "aws_completer" > /dev/null; then
+    complete -C "$(which aws_completer)" aws
+  fi
+fi

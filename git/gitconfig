@@ -68,15 +68,11 @@
 	defaultBranch = main
 	templateDir = /home/widnyana/.git-template
 
-#[url "ssh://git@github.com/"]
-#	insteadOf = https://github.com/
-
 [user]
 	useConfigOnly = true
 
-#[includeIf "gitdir:/home/widnyana/Development/personal/"]
-#    path = /home/widnyana/Development/personal/.gitconfig
 [pull]
 	rebase = true
+
 [diff]
 	submodule = log

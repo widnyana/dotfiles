@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
 docker rmi -f $(docker image ls --filter "dangling=true" --format "{{.ID}}")

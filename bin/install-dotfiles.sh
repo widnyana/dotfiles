@@ -61,6 +61,10 @@ if [[ ! -f "/usr/local/bin/mkcert" ]]; then
     sudo cp "mkcert-v*-linux-amd64" /usr/local/bin/mkcert
 fi
 
+### mise - https://mise.jdx.dev
+mkdir   "${CONFIG_DIR}/mise"
+ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise"
+
 ### Tmux
 mkdir -p    "${CONFIG_DIR}/tmux"
 mkdir -p    "${CONFIG_DIR}/tmux/plugins/"

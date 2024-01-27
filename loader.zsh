@@ -2,6 +2,9 @@
 export _DOT_DIR=$0:a:h
 export SDK_DIR="${HOME}/Development/sdks"
 
+export CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
+export DOT_DIR="${HOME}/.dotfiles"
+
 create_auth_keys() {
   cat <<EOF > "${_DOT_DIR}/auth_keys" 
 export GITHUB_PERSONAL_TOKEN=
@@ -62,10 +65,6 @@ export PATH=${FINAL_PATH}
 
 ## Completions
 export FPATH="$FPATH:${_DOT_DIR}/completions/"
-# source ${_DOT_DIR}/completions/minikube.completions
-# source ${_DOT_DIR}/completions/_istioctl
-# source "${_DOT_DIR}/completions/helm.zsh"
-# source "${_DOT_DIR}/completions/helm-gcs.zsh"
 
 #: clean up
 unset _BOXES _DOT_DIR FINAL_PATH

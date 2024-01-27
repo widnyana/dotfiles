@@ -13,6 +13,10 @@ fi
 # https://github.com/jdx/mise        
 if [[ -x "$(command -v mise)" ]]; then
   eval "$(~/.local/bin/mise activate zsh)"
+
+  # https://mise.jdx.dev/configuration.html#environment-variables
+  export MISE_DATA_DIR="${HOME}/Development/sdks/mise"
+  export MISE_ALWAYS_KEEP_DOWNLOAD=0
 fi
 
 #  ┏┓  ┓             ┓  ┏┓┓•  •  

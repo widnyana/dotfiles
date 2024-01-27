@@ -11,9 +11,6 @@ LOCAL_BIN="${HOME}/.local/bin"
 DEPENDENCIES=""
 
 PACKAGES="zsh \
-podman \
-podman-compose \
-podman-docker \
 policycoreutils \
 python3-policycoreutils \
 tree \

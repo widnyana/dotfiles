@@ -77,7 +77,6 @@ plugins=(
     fzf
     themes
     direnv
-    podman 
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src

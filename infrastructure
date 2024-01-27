@@ -46,10 +46,19 @@ if type "minikube" >> /dev/null; then
 fi
 
 #: Podman
-if type "podman" > /dev/null; then
+if [[ -x "$(command -v podman)" ]]; then
   alias docker=podman
   alias docker-compose=podman-compose
   export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
+fi
+
+
+#: docker
+if type "docker" > /dev/null; then
+  export DOCKER_HOST=unix:///run/user/1000/docker.sock
+  export BUILDKIT_PROGRESS=plain
+  alias podman=docker
+  alias podman-compose=docker-compoe
 fi
 
 #: https://github.com/buildpacks/pack
@@ -58,7 +67,7 @@ if type "pack" > /dev/null; then
 fi
 
 #: Helm.sh
-if type "helm" > /dev/null; then
+if [[ -x "$(command -v helm)" ]]; then
   source <(helm completion zsh)
 fi
 

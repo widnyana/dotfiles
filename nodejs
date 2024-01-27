@@ -21,11 +21,19 @@ export PATH="$BUN_INSTALL/bin:$PATH"
 # bun completions
 [ -s "${BUN_INSTALL}/_bun" ] && source "${BUN_INSTALL}/_bun"
 
-
-
 #  ┳┓     ┏┳┏┓
 #  ┃┃┏┓┓┏╋ ┃┗┓
 #  ┛┗┗ ┛┗┗┗┛┗┛
 #             
 #########################################
 export NEXT_TELEMETRY_DISABLED=1
+
+
+# pnpm
+export PNPM_HOME="${HOME}/Development/sdks/pnpm"
+mkdir -p "${PNPM_HOME}"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+# pnpm end

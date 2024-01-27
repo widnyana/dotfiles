@@ -1,10 +1,3 @@
-# fnm: Fast and simple Node.js version manager, built in Rust - https://github.com/Schniz/fnm
-if [ -d "$HOME/.local/share/fnm" ]; then
-  export PATH="$HOME/.local/share/fnm:$PATH"
-  eval "`fnm env`"
-  source <(fnm completions --shell zsh)
-fi
-
 #   ___.__._____ _______  ____  
 #  <   |  |\__  \\_  __ \/    \ 
 #   \___  | / __ \|  | \/   |  \

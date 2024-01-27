@@ -7,22 +7,29 @@ if [[ -x "$(command -v direnv)" ]]; then
   eval "$(direnv hook zsh)"
 fi
 
+#     •
+#  ┏┳┓┓┏┏┓
+#  ┛┗┗┗┛┗
+# https://github.com/jdx/mise        
+if [[ -x "$(command -v mise)" ]]; then
+  eval "$(~/.local/bin/mise activate zsh)"
+fi
 
-#     __     _                      ___       __ _ _      _      
-#    /__\ __| | __ _ _ __   __ _   ( _ )     /__\ (_)_  _(_)_ __ 
-#   /_\| '__| |/ _` | '_ \ / _` |  / _ \/\  /_\ | | \ \/ / | '__|
-#  //__| |  | | (_| | | | | (_| | | (_>  < //__ | | |>  <| | |   
-#  \__/|_|  |_|\__,_|_| |_|\__, |  \___/\/ \__/ |_|_/_/\_\_|_|   
-#                          |___/                                 
+#  ┏┓  ┓             ┓  ┏┓┓•  •  
+#  ┣ ┏┓┃┏┓┏┓┏┓  ┏┓┏┓┏┫  ┣ ┃┓┓┏┓┏┓
+#  ┗┛┛ ┗┗┻┛┗┗┫  ┗┻┛┗┗┻  ┗┛┗┗┛┗┗┛ 
+#            ┛                   
 if [ -f ~/.kerlrc ]; then
   source ~/.kerlrc
-else
+else 
   export KERL_BASE_DIR=$HOME/Development/bin/.kerl
   export KERL_DEFAULT_INSTALL_DIR=$KERL_BASE_DIR/installs
   export KERL_BUILD_BACKEND=git
   export KERL_CONFIGURE_OPTIONS="--enable-smp-support --enable-threads --enable-kernel-poll --enable-m64-build"
   export KERL_BUILD_DOCS=yes
   export OTP_GITHUB_URL="https://github.com/erlang/otp"
+
+  mkdir -p "${KERL_BASE_DIR}"
 fi 
 test -s "$HOME/Development/.kiex/scripts/kiex" && source "$HOME/Development/.kiex/scripts/kiex"
 
@@ -48,8 +55,8 @@ export PATH=$PATH:$HOME/Development/bin/flutter/bin
 #: Telepresence
 export SCOUT_DISABLE=1
 
-#export CC=clang
-#export CXX=clang++
+export CC=clang
+export CXX=clang++
 
-export CC=gcc
-export CXX=g++
+#export CC=gcc
+#export CXX=g++

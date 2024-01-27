@@ -354,6 +354,7 @@ set -g @plugin 'tmux-plugins/tmux-net-speed'
 set -g @plugin 'tmux-plugins/tmux-fpp'
 set -g @plugin 'tmux-plugins/tmux-copycat'
 set -g @plugin 'sainnhe/tmux-fzf'
+set -g @plugin 'lljbash/tmux-update-display'
 
 
 # -- custom variables ----------------------------------------------------------

@@ -1,38 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
-
-OMZ_PATH="${HOME}/.oh-my-zsh"
-FZF_PATH="${HOME}/.fzf"
-
+set -x
 
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 DOT_DIR="${HOME}/.dotfiles"
 
 pushd $DOT_DIR
 
-ln -sfn ${HOME}/.dotfiles/zsh/zfunc         "${HOME}/.zfunc"
-
 ### Git
 ln -sfn "${HOME}/.dotfiles/git/gitconfig"   "${HOME}/.gitconfig"
 ln -sfn "${HOME}/.dotfiles/git/gitignore"   "${HOME}/.gitignore"
 
 ## oh-my-zsh
+OMZ_PATH="${HOME}/.oh-my-zsh"
 if [[ ! -d "${OMZ_PATH}" ]]; then
     echo "installing oh-my-zsh..."
     sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+    mkdir -p "${OMZ_PATH}/cache"
+    ln -sfn  "${DOT_DIR}/vendor/oh-my-zsh/completions" "${OMZ_PATH}/cache/"
+
+    #: attach custom loader
     echo "source ${DOT_DIR}/loader.zsh" > "${OMZ_PATH}/custom/loader.zsh"
     source ~/.zshrc
 fi
 
 ### fzf - A command-line fuzzy finder
+FZF_PATH="${HOME}/.fzf"
 if [[ ! -d "${FZF_PATH}" ]]; then
     echo "installing fzf..."
     git clone --depth 1 https://github.com/junegunn/fzf.git "${FZF_PATH}"
     "${FZF_PATH}/install"
 fi
-
-### pull the submodules
-# git submodule update --init --recursive --rebase -f
 
 ### Rust
 export CARGO_HOME="${HOME}/Development/sdks/.cargo"
@@ -46,29 +45,41 @@ fi
 
 ### VIM and NeoVIm
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
-ln -sfn "${HOME}/.dotfiles/nvim-v2"         "${HOME}/.config/nvim"
+ln -sfn "${HOME}/.dotfiles/nvim-v2"         "${CONFIG_DIR}/nvim"
 
 ### Alacritty
-mkdir -p        "${CONFIG_DIR}/alacritty"
-mkdir -p        "${CONFIG_DIR}/alacritty/themes"
+if [[ ! -d "${CONFIG_DIR}/alacritty" ]]; then 
+    mkdir -p        "${CONFIG_DIR}/alacritty"
+    mkdir -p        "${CONFIG_DIR}/alacritty/themes"
+    ln -sfn         "${DOT_DIR}/config/alacritty/alacritty.toml"  "${CONFIG_DIR}/alacritty/alacritty.toml"
+fi
 
 ### mkcert
-if [[ ! -f "/usr/local/bin/mkcert" ]]; then
+if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
     echo -e "installing FiloSottile/mkcert..."
-    sudo dnf install nss-tools -y
-    curl -JLO "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-    chmod +x "mkcert-v*-linux-amd64"
-    sudo cp "mkcert-v*-linux-amd64" /usr/local/bin/mkcert
+    sudo dnf install nss-tools -y -q
+    wget   -q --show-progress --progress=bar-O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+    chmod +x "/tmp/mkcert"
+    mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
 fi
 
 ### mise - https://mise.jdx.dev
-mkdir   "${CONFIG_DIR}/mise"
-ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise"
+if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
+    echo -e "Installing mise - https://mise.jdx.dev"
+    mkdir -p "${CONFIG_DIR}/mise"
+    ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise/config.toml"
+
+    curl https://mise.jdx.dev/install.sh | sh
+    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > | "$ZSH_CACHE_DIR/completions/_dind" &| 
+"${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
+fi
 
 ### Tmux
-mkdir -p    "${CONFIG_DIR}/tmux"
-mkdir -p    "${CONFIG_DIR}/tmux/plugins/"
-ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
+if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then 
+    mkdir -p    "${CONFIG_DIR}/tmux"
+    mkdir -p    "${CONFIG_DIR}/tmux/plugins/"
+    ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
+fi
 
 ### kube-tmux: kubernetes-context integration for tmux
 go install "github.com/go-tmux/kube-tmux@latest"

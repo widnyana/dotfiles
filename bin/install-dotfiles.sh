@@ -45,7 +45,7 @@ fi
 
 ### VIM and NeoVIm
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
-ln -sfn "${HOME}/.dotfiles/nvim-v2"         "${CONFIG_DIR}/nvim"
+ln -sfn "${HOME}/.dotfiles/config/nvim-v2"         "${CONFIG_DIR}/nvim"
 
 ### Alacritty
 if [[ ! -d "${CONFIG_DIR}/alacritty" ]]; then 
@@ -84,5 +84,6 @@ fi
 ### kube-tmux: kubernetes-context integration for tmux
 go install "github.com/go-tmux/kube-tmux@latest"
 
+ln -sfn "${DOT_DIR}/config/k9s" "${CONFIG_DIR}/k9s"
 
 popd

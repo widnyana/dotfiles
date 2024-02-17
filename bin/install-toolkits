@@ -5,7 +5,6 @@ set -x
 source ~/.dotfiles/functions.sh
 source ~/.dotfiles/common/colors
 
-
 LOCAL_BIN="${HOME}/.local/bin"
 
 DEPENDENCIES=""
@@ -20,6 +19,8 @@ iotop \
 iftop \
 tmux \
 the_silver_searcher \
+ripgrep \
+fd-find \
 "
 
 sudo dnf install ${PACKAGES} -y
@@ -48,6 +49,29 @@ rm -rf terracognita-linux-amd64.tar.gz
 mkdir ~/.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+
+#: NeoVIM
+#: ========================================
+# The Tectonic Typesetting System - https://tectonic-typesetting.github.io
+curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh && mv ./tectonic "${LOCAL_BIN}/tectonic"
+
+#: Kubernetes
+#: ========================================
+
+#: kubectl
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl" && mv ./kubectl "${LOCAL_BIN}/kubectl" && chmod a+x "${LOCAL_BIN}/kubectl"
+
+#: krew
+(
+  set -x; cd "$(mktemp -d)" &&
+  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+  KREW="krew-${OS}_${ARCH}" &&
+  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+  tar zxvf "${KREW}.tar.gz" &&
+  ./"${KREW}" install krew
+)
+
 
 #: K9S
 K9S_INSTALL_PATH="${LOCAL_BIN}/k9s"

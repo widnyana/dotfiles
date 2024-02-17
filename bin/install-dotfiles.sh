@@ -78,6 +78,7 @@ fi
 if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then 
     mkdir -p    "${CONFIG_DIR}/tmux"
     mkdir -p    "${CONFIG_DIR}/tmux/plugins/"
+    ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf"        "${CONFIG_DIR}/tmux/tmux.conf"
     ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
 fi
 

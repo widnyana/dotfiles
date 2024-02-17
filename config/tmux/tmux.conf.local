@@ -346,6 +346,8 @@ tmux_conf_uninstall_plugins_on_reload=true
 # /!\ do not add run '~/.tmux/plugins/tpm/tpm'
 
 # List of plugins
+set -g @plugin 'aserowy/tmux.nvim'
+set -g @plugin 'joshmedeski/t-smart-tmux-session-manager'
 set -g @plugin 'tmux-plugins/tmux-sidebar'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'

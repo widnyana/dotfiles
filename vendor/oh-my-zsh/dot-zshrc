@@ -80,6 +80,8 @@ plugins=(
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
+fpath+=~/.zfunc
+
 source $ZSH/oh-my-zsh.sh
 
 # User configuration

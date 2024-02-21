@@ -55,6 +55,12 @@ curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
 # The Tectonic Typesetting System - https://tectonic-typesetting.github.io
 curl --proto '=https' --tlsv1.2 -fsSL https://drop-sh.fullyjustified.net | sh && mv ./tectonic "${LOCAL_BIN}/tectonic"
 
+#: zoxide -  A smarter cd command. Supports all major shells. (https://github.com/ajeetdsouza/zoxide)
+curl -sS https://raw.githubusercontent.com/ajeetdsouza/zoxide/main/install.sh | bash
+
+#: yq - https://github.com/mikefarah/yq
+wget -qO "${HOME}/.local/bin/yq" https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 && chmod +x "${HOME}/.local/bin/yq"
+
 #: Kubernetes
 #: ========================================
 

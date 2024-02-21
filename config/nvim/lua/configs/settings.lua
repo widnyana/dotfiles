@@ -19,60 +19,136 @@ M.listchars = "eol:¬,tab:>·,trail:~,extends:>,precedes:<"
 -- list of disabled plugins
 M.disable_builtin_plugins = {}
 
+-- lsp kinds icons
+M.lsp_kinds = {
+  Text = " ",
+  Method = " ",
+  Function = " ",
+  Constructor = " ",
+  Field = " ",
+  Variable = " ",
+  Class = " ",
+  Interface = " ",
+  Module = " ",
+  Property = " ",
+  Unit = " ",
+  Value = " ",
+  Enum = " ",
+  Keyword = " ",
+  Snippet = " ",
+  Color = " ",
+  File = " ",
+  Reference = " ",
+  Folder = " ",
+  EnumMember = " ",
+  Constant = " ",
+  Struct = " ",
+  Event = " ",
+  Operator = " ",
+  TypeParameter = " ",
+  Copilot = " ",
+  Namespace = " ",
+  Package = " ",
+  String = " ",
+  Number = " ",
+  Boolean = " ",
+  Array = " ",
+  Object = " ",
+  Key = " ",
+  Null = " ",
+}
+
+
+-- Packages that should be installed by Mason
+M.mason_packages = {
+  -- DAP
+  "clangd",
+  "codelldb",
+  "cspell",
+  "debugpy",
+
+  -- Formatter
+  "black",
+  "clang-format",
+  "shfmt",
+  "prettier",
+  "cueimports",
+  "gofumpt",
+  'golines',
+  "markdownlint",
+  "stylua",
+
+  -- Linter
+  "editorconfig-checker",
+  "eslint_d",
+  "pyright",
+  "ruff",
+  "shellcheck",
+  "tflint",
+  "yamllint",
+
+  -- Language Server via mason
+  "lua-language-server",
+  "yaml-language-server",
+  "bash-language-server",
+  "gopls",
+  "json-lsp",
+}
+
 -- stolen from NvChad core.mappings
 M.mappings = {
-    general = {
-        i = {
-            -- go to  beginning and end
-            ["<C-b>"] = { "<ESC>^i", "Beginning of line" },
-            ["<C-e>"] = { "<End>", "End of line" },
+  general = {
+    i = {
+      -- go to  beginning and end
+      ["<C-b>"] = { "<ESC>^i", "Beginning of line" },
+      ["<C-e>"] = { "<End>", "End of line" },
 
-            -- navigate within insert mode
-            ["<C-h>"] = { "<Left>", "Move left" },
-            ["<C-l>"] = { "<Right>", "Move right" },
-            ["<C-j>"] = { "<Down>", "Move down" },
-            ["<C-k>"] = { "<Up>", "Move up" },
-        },
+      -- navigate within insert mode
+      ["<C-h>"] = { "<Left>", "Move left" },
+      ["<C-l>"] = { "<Right>", "Move right" },
+      ["<C-j>"] = { "<Down>", "Move down" },
+      ["<C-k>"] = { "<Up>", "Move up" },
+    },
 
-        n = {
-            ["<Esc>"] = { ":noh <CR>", "Clear highlights" },
-            -- switch between windows
-            ["<C-h>"] = { "<C-w>h", "Window left" },
-            ["<C-l>"] = { "<C-w>l", "Window right" },
-            ["<C-j>"] = { "<C-w>j", "Window down" },
-            ["<C-k>"] = { "<C-w>k", "Window up" },
-        
-            -- save
-            ["<C-s>"] = { "<cmd> w <CR>", "Save file" },
-        
-            -- Copy all
-            ["<C-c>"] = { "<cmd> %y+ <CR>", "Copy whole file" },
-        
-            -- line numbers
-            ["<leader>n"] = { "<cmd> set nu! <CR>", "Toggle line number" },
-            ["<leader>rn"] = { "<cmd> set rnu! <CR>", "Toggle relative number" },
-        
-            -- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
-            -- http://www.reddit.com/r/vim/comments/2k4cbr/problem_with_gj_and_gk/
-            -- empty mode is same as using <cmd> :map
-            -- also don't use g[j|k] when in operator pending mode, so it doesn't alter d, y or c behaviour
-            ["j"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', "Move down", opts = { expr = true } },
-            ["k"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', "Move up", opts = { expr = true } },
-            ["<Up>"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', "Move up", opts = { expr = true } },
-            ["<Down>"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', "Move down", opts = { expr = true } },
-        
-            -- new buffer
-            ["<leader>b"] = { "<cmd> enew <CR>", "New buffer" },
-            ["<leader>ch"] = { "<cmd> NvCheatsheet <CR>", "Mapping cheatsheet" },
-        
-            ["<leader>fm"] = {
-              function()
-                vim.lsp.buf.format { async = true }
-              end,
-              "LSP formatting",
-            },
-          },
-    }
+    n = {
+      ["<Esc>"] = { ":noh <CR>", "Clear highlights" },
+      -- switch between windows
+      ["<C-h>"] = { "<C-w>h", "Window left" },
+      ["<C-l>"] = { "<C-w>l", "Window right" },
+      ["<C-j>"] = { "<C-w>j", "Window down" },
+      ["<C-k>"] = { "<C-w>k", "Window up" },
+
+      -- save
+      ["<C-s>"] = { "<cmd> w <CR>", "Save file" },
+
+      -- Copy all
+      ["<C-c>"] = { "<cmd> %y+ <CR>", "Copy whole file" },
+
+      -- line numbers
+      ["<leader>n"] = { "<cmd> set nu! <CR>", "Toggle line number" },
+      ["<leader>rn"] = { "<cmd> set rnu! <CR>", "Toggle relative number" },
+
+      -- Allow moving the cursor through wrapped lines with j, k, <Up> and <Down>
+      -- http://www.reddit.com/r/vim/comments/2k4cbr/problem_with_gj_and_gk/
+      -- empty mode is same as using <cmd> :map
+      -- also don't use g[j|k] when in operator pending mode, so it doesn't alter d, y or c behaviour
+      ["j"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', "Move down", opts = { expr = true } },
+      ["k"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', "Move up", opts = { expr = true } },
+      ["<Up>"] = { 'v:count || mode(1)[0:1] == "no" ? "k" : "gk"', "Move up", opts = { expr = true } },
+      ["<Down>"] = { 'v:count || mode(1)[0:1] == "no" ? "j" : "gj"', "Move down", opts = { expr = true } },
+
+      -- new buffer
+      ["<leader>b"] = { "<cmd> enew <CR>", "New buffer" },
+      ["<leader>ch"] = { "<cmd> NvCheatsheet <CR>", "Mapping cheatsheet" },
+
+      ["<leader>fm"] = {
+        function()
+          vim.lsp.buf.format { async = true }
+        end,
+        "LSP formatting",
+      },
+    },
+  }
 }
 -- which patterns to ignore in file switcher
 M.telescope_file_ignore_patterns = {
@@ -128,7 +204,7 @@ M.telescope_file_ignore_patterns = {
   "vendor/*",
 }
 
--- options for fzf in telescope 
+-- options for fzf in telescope
 M.telescope_fzf_opts = {
   fuzzy = true,                   -- false will only do exact matching
   override_generic_sorter = true, -- override the generic sorter
@@ -139,5 +215,29 @@ M.telescope_fzf_opts = {
 -- enable greping in hidden files
 M.telescope_grep_hidden = false
 
+-- A list of parser names, or "all" 
+-- this five listed parsers should always be installed: "c", "lua", "vim", "vimdoc", "query"
+M.treesitter_ensure_installed = {
+  --  this five listed parsers should always be installed: "c", "lua", "vim", "vimdoc", "query"
+  "c",
+  "lua",
+  "vim",
+  "vimdoc",
+  "query",
+  -- add another below
+  "comment",
+  "gitignore",
+  "gomod",
+  "gowork",
+  "go",
+  "json",
+  "markdown",
+  "python",
+  "rust",
+  "yaml"
+}
+
+-- List of parsers to ignore installing (or "all")
+M.treesitter_ignore_install = {}
 
 return M

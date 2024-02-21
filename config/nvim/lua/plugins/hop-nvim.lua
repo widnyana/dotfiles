@@ -3,7 +3,7 @@ local M = {
     branch = 'v2',
     config = function()
         require("hop").setup({
-            keys = 'etovxqpdygfblzhckisuran',
+            keys = 'etovxq;pdygfblzhck,isuran',
             case_insensitive = false
         })
     end

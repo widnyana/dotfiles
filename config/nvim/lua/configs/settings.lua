@@ -1,14 +1,12 @@
 local M = {}
 
+M.bufferline_tab_style = "thin"
+
 -- theme: nightfox, tokyonight, tundra, kanagawa, oxocarbon; default is catppuccin
 -- refer to the themes settings file for different styles
 M.colorscheme = "oxocarbon"
 
--- set relative numbered lines
-M.relative_number = false
-
--- always show tabs; 0 never, 1 only if at least two tab pages, 2 always
-M.showtabline = 1
+M.file_explorer_title = "🥷 File Explorer"
 
 -- enable or disable listchars
 M.list = false
@@ -68,19 +66,19 @@ M.mason_packages = {
   "debugpy",
 
   -- Formatter
+  'golines',
   "black",
   "clang-format",
-  "shfmt",
-  "prettier",
   "cueimports",
   "gofumpt",
-  'golines',
-  "markdownlint",
+  "prettier",
+  "shfmt",
   "stylua",
 
   -- Linter
   "editorconfig-checker",
   "eslint_d",
+  "markdownlint",
   "pyright",
   "ruff",
   "shellcheck",
@@ -93,6 +91,7 @@ M.mason_packages = {
   "bash-language-server",
   "gopls",
   "json-lsp",
+  "marksman",
 }
 
 -- stolen from NvChad core.mappings
@@ -203,6 +202,12 @@ M.telescope_file_ignore_patterns = {
   "target/",
   "vendor/*",
 }
+
+-- set relative numbered lines
+M.relative_number = false
+
+-- always show tabs; 0 never, 1 only if at least two tab pages, 2 always
+M.showtabline = 1
 
 -- options for fzf in telescope
 M.telescope_fzf_opts = {

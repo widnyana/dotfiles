@@ -59,6 +59,7 @@ return {
     {
         "rebelot/kanagawa.nvim",
         lazy = false,
+        enabled = true,
         config = function()
             require("kanagawa").setup({
                 overrides = function(colors)
@@ -87,11 +88,79 @@ return {
                     }
                 }
             })
+            -- vim.cmd("colorscheme kanagawa")
         end
     },
+    --  Soho vibes for Neovim - https://github.com/rose-pine/neovim
+    {
+        "rose-pine/neovim",
+        config = function()
+            require("rose-pine").setup({
+                disable_background = true,
+                disable_float_background = true,
+                dark_variant = "moon",
+                disable_italics = true,
+                groups = {
+                    background = "base",
+                    background_nc = "_experimental_nc",
+                    panel = "surface",
+                    panel_nc = "base",
+                    border = "highlight_med",
+                    comment = "muted",
+                    link = "iris",
+                    punctuation = "subtle",
 
+                    error = "love",
+                    hint = "iris",
+                    info = "foam",
+                    warn = "gold",
+
+                    headings = {
+                        h1 = "iris",
+                        h2 = "foam",
+                        h3 = "rose",
+                        h4 = "gold",
+                        h5 = "pine",
+                        h6 = "foam",
+                    },
+                },
+                highlight_groups = {
+                    ColorColumn = { bg = "rose" },
+
+                    -- Blend colours against the "base" background
+                    CursorLine = { bg = "foam", blend = 10 },
+                    StatusLine = { fg = "love", bg = "love", blend = 10 },
+                    Search = { bg = "gold", inherit = false },
+
+                    TelescopeBorder = { fg = "highlight_high", bg = "none" },
+                    TelescopeNormal = { bg = "none" },
+                    TelescopePromptNormal = { bg = "base" },
+                    TelescopeResultsNormal = { fg = "subtle", bg = "none" },
+                    TelescopeSelection = { fg = "text", bg = "base" },
+                    TelescopeSelectionCaret = { fg = "rose", bg = "rose" },
+                },
+            })
+
+            -- vim.cmd.colorscheme 'rose-pine-moon'
+        end,
+    },
     {                                 -- make Nvim Transparent
         "xiyaowong/nvim-transparent", -- Remove all background colors to make nvim transparent
         lazy = false,
+        config = function()
+            require("transparent").setup({
+                groups = { -- table: default groups
+                    'Normal', 'NormalNC', 'Comment', 'Constant', 'Special', 'Identifier',
+                    'Statement', 'PreProc', 'Type', 'Underlined', 'Todo', 'String', 'Function',
+                    'Conditional', 'Repeat', 'Operator', 'Structure', 'LineNr', 'NonText',
+                    'SignColumn', 'CursorLine', 'CursorLineNr', 'StatusLine', 'StatusLineNC',
+                    'EndOfBuffer',
+                },
+                extra_groups = {},   -- table: additional groups that should be cleared
+                exclude_groups = {}, -- table: groups you don't want to clear
+            })
+
+            require('transparent').clear_prefix('lualine')
+        end
     }
 }

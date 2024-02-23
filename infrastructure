@@ -42,6 +42,7 @@ fi
 if type "minikube" >> /dev/null; then
     export MINIKUBE_HOME=$HOME/Infrastructure/labs/minikube
     export MINIKUBE_IN_STYLE=false
+    mkdir -p "${MINIKUBE_HOME}"
     source <(minikube completion zsh)
 fi
 

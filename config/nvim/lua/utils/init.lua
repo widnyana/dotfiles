@@ -1,8 +1,6 @@
 local M = {}
 
 -- functions
-
-
 function M.merge(...)
     return vim.tbl_deep_extend('force', ...)
 end

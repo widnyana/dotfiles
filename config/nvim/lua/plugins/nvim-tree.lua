@@ -27,7 +27,6 @@ local args = {
     ignore = true,
     enable = true,
   },
-
   filters = {
     dotfiles = true,
   },
@@ -48,7 +47,6 @@ local args = {
     },
   },
   sync_root_with_cwd = true,
-
 }
 
 

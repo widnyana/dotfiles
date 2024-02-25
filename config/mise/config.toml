@@ -1,15 +1,14 @@
 [tools]
 bun = "latest"
 node = "latest"
+go = "1.22.0"
 
 [settings]
-always_keep_download = false
-always_keep_install = false
-
+always_keep_download = false    # deleted after install by default
+always_keep_install = true      # deleted on failure by default
 jobs = 4
 not_found_auto_install = true
-paranoid = false
+paranoid = false                # see https://mise.jdx.dev/paranoid.html
 env_file = '.env'
-
 activate_aggressive = true
-
+asdf_compat = true # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`

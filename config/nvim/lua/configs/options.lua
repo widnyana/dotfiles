@@ -62,3 +62,7 @@ local options = {
 for k, v in pairs(options) do
   vim.opt[k] = v
 end
+
+
+-- Prepend mise shims to PATH
+vim.env.PATH = vim.env.HOME .. "/Development/sdks/mise/shims:" .. vim.env.PATH

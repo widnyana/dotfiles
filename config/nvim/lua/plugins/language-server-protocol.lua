@@ -75,6 +75,8 @@ return {
 
       lsp_zero.on_attach(
         function(_, bufnr)
+          -- see :help lsp-zero-keybindings
+          -- to learn the available actions
           lsp_zero.default_keymaps({ buffer = bufnr })
           local opts = { buffer = bufnr, silent = true }
 
@@ -87,6 +89,7 @@ return {
           -- vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<cr>', opts)
           vim.keymap.set('n', 'gs', '<cmd>lua vim.lsp.buf.signature_help()<cr>', opts)
           vim.keymap.set('n', '<F2>', '<cmd>lua vim.lsp.buf.rename()<cr>', opts)
+          --  Formats a buffer using the attached (and optionally filtered) language server clients.
           vim.keymap.set({ 'n', 'x' }, '<F3>', '<cmd>lua vim.lsp.buf.format({async = true})<cr>', opts)
           vim.keymap.set('n', '<F4>', '<cmd>lua vim.lsp.buf.code_action()<cr>', opts)
 
@@ -155,7 +158,7 @@ return {
       })
 
       -- enable format on file save
-      lsp_zero.format_on_save({
+      lsp_zero.format_mapping('gq', {
         format_opts = {
           async = false,
           timeout_ms = 10000,
@@ -173,10 +176,10 @@ return {
       })
 
       lsp_zero.set_sign_icons({
-        error = "E",
-        warn = "W",
-        hint = "H",
-        info = "I",
+        error = '✘',
+        warn = '▲',
+        hint = '⚑',
+        info = '»'
       })
 
       vim.diagnostic.config({

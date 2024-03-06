@@ -21,4 +21,5 @@ mkdir -p $GOENV_GOPATH_PREFIX
 eval "$(goenv init -)"
 
 
-export GOPROXY="https://proxy.golang.org,direct"
+export GOPROXY=https://goproxy.io,direct
+

@@ -68,3 +68,8 @@ export CXX=clang++
 
 #export CC=gcc
 #export CXX=g++
+
+
+if [[ -x "$(command -v zoxide)" ]]; then
+    eval "$(zoxide init zsh)"
+fi

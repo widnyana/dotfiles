@@ -1,0 +1,11 @@
+[installer]
+max-workers = 24
+modern-installation = true
+
+
+
+[virtualenvs]
+create = true
+in-project = true
+prefer-active-python = true
+

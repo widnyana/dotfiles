@@ -8,9 +8,9 @@ TERM = "xterm-256color"
 program = "/usr/bin/zsh"
 
 [window]
-title = "./w"
+title = "¯\\_(ツ)_/¯"
 dynamic_padding = false
-opacity = 0.95
+opacity = 0.9
 startup_mode = "Windowed"
 dynamic_title = false
 

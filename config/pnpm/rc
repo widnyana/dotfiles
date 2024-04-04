@@ -1,2 +1,9 @@
-auto-install-peers=true
-
+hoist = true
+auto-install-peers = true
+dedupe-peer-dependents = true
+strict-peer-dependencies = true
+node-linker = hoisted
+symlink = false 
+recursive-install = true
+child-concurrency = 8
+use-stderr = true

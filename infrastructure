@@ -56,7 +56,7 @@ fi
 
 #: docker
 if type "docker" > /dev/null; then
-  export DOCKER_HOST=unix:///run/user/1000/docker.sock
+  export DOCKER_HOST="unix:///run/docker.sock"
   export BUILDKIT_PROGRESS=plain
   alias podman=docker
   alias podman-compose=docker-compoe

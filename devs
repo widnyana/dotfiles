@@ -1,4 +1,6 @@
+# set default editor
 export EDITOR=nvim
+
 #   ┓•              
 #  ┏┫┓┏┓┏┓┏┓┓┏ ┏┓┏┓╋
 #  ┗┻┗┛ ┗ ┛┗┗┛•┛┗┗ ┗
@@ -69,7 +71,14 @@ export CXX=clang++
 #export CC=gcc
 #export CXX=g++
 
-
+# use ajeetdsouza/zoxide if available
 if [[ -x "$(command -v zoxide)" ]]; then
-    eval "$(zoxide init zsh)"
+    eval "$(zoxide init zsh --hook pwd)"
+fi
+
+# always use nvim, if available
+if [[ -x "$(command -v nvim)" ]]; then
+  alias vim=$(which nvim)
+  alias vi=$(which nvim)
+  alias nv=$(which nvim)
 fi

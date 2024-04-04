@@ -77,7 +77,8 @@ plugins=(
     tmux
     fzf
     themes
-    direnv
+    mise
+    docker
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src

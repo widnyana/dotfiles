@@ -82,3 +82,10 @@ if [[ -x "$(command -v nvim)" ]]; then
   alias vi=$(which nvim)
   alias nv=$(which nvim)
 fi
+
+
+
+
+# disable any IBM telemetry
+# https://github.com/ibm-telemetry/telemetry-js/tree/main#opting-out-of-ibm-telemetry-data-collection
+export IBM_TELEMETRY_DISABLED='true'

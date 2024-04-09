@@ -2,8 +2,8 @@
 set -euo pipefail
 set -x
 
-source ~/.dotfiles/functions.sh
-source ~/.dotfiles/common/colors
+source "${HOME}/.dotfiles/functions.sh"
+source "${HOME}/.dotfiles/common/colors"
 
 LOCAL_BIN="${HOME}/.local/bin"
 

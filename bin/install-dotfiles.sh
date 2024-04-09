@@ -36,6 +36,7 @@ fi
 ### Rust
 export CARGO_HOME="${HOME}/Development/sdks/.cargo"
 export RUSTUP_HOME="${HOME}/Development/sdks/rustup" 
+export PATH="${CARGO_HOME}/bin:${PATH}"
 
 if [[ ! -d "${CARGO_HOME}" ]]; then
     mkdir -p "${CARGO_HOME}"
@@ -70,8 +71,7 @@ if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
     ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise/config.toml"
 
     curl https://mise.jdx.dev/install.sh | sh
-    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > | "$ZSH_CACHE_DIR/completions/_dind" &| 
-"${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
+    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > | "$ZSH_CACHE_DIR/completions/_dind" &| "${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
 fi
 
 ### Tmux
@@ -86,5 +86,8 @@ fi
 go install "github.com/go-tmux/kube-tmux@latest"
 
 ln -sfn "${DOT_DIR}/config/k9s" "${CONFIG_DIR}/k9s"
+
+### install all required tools via mise
+$(which mise) install -y
 
 popd

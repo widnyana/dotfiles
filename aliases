@@ -15,3 +15,9 @@ alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""
 ### https://the.exa.website/introduction
 alias l="exa --icons --header"
 
+
+### random string generator
+randn() { if [ $# -eq 0 ]; then echo -e "char count needed"; return 1; fi
+head -c128 /dev/urandom | base64 -w 0 | cut -c -$1
+}
+

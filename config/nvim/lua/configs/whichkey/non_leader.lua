@@ -3,12 +3,12 @@ return {
     w = { "<cmd>w!<CR>", "Save" },
     q = { "<cmd>confirm q<CR>", "Quit" },
     c = { "<cmd>bd<CR>", "Close Buffer" },
-    h = { "<cmd>nohlsearch<CR>", "No Highlight" },
+    -- h = { "<cmd>nohlsearch<CR>", "No Highlight" },
     t = { "<cmd>Telescope treesitter<CR>", "List Symbols" },
     f = { "<cmd>lua require('configs.utils').telescope_git_or_file()<CR>", "Find Files (Root)" },
     U = { "<cmd>UndotreeToggle<CR>", "Toggle UndoTree" },
     o = { "<cmd>Telescope buffers<CR>", "Open Buffer" },
-    j = { "<cmd>HopWord<CR>", "Go to any word in the current buffer" },
+    -- j = { "<cmd>HopWord<CR>", "Go to any word in the current buffer" },
     K = { "<cmd>lua vim.lsp.buf.hover()<cr>", "Hover" },
     m = { "<cmd>MarkdownPreview<CR>", "Open markdown in web browser" },
     Z = { "<cmd>ZenMode<CR>", "Zen Mode" },
@@ -80,7 +80,10 @@ return {
     s = {
         name = "+Search",
         f = { "<cmd>Telescope find_files<cr>", "Find File (CWD)" },
-        h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
+        h = {
+          h = { "<cmd>Telescope help_tags<cr>", "Find Help" },
+          l = { "<cmd>nohlsearch<CR>", "No Highlight" }
+        },
         H = { "<cmd>Telescope highlights<cr>", "Find highlight groups" },
         M = { "<cmd>Telescope man_pages<cr>", "Man Pages" },
         o = { "<cmd>Telescope oldfiles<cr>", "Open Recent File" },

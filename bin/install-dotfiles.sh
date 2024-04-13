@@ -1,6 +1,23 @@
 #!/usr/bin/env bash
 set -euo pipefail
-set -x
+
+unameOut="$(uname -sr)"
+case "${unameOut}" in
+    Linux*)     machine=Linux;;
+    Darwin*)    machine=Mac;;
+    CYGWIN*)    machine=Cygwin;;
+    MINGW*)     machine=MinGw;;
+    MSYS_NT*)   machine=Git;;
+    *)          machine="UNKNOWN:${unameOut}"
+esac
+
+if [[ $machine == "Mac" ]]; then
+  if ! [[ -x $(command -v "brew") ]]; then
+    # install homebrew
+    xcode-select --install || true
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  fi
+fi
 
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 DOT_DIR="${HOME}/.dotfiles"
@@ -57,8 +74,19 @@ fi
 ### mkcert
 if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
     echo -e "installing FiloSottile/mkcert..."
-    sudo dnf install nss-tools -y -q
-    wget   -q --show-progress --progress=bar-O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+
+    if [[ $machine == "Linux" ]]; then
+      sudo dnf install wget nss-tools -y -q
+    fi
+    
+    if ! [[ -x $(command -v "wget") ]]; then
+      if [[ $machine == "Mac" ]]; then
+        brew install wget
+      fi
+    fi
+
+
+    wget -q --show-progress --progress=bar -O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
     chmod +x "/tmp/mkcert"
     mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
 fi
@@ -70,8 +98,8 @@ if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
     ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise/config.toml"
 
     curl https://mise.jdx.dev/install.sh | sh
-    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > | "$ZSH_CACHE_DIR/completions/_dind" &| 
-"${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
+    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > "${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
+    eval $(${HOME}/.local/bin/mise activate --shims)
 fi
 
 ### Tmux
@@ -81,6 +109,14 @@ if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then
     ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf"        "${CONFIG_DIR}/tmux/tmux.conf"
     ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
 fi
+
+
+if ! [[ -x $(command -v "go") ]]; then
+  echo -e "Golang Compiler is not exist, installing"
+  ~/.local/bin/mise install "go@latest"
+  ~/.local/bin/mise reshim
+fi
+
 
 ### kube-tmux: kubernetes-context integration for tmux
 go install "github.com/go-tmux/kube-tmux@latest"

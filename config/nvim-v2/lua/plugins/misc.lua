@@ -16,17 +16,17 @@ return {
 
     -- Utilities
     {
-    	"folke/persistence.nvim",
-    	lazy = false,
-    	keys = {
-    		{
-    			"<leader>ls",
-    			function()
-    				require("persistence").load()
-    			end,
-    		},
-    	},
-    	opts = { options = { "buffers", "curdir", "folds", "help", "tabpages", "terminal", "globals" } },
+        "folke/persistence.nvim",
+        lazy = false,
+        keys = {
+            {
+                "<leader>ls",
+                function()
+                    require("persistence").load()
+                end,
+            },
+        },
+        opts = { options = { "buffers", "curdir", "folds", "help", "tabpages", "terminal", "globals" } },
     },
     -- {
     --     "rmagatti/auto-session",

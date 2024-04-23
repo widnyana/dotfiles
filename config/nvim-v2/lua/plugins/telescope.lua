@@ -7,7 +7,7 @@ local M = {
     "nvim-telescope/telescope-symbols.nvim",
     "nvim-telescope/telescope-file-browser.nvim",
     "nvim-telescope/telescope-ui-select.nvim",
-	"nvim-telescope/telescope-project.nvim",
+    "nvim-telescope/telescope-project.nvim",
     "ptethng/telescope-makefile",
     { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },
   },

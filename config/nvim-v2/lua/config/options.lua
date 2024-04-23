@@ -5,7 +5,7 @@ local indent = 2
 local user_config = require("config.settings")
 
 cmd([[
-	filetype plugin indent on
+    filetype plugin indent on
 ]])
 
 
@@ -38,12 +38,12 @@ opt.cursorline = true
 opt.laststatus = 2
 opt.list = true
 opt.listchars = {
-	tab = '❘-',
-	trail = '·',
-	lead = '·',
-	extends = '»',
-	precedes = '«',
-	nbsp = '×',
+    tab = '❘-',
+    trail = '·',
+    lead = '·',
+    extends = '»',
+    precedes = '«',
+    nbsp = '×',
 }
 opt.number = user_config.number
 opt.rnu = user_config.relative_number
@@ -93,31 +93,31 @@ opt.splitkeep = "screen"
 opt.undofile = true
 vim.o.foldcolumn = "1"
 opt.fillchars = {
-	foldopen = "",
-	foldclose = "",
-	fold = " ",
-	foldsep = " ",
-	diff = "/",
-	eob = " ",
+    foldopen = "",
+    foldclose = "",
+    fold = " ",
+    foldsep = " ",
+    diff = "/",
+    eob = " ",
 }
 
 
 -- command completion
 opt.wildmode = "longest:full:full"
 opt.wildignore = opt.wildignore + {
-	'*/node_modules/*',
-	'*/.git/*',
-	'*/vendor/*',
-	'*.docx',
-	'*.jpg',
-	'*.png',
-	'*.gif',
-	'*.pdf',
-	'*.pyc',
-	'*.exe',
-	'*.flv',
-	'*.img',
-	'*.xlsx',
-	'*DS_STORE',
-	'*.db'
+    '*/node_modules/*',
+    '*/.git/*',
+    '*/vendor/*',
+    '*.docx',
+    '*.jpg',
+    '*.png',
+    '*.gif',
+    '*.pdf',
+    '*.pyc',
+    '*.exe',
+    '*.flv',
+    '*.img',
+    '*.xlsx',
+    '*DS_STORE',
+    '*.db'
 }

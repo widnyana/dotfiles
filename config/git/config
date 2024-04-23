@@ -47,7 +47,7 @@
 	required = true
 
 [core]
-	excludesfile = /home/widnyana/.gitignore
+	excludesfile = /Users/wid/.gitignore_global
 
 [fetch]
 	parallel = 32
@@ -79,3 +79,9 @@
 
 [gitbutler]
     utmostDiscretion = 1
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path = 
+[mergetool "sourcetree"]
+	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true

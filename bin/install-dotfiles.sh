@@ -25,8 +25,8 @@ DOT_DIR="${HOME}/.dotfiles"
 pushd $DOT_DIR
 
 ### Git
-ln -sfn "${HOME}/.dotfiles/git/gitconfig"   "${HOME}/.gitconfig"
-ln -sfn "${HOME}/.dotfiles/git/gitignore"   "${HOME}/.gitignore"
+ln -sfn "${HOME}/.dotfiles/config/git" "${CONFIG_DIR}/git"
+
 
 ## oh-my-zsh
 OMZ_PATH="${HOME}/.oh-my-zsh"
@@ -61,6 +61,11 @@ if [[ ! -d "${CARGO_HOME}" ]]; then
 fi
 
 ### VIM and NeoVIm
+if [[ ! -d "${HOME}/.vim/autoload" ]]; then
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
+
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
 ln -sfn "${HOME}/.dotfiles/config/nvim-v2"         "${CONFIG_DIR}/nvim"
 
@@ -77,16 +82,18 @@ if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
 
     if [[ $machine == "Linux" ]]; then
       sudo dnf install wget nss-tools -y -q
+      wget -q --show-progress --progress=bar -O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
     fi
     
     if ! [[ -x $(command -v "wget") ]]; then
       if [[ $machine == "Mac" ]]; then
         brew install wget
       fi
+
+      brew install nss
+      wget -q --show-progress --progress=bar -O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
     fi
 
-
-    wget -q --show-progress --progress=bar -O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
     chmod +x "/tmp/mkcert"
     mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
 fi

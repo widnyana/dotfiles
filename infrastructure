@@ -125,11 +125,15 @@ export VAGRANT_DEFAULT_PROVIDER=libvirt
 #  ┗┛┗┗┗┗┻┗┛
 #########################
 if type "glab" > /dev/null; then
+  python3 -m pip install --user --upgrade argcomplete
+  activate-global-python-argcomplete
   source <(glab completion -s zsh); compdef _glab glab
 fi
 
-#: GitLab
-eval "$(register-python-argcomplete gitlab)"
+if type "register-python-argcomplete" > /dev/null; then 
+  eval "$(register-python-argcomplete gitlab)"
+fi
+
 
 #  ┓┏  ┓       •  
 #  ┃┃┏┓┃┏┓┏┓┏┓ ┓┏┓

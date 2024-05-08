@@ -46,6 +46,10 @@ if type "minikube" >> /dev/null; then
     source <(minikube completion zsh)
 fi
 
+if type "trivy" >> /dev/null; then
+  source <(trivy completion zsh)
+fi
+
 #: Podman
 if [[ -x "$(command -v podman)" ]]; then
   alias docker=podman

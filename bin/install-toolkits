@@ -21,6 +21,7 @@ tmux \
 the_silver_searcher \
 ripgrep \
 fd-find \
+latexmk \
 "
 
 sudo dnf install ${PACKAGES} -y
@@ -31,12 +32,13 @@ python3 -m ensurepip
 #: vscode
 sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo sh -c 'echo -e "[code]\nname=Visual Studio Code\nbaseurl=https://packages.microsoft.com/yumrepos/vscode\nenabled=1\ngpgcheck=1\ngpgkey=https://packages.microsoft.com/keys/microsoft.asc" > /etc/yum.repos.d/vscode.repo'
-sudo dnf update; sudo dnf install code -y
+sudo dnf update
+sudo dnf install code -y
 
 #: facebook path picker
 FPP_DEST="${LOCAL_BIN}/path_picker"
-git clone --depth=1 https://github.com/facebook/PathPicker.git    "${FPP_DEST}"
-ln -s "${FPP_DEST}/fpp"                                 "${LOCAL_BIN}/fpp"
+git clone --depth=1 https://github.com/facebook/PathPicker.git "${FPP_DEST}"
+ln -s "${FPP_DEST}/fpp" "${LOCAL_BIN}/fpp"
 
 #: terracognita
 curl -L https://github.com/cycloidio/terracognita/releases/latest/download/terracognita-linux-amd64.tar.gz -o terracognita-linux-amd64.tar.gz
@@ -48,7 +50,7 @@ rm -rf terracognita-linux-amd64.tar.gz
 #: VIm
 mkdir ~/.vim
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
-    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+	https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
 #: NeoVIM
 #: ========================================
@@ -69,15 +71,15 @@ curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stabl
 
 #: krew
 (
-  set -x; cd "$(mktemp -d)" &&
-  OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
-  ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
-  KREW="krew-${OS}_${ARCH}" &&
-  curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
-  tar zxvf "${KREW}.tar.gz" &&
-  ./"${KREW}" install krew
+	set -x
+	cd "$(mktemp -d)" &&
+		OS="$(uname | tr '[:upper:]' '[:lower:]')" &&
+		ARCH="$(uname -m | sed -e 's/x86_64/amd64/' -e 's/\(arm\)\(64\)\?.*/\1\2/' -e 's/aarch64$/arm64/')" &&
+		KREW="krew-${OS}_${ARCH}" &&
+		curl -fsSLO "https://github.com/kubernetes-sigs/krew/releases/latest/download/${KREW}.tar.gz" &&
+		tar zxvf "${KREW}.tar.gz" &&
+		./"${KREW}" install krew
 )
-
 
 #: K9S
 K9S_INSTALL_PATH="${LOCAL_BIN}/k9s"

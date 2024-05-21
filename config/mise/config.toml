@@ -6,6 +6,7 @@ zigmod = "r89"
 zig = "0.11.0"
 uv = "latest"
 exa = "latest"
+bat = "0.24.0"
 
 [settings]
 always_keep_download = false    # deleted after install by default

@@ -25,6 +25,13 @@ if [[ ! -d "${OMZ_PATH}" ]]; then
     source ~/.zshrc
 fi
 
+## ZSH Completions
+ZSH_COMPLETIONS_DIR="${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
+if [[ ! -d $ZSH_COMPLETIONS_DIR ]]; then 
+  git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions
+    git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
+fi
+
 ### fzf - A command-line fuzzy finder
 FZF_PATH="${HOME}/.fzf"
 if [[ ! -d "${FZF_PATH}" ]]; then

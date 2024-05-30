@@ -1,10 +1,14 @@
 [tools]
+usage = "latest"
 bun = "latest"
 node = "latest"
-go = "1.22.0"
+go = "1.22"
 zigmod = "r89"
 zig = "0.11.0"
 uv = "latest"
+
+[plugins]
+flutter = "https://github.com/asdf-community/asdf-flutter"
 
 [settings]
 always_keep_download = false    # deleted after install by default

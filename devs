@@ -1,6 +1,15 @@
 # set default editor
 export EDITOR=nvim
 
+
+## Compiler to use
+export CC=clang
+export CXX=clang++
+
+#export CC=gcc
+#export CXX=g++
+
+
 #   ┓•              
 #  ┏┫┓┏┓┏┓┏┓┓┏ ┏┓┏┓╋
 #  ┗┻┗┛ ┗ ┛┗┗┛•┛┗┗ ┗
@@ -59,17 +68,17 @@ if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
   source /etc/profile.d/vte.sh
 fi
 
-#: FLutter
-export PATH=$PATH:$HOME/Development/bin/flutter/bin
+#: Flutter
+export FLUTTER_ROOT="$(mise where flutter)"
+export PATH=$PATH:$FLUTTER_ROOT/bin
+if [[ $(uname) == "Darwin" ]]; then
+  export PATH=$PATH:"$HOME/.pub-cache/bin"
+fi
 
 #: Telepresence
+# disable usage reporting
+# see: https://github.com/telepresenceio/telepresence.io/blob/45aeeeb6287e874c46bf00bad97f179abc83525e/docs/v1/reference/usage_reporting.md
 export SCOUT_DISABLE=1
-
-export CC=clang
-export CXX=clang++
-
-#export CC=gcc
-#export CXX=g++
 
 # use ajeetdsouza/zoxide if available
 if [[ -x "$(command -v zoxide)" ]]; then
@@ -81,4 +90,11 @@ if [[ -x "$(command -v nvim)" ]]; then
   alias vim=$(which nvim)
   alias vi=$(which nvim)
   alias nv=$(which nvim)
+fi
+
+
+# RipGrep config
+# see: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+if [[ -x "$(command -v rg)" ]]; then
+  export RIPGREP_CONFIG_PATH="${HOME}/.dotfiles/config/rigprep/ripgreprc";
 fi

@@ -1,20 +1,8 @@
 export XDG_CONFIG_HOME="${HOME}/.config"
+export PATH=$PATH:/usr/local/bin:/bin:/usr/bin:/usr/local/bin
 
 export LOCALPATH
 LOCALPATH=$HOME/Development/bin:${HOME}/.dotfiles/bin
-
-
-#                _  __ _                  
-#   _____      _(_)/ _| |_ ___ _ ____   __
-#  / __\ \ /\ / / | |_| __/ _ \ '_ \ \ / /
-#  \__ \\ V  V /| |  _| ||  __/ | | \ V / 
-#  |___/ \_/\_/ |_|_|  \__\___|_| |_|\_/  
-#                                         
-if [[ -x $(command -v swiftenv) ]]; then
-    export SWIFTENV_ROOT="${HOME}/.swiftenv"
-    LOCALPATH="$SWIFTENV_ROOT/bin:$LOCALPATH"
-    eval "$(swiftenv init -)"
-fi
 
 #       _ _                     
 #    __| (_)_ __ ___ _ ____   __

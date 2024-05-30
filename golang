@@ -1,5 +1,5 @@
 GOCACHE=$HOME/Development/.cache/go-build
-export GOPRIVATE="$GOPRIVATE,pkg.damarseta.id/*,github.com/koinworks/*"
+export GOPRIVATE="${GOPRIVATE},pkg.damarseta.id/*"
 
 alias goget='go get -x'
 alias gop='export GOPATH=$GOPATH:$(pwd)'

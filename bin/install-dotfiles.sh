@@ -98,6 +98,11 @@ if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
     mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
 fi
 
+### burntsushi/ripgrep
+if [[ -f "$DOT_DIR/config/ripgrep/ripgreprc" ]]; then 
+  ln -sfn "$DOT_DIR/config/ripgrep/ripgreprc"  $HOME/.ripgreprc
+fi
+
 ### mise - https://mise.jdx.dev
 if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
     echo -e "Installing mise - https://mise.jdx.dev"

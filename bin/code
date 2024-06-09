@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+XDG_SESSION_TYPE=wayland \
+WAYLAND_DISPLAY=wayland-0 \
+/usr/share/code/bin/code $@

@@ -19,6 +19,7 @@ if [[ -x "$(command -v mise)" ]]; then
   export MISE_ALWAYS_KEEP_DOWNLOAD=0
   export MISE_NOT_FOUND_AUTO_INSTALL=true
   export MISE_NODE_COREPACK=1
+  export MISE_POETRY_AUTO_INSTALL=1
 
   #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
   eval "$(mise activate zsh --shims)" # should be first

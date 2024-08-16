@@ -12,8 +12,8 @@ fi
 if type "gcloud" > /dev/null; then
   export USE_GKE_GCLOUD_AUTH_PLUGIN=True
   export CLOUDSDK_PYTHON_SITEPACKAGES=1
-  export CLOUDSDK_HOME=/usr/share/google-cloud-sdk
-  source "${CLOUDSDK_HOME}/completion.zsh.inc"
+  export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
+  source /usr/lib64/google-cloud-sdk/completion.zsh.inc
 fi 
 
 #: kubectl autocomplete

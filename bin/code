@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
-XDG_SESSION_TYPE=wayland \
-WAYLAND_DISPLAY=wayland-0 \
-/usr/share/code/bin/code $@
+XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-~/.config}
+
+# Allow users to override command-line options
+if [[ -f $XDG_CONFIG_HOME/code-flags.conf ]]; then
+  CODE_USER_FLAGS="$(sed 's/#.*//' $XDG_CONFIG_HOME/code-flags.conf | tr '\n' ' ')"
+fi
+
+export XDG_SESSION_TYPE=wayland
+export WAYLAND_DISPLAY=wayland-0
+exec /usr/share/code/bin/code --ozone-platform=wayland "$@" $CODE_USER_FLAGS

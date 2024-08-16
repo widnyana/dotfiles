@@ -22,6 +22,7 @@ if [ ! -f ${_DOT_DIR}/auth_keys ]; then
   exit 1
 fi
 
+source ${_DOT_DIR}/global_env
 source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
 source ${_DOT_DIR}/functions.sh

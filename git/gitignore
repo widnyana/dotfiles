@@ -9,4 +9,5 @@ node_modules
 sample-data
 temp
 junkdata
-
+*.tfplan
+*.out

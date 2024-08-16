@@ -1,14 +1,15 @@
 [tools]
-bun = "latest"
+bun = "1.1.21"
 node = "latest"
-go = "1.22"
-zigmod = "r89"
+go = "1.22.3"
+zigmod = "latest"
 zig = "latest"
 uv = "latest"
 exa = "latest"
 bat = "latest"
 usage = "latest"
 poetry = "latest"
+java = "22.0.2"
 
 [settings]
 always_keep_download = false    # deleted after install by default

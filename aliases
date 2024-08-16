@@ -9,7 +9,7 @@ alias tmux='direnv exec / tmux'
 
 alias nv=$(which nvim) $@
 
-alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""
+#alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""
 
 ### Exa - better ls replacement
 ### https://the.exa.website/introduction

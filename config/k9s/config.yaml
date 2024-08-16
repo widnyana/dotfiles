@@ -1,19 +1,18 @@
 k9s:
-  liveViewAutoRefresh: false
+  liveViewAutoRefresh: true
   screenDumpDir: /home/wid/.local/state/k9s/screen-dumps
   refreshRate: 2
   maxConnRetry: 5
   readOnly: false
   noExitOnCtrlC: false
-  skin: monokai
   ui:
-    enableMouse: false
+    skin: catppuccin-macchiato
+    enableMouse: true
     headless: false
-    logoless: false
-    crumbsless: false
-    reactive: false
+    logoless: true
+    crumbsless: true
+    reactive: true
     noIcons: false
-    skin: axual
   skipLatestRevCheck: false
   disablePodCounting: false
   shellPod:

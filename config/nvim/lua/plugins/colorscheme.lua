@@ -1,18 +1,25 @@
 return {
   {
     "craftzdog/solarized-osaka.nvim",
-    lazy = true,
+    lazy = false,
     priority = 1000,
     opts = function()
       return {
         transparent = true,
         terminal_colors = true,
-        sidebars = { "qf", "help" },
         day_brightness = 0.4,
-        dim_inactive = true,
-        lualine_bold = false,
+        dim_inactive = true, -- dims inactive windows        lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
+        sidebars = { "qf", "vista_kind", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
         styles = {
-          sidebars = "dark",
+          -- Style to be applied to different syntax groups
+          -- Value is any valid attr-list value for `:help nvim_set_hl`
+          comments = { italic = true },
+          keywords = { italic = true },
+          functions = {},
+          variables = {},
+          -- Background styles. Can be "dark", "transparent" or "normal"
+          sidebars = "dark", -- style for sidebars, see below
+          floats = "dark",   -- style for floating windows
         },
       }
     end,
@@ -39,9 +46,9 @@ return {
         statementStyle = { bold = true },
         transparent = false, -- do not set background colors
         dimInactive = false, -- dim inactive window `:h hl-NormalNC`
-        theme = "wave", -- Load "wave" theme when 'background' option is not set
-        background = { -- map the value of 'background' option to a theme
-          dark = "wave", -- try "dragon" !
+        theme = "wave",      -- Load "wave" theme when 'background' option is not set
+        background = {       -- map the value of 'background' option to a theme
+          dark = "wave",     -- try "dragon" !
           light = "lotus",
         },
       }

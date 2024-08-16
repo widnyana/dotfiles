@@ -15,11 +15,15 @@ vim.opt.breakindent = true
 vim.opt.shiftwidth = 2
 vim.opt.tabstop = 2
 
+-- clipboard
+-- integration works automatically. Requires Neovim >= 0.10.0
+vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
+
 --
 vim.opt.inccommand = "split"
 
 -- UI
-vim.opt.title = true
+vim.opt.title = false
 vim.opt.cmdheight = 1 -- when using LazyVim, built-in cmd panel is not needed
 vim.opt.scrolloff = 10
 vim.opt.splitkeep = "cursor"
@@ -32,7 +36,10 @@ vim.opt.termguicolors = true
 vim.opt.wildignore:append({
   "*/node_modules/*",
   "*/.venv/*",
+  "*/.git/*",
+  "*/vendor/*",
 })
+
 vim.opt.backupskip = {
   "/tmp/*",
   "/private/tmp/*",
@@ -44,3 +51,8 @@ vim.opt.formatoptions:append({ "r" })
 if vim.fn.has("nvim-0.8") == 1 then
   vim.opt.cmdheight = 0
 end
+
+-- custom filetypes mapping
+vim.filetype.add({
+  pattern = {},
+})

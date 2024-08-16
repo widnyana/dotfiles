@@ -1,17 +1,17 @@
 {
   "extras": [
-    "lazyvim.plugins.extras.lang.typescript",
+    "lazyvim.plugins.extras.util.dot",
+    "lazyvim.plugins.extras.util.project",
     "lazyvim.plugins.extras.formatting.prettier",
     "lazyvim.plugins.extras.lang.go",
     "lazyvim.plugins.extras.lang.helm",
     "lazyvim.plugins.extras.lang.json",
     "lazyvim.plugins.extras.lang.markdown",
     "lazyvim.plugins.extras.lang.yaml",
-    "lazyvim.plugins.extras.util.dot",
-    "lazyvim.plugins.extras.util.project"
+    "lazyvim.plugins.extras.lang.typescript"
   ],
   "news": {
-    "NEWS.md": "5204"
+    "NEWS.md": "6520"
   },
   "version": 6
 }

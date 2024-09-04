@@ -21,7 +21,7 @@ require("lazy").setup({
       "LazyVim/LazyVim",
       import = "lazyvim.plugins",
       opts = {
-        colorscheme = "solarized-osaka",
+        colorscheme = "catppuccin",
       },
     },
     -- import any extras modules here
@@ -36,6 +36,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.yaml" },
     { import = "lazyvim.plugins.extras.lang.terraform" },
     { import = "lazyvim.plugins.extras.lang.typescript" },
+    { import = "lazyvim.plugins.extras.lang.python" },
     { import = "plugins" },
   },
   defaults = {
@@ -57,12 +58,12 @@ require("lazy").setup({
     },
   },
   checker = {
-    enabled = true, -- automatically check for plugin updates
+    enabled = false, -- automatically check for plugin updates
     notify = false,
   },
   --autoreload notification
   change_detection = {
-    notify = false,
+    notify = true,
   },
   performance = {
     rtp = {

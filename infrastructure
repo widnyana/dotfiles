@@ -14,6 +14,7 @@ if type "gcloud" > /dev/null; then
   export CLOUDSDK_PYTHON_SITEPACKAGES=1
   export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
   source /usr/lib64/google-cloud-sdk/completion.zsh.inc
+  . /usr/lib64/google-cloud-sdk/completion.zsh.inc
 fi 
 
 #: kubectl autocomplete

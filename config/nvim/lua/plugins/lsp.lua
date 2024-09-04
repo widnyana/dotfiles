@@ -1,3 +1,5 @@
+local python_lsp = "pyright"
+
 return {
   -- tools
   {
@@ -29,10 +31,9 @@ return {
       }
     end,
     opts = {
-      inlay_hints = { enabled = false },
+      inlay_hints = { enabled = true },
       ---@type lspconfig.options
       servers = {
-
         tsserver = {
           root_dir = function(...)
             return require("lspconfig.util").root_pattern(".git")(...)
@@ -62,6 +63,15 @@ return {
               },
             },
           },
+        },
+        -- Python
+        ruff = {
+          enabled = true,
+          keys = {},
+        },
+
+        pyright = {
+          enabled = python_lsp == "pyright",
         },
 
         yamlls = {

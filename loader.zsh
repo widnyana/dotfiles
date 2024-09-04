@@ -32,11 +32,11 @@ source ${_DOT_DIR}/android
 source ${_DOT_DIR}/blockchain
 source ${_DOT_DIR}/devs
 source ${_DOT_DIR}/golang
-source ${_DOT_DIR}/infrastructure
 source ${_DOT_DIR}/nodejs
 source ${_DOT_DIR}/python
 source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases
+source ${_DOT_DIR}/infrastructure
 
 #: specific per OS
 if [[ $(uname) == "Linux" ]]; then

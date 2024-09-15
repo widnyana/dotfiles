@@ -1,15 +1,14 @@
 [tools]
-bun = "1.1.21"
+bun = "latest"
 node = "latest"
-go = "1.22.3"
-zigmod = "latest"
+go = "1.22"
 zig = "latest"
 uv = "latest"
 exa = "latest"
 bat = "latest"
 usage = "latest"
 poetry = "latest"
-java = "22.0.2"
+ubi = "latest"
 
 [settings]
 always_keep_download = false    # deleted after install by default
@@ -18,5 +17,7 @@ jobs = 4
 not_found_auto_install = true
 paranoid = false                # see https://mise.jdx.dev/paranoid.html
 env_file = '.env'
-activate_aggressive = true
+activate_aggressive = false
 asdf_compat = true # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`
+http_timeout = 10  # set the timeout for http requests in seconds, see `MISE_HTTP_TIMEOUT`
+experimental = true

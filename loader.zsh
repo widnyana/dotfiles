@@ -38,6 +38,10 @@ source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases
 source ${_DOT_DIR}/infrastructure
 
+if [ ! -f ${_DOT_DIR}/workaround ]; then 
+  source ${_DOT_DIR}/workaround
+fi
+
 #: specific per OS
 if [[ $(uname) == "Linux" ]]; then
 

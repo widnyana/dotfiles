@@ -1,0 +1,2 @@
+## workaround for gcloud ssl failure 
+alias gcloud="OPENSSL_CONF=/dev/null gcloud"

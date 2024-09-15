@@ -1,4 +1,5 @@
-cache-dir = "$HOME/Development/.cache/pypoetry"
+cache-dir = "~/Development/.cache/pypoetry"
+
 [installer]
 max-workers = 24
 modern-installation = true

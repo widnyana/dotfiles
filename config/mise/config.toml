@@ -8,7 +8,7 @@ exa = "latest"
 bat = "latest"
 usage = "latest"
 poetry = "latest"
-ubi = "latest"
+ubi = "0.1.1"
 
 [settings]
 always_keep_download = false    # deleted after install by default

@@ -11,3 +11,4 @@ temp
 junkdata
 *.tfplan
 *.out
+test.py

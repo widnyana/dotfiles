@@ -47,7 +47,7 @@
 	required = true
 
 [core]
-	excludesfile = /home/widnyana/.gitignore
+	excludesfile = /home/wid/.gitignore
 
 [fetch]
 	parallel = 32

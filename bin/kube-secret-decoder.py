@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 import argparse
-import sys
 import base64
 import json
+import sys
 
 import yaml
 
@@ -36,7 +36,7 @@ def decode_data_fields(secret):
     if secret.get("data"):
         decoded_data = {}
         for key, value in secret["data"].items():
-            decoded_data[key] = decode_data_value(value)
+            decoded_data[key] = decode_data_value(value).strip()
         decoded_secret["data"] = decoded_data
     return decoded_secret
 
@@ -50,9 +50,7 @@ def decode_data_value(encoded_value):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Take a kubernetes secret and decode the data fields"
-    )
+    parser = argparse.ArgumentParser(description="Take a kubernetes secret and decode the data fields")
     args = parse_arguments(parser)
     if args.secret:
         secret_string = args.secret.read()
@@ -66,15 +64,9 @@ def main():
 
 
 def parse_arguments(parser: argparse.ArgumentParser):
-    parser.add_argument(
-        "secret", nargs="?", type=argparse.FileType("r"), default=sys.stdin
-    )
-    parser.add_argument(
-        "--outfile", "-o", nargs="?", type=argparse.FileType("w"), default=sys.stdout
-    )
-    parser.add_argument(
-        "--format", "-f", type=str, help="Format of the secret", required=False
-    )
+    parser.add_argument("secret", nargs="?", type=argparse.FileType("r"), default=sys.stdin)
+    parser.add_argument("--outfile", "-o", nargs="?", type=argparse.FileType("w"), default=sys.stdout)
+    parser.add_argument("--format", "-f", type=str, help="Format of the secret", required=False)
     return parser.parse_args()
 
 

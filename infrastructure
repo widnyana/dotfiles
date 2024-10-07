@@ -8,15 +8,6 @@ if [[ -x "$(command -v kubectl)" ]]; then
   export KUBE_TMUX_BINARY="$(which kubectl)"
 fi
 
-#: Google Cloud SDK
-if type "gcloud" > /dev/null; then
-  export USE_GKE_GCLOUD_AUTH_PLUGIN=True
-  export CLOUDSDK_PYTHON_SITEPACKAGES=1
-  export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
-  source /usr/lib64/google-cloud-sdk/completion.zsh.inc
-  . /usr/lib64/google-cloud-sdk/completion.zsh.inc
-fi 
-
 #: kubectl autocomplete
 if type "kubectl" > /dev/null; then
   source <(kubectl completion zsh)
@@ -121,6 +112,11 @@ if type "vault" > /dev/null; then
   complete -o nospace -C $(which vault) vault
 fi
 
+#: argocd autocomplete
+if type "argocd" > /dev/null; then
+  source <(argocd completion zsh)
+fi
+
 #: Vagrant
 export VAGRANT_HOME=$HOME/Development/.vagrant.d
 export VAGRANT_DEFAULT_PROVIDER=libvirt
@@ -175,3 +171,11 @@ fi
 if type "aliyun" > /dev/null; then
   complete -o nospace -F $(which aliyun) aliyun
 fi
+
+#: Google Cloud SDK
+if type "gcloud" > /dev/null; then
+  export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+  export CLOUDSDK_PYTHON_SITEPACKAGES=1
+  export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
+  source /usr/lib64/google-cloud-sdk/completion.$(basename ${SHELL}).inc
+fi 

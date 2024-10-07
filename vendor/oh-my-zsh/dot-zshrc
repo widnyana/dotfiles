@@ -79,7 +79,6 @@ plugins=(
     themes
     mise
     docker
-    gcloud
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src

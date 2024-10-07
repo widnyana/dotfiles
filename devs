@@ -26,6 +26,12 @@ if [[ -x "$(command -v mise)" ]]; then
   eval "$(mise activate zsh)"
 fi
 
+if [[ -x "$(command -v rye)" ]]; then
+  export RYE_HOME="${HOME}/Development/sdks/rye"
+  export UV_LINK_MODE=copy
+fi  
+
+
 #  ┏┓  ┓             ┓  ┏┓┓•  •  
 #  ┣ ┏┓┃┏┓┏┓┏┓  ┏┓┏┓┏┫  ┣ ┃┓┓┏┓┏┓
 #  ┗┛┛ ┗┗┻┛┗┗┫  ┗┻┛┗┗┻  ┗┛┗┗┛┗┗┛ 

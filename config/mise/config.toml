@@ -8,7 +8,10 @@ exa = "latest"
 bat = "latest"
 usage = "latest"
 poetry = "latest"
-ubi = "0.1.1"
+ubi = "0.1"
+rye = "latest"
+maven = "3"
+java = "11"
 
 [settings]
 always_keep_download = false    # deleted after install by default

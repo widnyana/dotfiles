@@ -36,7 +36,10 @@ def decode_data_fields(secret):
     if secret.get("data"):
         decoded_data = {}
         for key, value in secret["data"].items():
-            decoded_data[key] = decode_data_value(value).strip()
+            decoded = decode_data_value(value)
+            if isinstance(decoded, str):
+                decoded = decoded.strip()
+            decoded_data[key] = decoded
         decoded_secret["data"] = decoded_data
     return decoded_secret
 

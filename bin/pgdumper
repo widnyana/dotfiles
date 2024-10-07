@@ -1,0 +1,63 @@
+#!/bin/bash
+
+# Default values
+DB_NAME=""
+OUTPUT_FILE="dump_$(date +%Y%m%d_%H%M%S).sql"
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_USER="postgres"
+
+# Function to display usage
+usage() {
+    echo "Usage: $0 -d <database_name> [-o <output_file>] [-h <host>] [-p <port>] [-U <user>]"
+    echo "  -d : Database name (required)"
+    echo "  -o : Output file name (default: dump_YYYYMMDD_HHMMSS.sql)"
+    echo "  -h : Database host (default: localhost)"
+    echo "  -p : Database port (default: 5432)"
+    echo "  -U : Database user (default: postgres)"
+    exit 1
+}
+
+# Parse command line options
+while getopts ":d:o:h:p:U:" opt; do
+    case $opt in
+        d) DB_NAME="$OPTARG" ;;
+        o) OUTPUT_FILE="$OPTARG" ;;
+        h) DB_HOST="$OPTARG" ;;
+        p) DB_PORT="$OPTARG" ;;
+        U) DB_USER="$OPTARG" ;;
+        \?) echo "Invalid option -$OPTARG" >&2; usage ;;
+    esac
+done
+
+# Check if database name is provided
+if [ -z "$DB_NAME" ]; then
+    echo "Error: Database name is required."
+    usage
+fi
+
+# Perform pg_dump
+pg_dump \
+    -h "$DB_HOST" \
+    -p "$DB_PORT" \
+    -U "$DB_USER" \
+    -d "$DB_NAME" \
+    --no-owner \
+    --no-acl \
+    --no-tablespaces \
+    --create \
+    --if-exists \
+    --clean \
+    --format=p \
+    --no-comments \
+    --file="$OUTPUT_FILE"
+    #  \
+    # > "$OUTPUT_FILE"
+
+# Check if pg_dump was successful
+if [ $? -eq 0 ]; then
+    echo "Dump completed successfully. Output file: $OUTPUT_FILE"
+else
+    echo "Error: pg_dump failed."
+    exit 1
+fi

@@ -1,0 +1,59 @@
+#!/bin/bash
+
+# Default values
+DB_NAME=""
+INPUT_FILE=""
+DB_HOST="localhost"
+DB_PORT="5432"
+DB_USER="postgres"
+
+# Function to display usage
+usage() {
+    echo "Usage: $0 -d <database_name> -i <input_file> [-h <host>] [-p <port>] [-U <user>]"
+    echo "  -d : Database name (required)"
+    echo "  -i : Input file name (required)"
+    echo "  -h : Database host (default: localhost)"
+    echo "  -p : Database port (default: 5432)"
+    echo "  -U : Database user (default: postgres)"
+    exit 1
+}
+
+# Parse command line options
+while getopts ":d:i:h:p:U:" opt; do
+    case $opt in
+        d) DB_NAME="$OPTARG" ;;
+        i) INPUT_FILE="$OPTARG" ;;
+        h) DB_HOST="$OPTARG" ;;
+        p) DB_PORT="$OPTARG" ;;
+        U) DB_USER="$OPTARG" ;;
+        \?) echo "Invalid option -$OPTARG" >&2; usage ;;
+    esac
+done
+
+# Check if required parameters are provided
+if [ -z "$DB_NAME" ] || [ -z "$INPUT_FILE" ]; then
+    echo "Error: Database name and input file are required."
+    usage
+fi
+
+# Check if input file exists
+if [ ! -f "$INPUT_FILE" ]; then
+    echo "Error: Input file '$INPUT_FILE' does not exist."
+    exit 1
+fi
+
+# Perform database restore
+psql \
+    -h "$DB_HOST" \
+    -p "$DB_PORT" \
+    -U "$DB_USER" \
+    -d "$DB_NAME" \
+    -f "$INPUT_FILE"
+
+# Check if psql was successful
+if [ $? -eq 0 ]; then
+    echo "Restore completed successfully."
+else
+    echo "Error: Database restore failed."
+    exit 1
+fi

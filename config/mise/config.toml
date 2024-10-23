@@ -1,17 +1,17 @@
 [tools]
-bun = "latest"
-node = "latest"
-go = "1.22"
-zig = "latest"
-uv = "latest"
-exa = "latest"
+"starship" = "1.21"
+"cargo:eza" = "0.20"
+"cargo:ubi" = "0.1"
 bat = "latest"
-usage = "latest"
-poetry = "latest"
-ubi = "0.1"
-rye = "latest"
-maven = "3"
+bun = "latest"
+go = "latest"
 java = "11"
+maven = "3"
+node = "22"
+rye = "latest"
+usage = "latest"
+uv = "latest"
+zig = "latest"
 
 [settings]
 always_keep_download = false    # deleted after install by default
@@ -22,5 +22,5 @@ paranoid = false                # see https://mise.jdx.dev/paranoid.html
 env_file = '.env'
 activate_aggressive = false
 asdf_compat = true # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`
-http_timeout = 10  # set the timeout for http requests in seconds, see `MISE_HTTP_TIMEOUT`
+http_timeout = '10'  # set the timeout for http requests in seconds, see `MISE_HTTP_TIMEOUT`
 experimental = true

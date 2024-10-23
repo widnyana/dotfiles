@@ -20,3 +20,8 @@ command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 if [[ -x "$(command -v pyenv)" ]]; then
     eval "$(pyenv init -)"
 fi
+
+
+if [[ -x "$(command -v rye)" ]]; then
+  export RYE_NO_AUTO_INSTALL=1
+fi

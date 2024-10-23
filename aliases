@@ -11,9 +11,9 @@ alias nv=$(which nvim) $@
 
 #alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""
 
-### Exa - better ls replacement
-### https://the.exa.website/introduction
-alias l="exa --icons --header"
+### Eza - better ls replacement
+### https://github.com/eza-community/eza
+alias l="eza --icons --header"
 
 
 ### random string generator

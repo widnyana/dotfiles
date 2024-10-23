@@ -7,7 +7,6 @@ M.mason_ensure_installed = {
   "golangci-lint-langserver",
   "lua-language-server",
   "marksman",
-  "ruff-lsp",
   "rust-analyzer",
   "sqls",
   "texlab",
@@ -16,6 +15,7 @@ M.mason_ensure_installed = {
 
   -- linter
   "ansible-lint",
+  "basedpyright",
   "golangci-lint",
   "luacheck",
   "ruff",

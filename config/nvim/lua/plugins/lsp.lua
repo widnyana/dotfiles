@@ -1,4 +1,4 @@
-local python_lsp = "pyright"
+local python_lsp = "ruff"
 
 return {
   -- tools
@@ -66,14 +66,30 @@ return {
         },
         -- Python
         ruff = {
-          enabled = true,
+          enabled = python_lsp == "ruff",
           keys = {},
+          settings = {
+            configurationPreference = "editorFirst",
+            lineLength = 120,
+            organizeImports = true,
+            logLevel = "error",
+            lint = {
+              enable = false,
+              ignore = {
+                "E4",
+                "E7"
+              }
+            }
+          }
         },
 
         pyright = {
           enabled = python_lsp == "pyright",
+          autostart = python_lsp == "pyright",
+          mason = python_lsp == "pyright"
         },
 
+        -- YAML
         yamlls = {
           settings = {
             yaml = {
@@ -81,6 +97,8 @@ return {
             },
           },
         },
+
+        -- LUA
         lua_ls = {
           -- enabled = false,
           single_file_support = true,

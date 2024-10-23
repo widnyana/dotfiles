@@ -89,12 +89,14 @@ if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then
     ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
 fi
 
+### install all required tools via mise
+$(which mise) install -y
+
+# =====================================================================================================================
+
 ### kube-tmux: kubernetes-context integration for tmux
 go install "github.com/go-tmux/kube-tmux@latest"
 
 ln -sfn "${DOT_DIR}/config/k9s" "${CONFIG_DIR}/k9s"
-
-### install all required tools via mise
-$(which mise) install -y
 
 popd

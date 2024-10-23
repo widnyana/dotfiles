@@ -12,3 +12,6 @@ junkdata
 *.tfplan
 *.out
 test.py
+
+# should be manually updated
+.obsidian/workspace.json

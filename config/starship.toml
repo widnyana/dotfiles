@@ -1,151 +1,125 @@
-# ~/.config/starship.toml
+# symlink this to "~/.config/starship.toml"
 
-format = """
-$username\
-$hostname\
-$shlvl\
-$kubernetes\
-$directory\
-$git_branch\
-$git_commit\
-$git_state\
-$git_status\
-$hg_branch\
-$docker_context\
-$package\
-$cmake\
-$dart\
-$dotnet\
-$elixir\
-$elm\
-$erlang\
-$golang\
-$helm\
-$java\
-$julia\
-$kotlin\
-$nim\
-$nodejs\
-$ocaml\
-$perl\
-$php\
-$purescript\
-$python\
-$ruby\
-$rust\
-$swift\
-$terraform\
-$vagrant\
-$zig\
-$nix_shell\
-$conda\
-$memory_usage\
-$aws\
-$gcloud\
-$openstack\
-$env_var\
-$crystal\
-$custom\
-$cmd_duration\
-$line_break\
-$lua\
-$jobs\
-$battery\
-$time\
-$status\
-$character"""
+# Get editor completions based on the config schema
+"$schema" = 'https://starship.rs/config-schema.json'
 
+add_newline = true
 
-[battery]
-full_symbol = "🔋"
-charging_symbol = "🔌"
-discharging_symbol = "⚡"
+# A continuation prompt that displays two filled-in arrows
+continuation_prompt = '▶▶ '
 
-[[battery.display]]
-threshold = 30
-style = "bold red"
+# format = """
+# $username\
+# $localip\
+# $hostname\
+# $directory\
+# $git_branch\
+# $git_state\
+# $git_status\
+# $cmd_duration\
+# $python\
+# $time\
+# $line_break\
+# $character"""
 
-[character]
-error_symbol = "[✖](bold red) "
+format = "$all"
 
-[cmd_duration]
-min_time = 10_000  # Show command duration over 10,000 milliseconds (=10 sec)
-format = " took [$duration]($style)"
-disabled = true
-
-[directory]
-truncation_length = 2
-format = "[$path]($style)[$lock_symbol]($lock_style) "
-
-[git_branch]
-format = " [$symbol$branch]($style) "
-symbol = "🍣 "
-style = "bold yellow"
-
-[git_commit]
-commit_hash_length = 8
-style = "bold white"
-
-[git_state]
-format = '[\($state( $progress_current of $progress_total)\)]($style) '
-
-[git_status]
-disabled = false
-conflicted = "⚔️ "
-ahead = "⇡"
-behind = "⇣"
-diverged = "⇕"
-untracked = "?"
-stashed = ""
-modified = "!"
-staged = "+"
-renamed = "»"
-deleted = "✘"
-style = "bold red"
-format = "$all_status$ahead_behind"
-ignore_submodules = true
-
-[hostname]
-ssh_only = true
-format = "<[$hostname]($style)>"
-trim_at = "-"
-style = "bold dimmed white"
-disabled = true
-
-[julia]
-format = "[$symbol$version]($style) "
-symbol = "ஃ "
-style = "bold green"
-
-[memory_usage]
-format = "$symbol[${ram}( | ${swap})]($style) "
-threshold = 70
-style = "bold dimmed white"
-disabled = true
 
 [package]
 disabled = true
 
-[python]
-format = "[$symbol$version]($style) "
-style = "bold green"
 
-[rust]
-format = "[$symbol$version]($style) "
-style = "bold green"
+[character]
+success_symbol = "[❯](purple)"
+error_symbol = "[❯](red)"
+vimcmd_symbol = "[❮](green)"
 
-[time]
-time_format = "%T"
-format = "🕙 $time($style) "
-style = "bright-white"
-disabled = true
+[cmd_duration]
+format = "[$duration]($style) "
+style = "yellow"
 
-[username]
-style_user = "bold dimmed blue"
-show_always = false
+[directory]
+disabled = false
+style = "blue"
+truncation_length = 8
 
 [gcloud]
 disabled = true
 
-[kubernetes]
+[git_branch]
+format = "[$branch]($style)"
+style = "bright-black"
+
+[git_status]
+format = "[[(*$conflicted$untracked$modified$staged$renamed$deleted)](218) ($ahead_behind$stashed)]($style)"
+style = "cyan"
+conflicted = "​"
+untracked = "​"
+modified = "​"
+staged = "​"
+renamed = "​"
+deleted = "​"
+stashed = "≡"
+
+[git_state]
+format = '\([$state( $progress_current/$progress_total)]($style)\) '
+style = "bright-black"
+
+[hostname]
+ssh_only = false
+format = '[$ssh_symbol](bold blue) on [$hostname](bold red) '
+detect_env_vars = ['!TMUX', 'SSH_CONNECTION']
 disabled = false
+
+[kubernetes]
+disabled = true
+
+[kubernetes.context_aliases]
+
+[kubernetes.user_aliases]
+
+[localip]
+ssh_only = true
+format = '@[$localipv4](bold red) '
+disabled = false
+
+[python]
+disabled = false
+format = "[$virtualenv]($style) "
+style = "bright-black"
+detect_extensions = ["py", "ipynb"]
+detect_files = [
+    "requirements.txt",
+    ".python-version",
+    "pyproject.toml",
+    "Pipfile",
+    "tox.ini",
+    "setup.py",
+    "__init__.py",
+    "pixi.toml",
+]
+
+[rust]
+detect_files = [
+    "Cargo.toml",
+    "Cargo.lock",
+]
+detect_extensions = ["rs"]
+
+
+[terraform]
+disabled = true
+
+[time]
+disabled = true
+format = '🕙[\[ $time \]]($style) '
+time_format = '%T'
+utc_time_offset = 'local'
+time_range = '10:00:00-14:00:00'
+
+[username]
+style_user = 'white bold'
+style_root = 'black bold'
+format = '[$user]($style)'
+disabled = true
+show_always = false

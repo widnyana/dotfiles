@@ -359,7 +359,7 @@ set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
 set -g @plugin 'tmux-plugins/tmux-net-speed'
 set -g @plugin 'tmux-plugins/tmux-fpp'
 set -g @plugin 'tmux-plugins/tmux-copycat'
-set -g @plugin 'lljbash/tmux-update-display'
+#set -g @plugin 'lljbash/tmux-update-display'
 set -g @plugin 'brokenricefilms/tmux-fzf-session-switch'
 
 
@@ -373,6 +373,7 @@ set -g @fpp-path ~/.local/bin/fpp
 
 ## -- Neovim TMUX integration
 set-option -sa terminal-features ',alacritty:RGB'
+
 
 
 # -- custom variables ----------------------------------------------------------

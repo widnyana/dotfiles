@@ -1,0 +1,4 @@
+if type "starship" >> /dev/null; then
+  source <(starship completions zsh)
+fi
+

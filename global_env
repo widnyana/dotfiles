@@ -1,3 +1,4 @@
 ## ohmyzsh - tmux plugin
 export ZSH_TMUX_AUTOSTART_ONCE=false
 export ZSH_TMUX_UNICODE=true
+

@@ -27,6 +27,7 @@ source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
 source ${_DOT_DIR}/functions.sh
 source ${_DOT_DIR}/paths                      ### declare $PATH here
+source ${_DOT_DIR}/core
 
 source ${_DOT_DIR}/android
 source ${_DOT_DIR}/blockchain

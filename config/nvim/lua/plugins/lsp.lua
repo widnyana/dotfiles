@@ -38,6 +38,11 @@ return {
           root_dir = function(...)
             return require("lspconfig.util").root_pattern(".git")(...)
           end,
+          on_attach = function(client)
+						-- this is important, otherwise tsserver will format ts/js
+						-- files which we *really* don't want.
+						client.server_capabilities.documentFormattingProvider = false
+          end,
           single_file_support = false,
           settings = {
             typescript = {
@@ -63,6 +68,11 @@ return {
               },
             },
           },
+        },
+
+        biome = {
+          root_dir = require("lspconfig").util.root_pattern("biome.json"),
+          single_file_support = false,
         },
         -- Python
         ruff = {

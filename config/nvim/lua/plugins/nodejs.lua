@@ -24,8 +24,21 @@ local M = {
       -- "change"|"insert_leave" determine when the client asks the server about diagnostic
       publish_diagnostic_on = "insert_leave",
     },
-  }
+  },
 
+  -- integrate Biomejs with lspconfig
+  {
+    "stevearc/conform.nvim",
+    opts = {
+      formatters_by_ft = {
+        javascript = { "biome" },
+        typescript = { "biome" },
+        javascriptreact = { "biome" },
+        typescriptreact = { "biome" },
+        json = { "biome" },
+      },
+    },
+  },
 };
 
 

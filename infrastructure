@@ -79,32 +79,15 @@ export PATH="${PATH}:$HOME/.istioctl/bin"
 #               ┛ 
 ###########################
 
-#: tfenv - Terraform version manager 
-if ! [[ -f ${HOME}/Infrastructure/.tfenv/bin/tfenv ]]; then 
-  echo "tfenv does not exist, installing..."
-  git clone https://github.com/tfutils/tfenv.git ${HOME}/Infrastructure/.tfenv --depth=1
-fi
-
 #: terraform autocompleter
 if type "terraform" > /dev/null; then
   alias tf="$(which terraform)"
   complete -o nospace -C $(which terraform) terraform
 fi
-PATH="${HOME}/Infrastructure/.tfenv/bin:${PATH}"
 
 #: terraformer
 if type "terraformer" > /dev/null; then
   alias tfer="$(which terraformer)"
-fi 
-
-#: tgenv - Terragrunt version manager 
-if ! [[ -f ${HOME}/Infrastructure/.tgenv/bin/tgenv ]]; then 
-  echo "tgenv does not exist, installing..."
-  git clone https://github.com/cunymatthieu/tgenv ${HOME}/Infrastructure/.tgenv --depth=1
-fi
-PATH="${HOME}/Infrastructure/.tgenv/bin:${PATH}"
-if type "terragrunt" > /dev/null; then
-  alias tg="$(which terragrunt)"
 fi 
 
 #: Hashicorp Vault

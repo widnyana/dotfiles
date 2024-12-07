@@ -48,6 +48,9 @@
 
 [core]
 	excludesfile = /home/wid/.gitignore
+	packedGitLimit = 512m
+	packedGitWindowSize = 512m
+	bigFileThreshold = 50m
 
 [fetch]
 	parallel = 32
@@ -78,3 +81,6 @@
 
 [gitbutler]
     utmostDiscretion = 1
+[pack]
+	windowMemory = 100m
+	packSizeLimit = 100m

@@ -1,7 +1,6 @@
 return {
   -- declarative dashboards
   -- https://github.com/folke/snacks.nvim/blob/main/docs/dashboard.md
-
   {
     "folke/snacks.nvim",
     opts = {

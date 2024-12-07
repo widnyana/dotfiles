@@ -5,10 +5,11 @@ return {
     priority = 1000,
     opts = function()
       return {
-        transparent = true,
+        transparent = false,
         terminal_colors = true,
-        day_brightness = 0.4,
-        dim_inactive = true, -- dims inactive windows        lualine_bold = false, -- When `true`, section headers in the lualine theme will be bold
+        day_brightness = 0.5,
+        dim_inactive = true, -- dims inactive windows
+        lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
         sidebars = { "qf", "vista_kind", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`
         styles = {
           -- Style to be applied to different syntax groups
@@ -19,7 +20,7 @@ return {
           variables = {},
           -- Background styles. Can be "dark", "transparent" or "normal"
           sidebars = "dark", -- style for sidebars, see below
-          floats = "dark",   -- style for floating windows
+          floats = "dark", -- style for floating windows
         },
       }
     end,
@@ -46,9 +47,9 @@ return {
         statementStyle = { bold = true },
         transparent = false, -- do not set background colors
         dimInactive = false, -- dim inactive window `:h hl-NormalNC`
-        theme = "wave",      -- Load "wave" theme when 'background' option is not set
-        background = {       -- map the value of 'background' option to a theme
-          dark = "wave",     -- try "dragon" !
+        theme = "wave", -- Load "wave" theme when 'background' option is not set
+        background = { -- map the value of 'background' option to a theme
+          dark = "wave", -- try "dragon" !
           light = "lotus",
         },
       }

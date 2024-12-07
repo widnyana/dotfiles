@@ -12,6 +12,8 @@ rye = "latest"
 usage = "latest"
 uv = "latest"
 zig = "latest"
+just = "1.37.0"
+terraform = "1.9.3"
 
 [settings]
 always_keep_download = false    # deleted after install by default

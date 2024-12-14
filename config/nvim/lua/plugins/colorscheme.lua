@@ -5,9 +5,10 @@ return {
     priority = 1000,
     opts = function()
       return {
-        transparent = false,
+        style = "night",
+        transparent = true,
         terminal_colors = true,
-        day_brightness = 0.5,
+        day_brightness = 0.3,
         dim_inactive = true, -- dims inactive windows
         lualine_bold = true, -- When `true`, section headers in the lualine theme will be bold
         sidebars = { "qf", "vista_kind", "help" }, -- Set a darker background on sidebar-like windows. For example: `["qf", "vista_kind", "terminal", "packer"]`

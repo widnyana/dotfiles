@@ -4,12 +4,15 @@ local M = {}
 M.mason_ensure_installed = {
   -- lsp
   "ansible-language-server",
+  "dockerfile-language-server",
+  "docker-compose-language-service",
   "golangci-lint-langserver",
   "lua-language-server",
   "marksman",
   "rust-analyzer",
   "sqls",
   "texlab",
+  "templ",
   "typescript-language-server",
   "yaml-language-server",
 
@@ -48,5 +51,9 @@ M.treesitter_ensure_installed = {
   "typescript",
   "tsx",
 }
+
+function M.toggleInlayHints()
+  vim.lsp.inlay_hint.enable(0, not vim.lsp.inlay_hint.is_enabled())
+end
 
 return M

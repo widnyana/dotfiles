@@ -21,16 +21,24 @@ vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system 
 
 --
 vim.opt.inccommand = "split"
+vim.opt.shell = "zsh"
+vim.opt.ignorecase = true
 
 -- UI
 vim.opt.title = false
 vim.opt.cmdheight = 1 -- when using LazyVim, built-in cmd panel is not needed
 vim.opt.scrolloff = 10
+vim.opt.showcmd = true
 vim.opt.splitkeep = "cursor"
+vim.opt.mouse = ""
+
 vim.opt.number = true
 vim.opt.wrap = false -- No Wrap line
 vim.opt.backspace = { "start", "eol", "indent" }
 vim.opt.termguicolors = true
+
+vim.opt.splitbelow = true -- Put new windows below current
+vim.opt.splitright = true -- Put new windows right of current
 
 -- skip indexing unecessary folders
 vim.opt.wildignore:append({

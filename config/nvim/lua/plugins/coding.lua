@@ -1,14 +1,5 @@
 return {
-  {
-    "telescope.nvim",
-    dependencies = {
-      "nvim-telescope/telescope-fzf-native.nvim",
-      build = "make",
-      config = function()
-        require("telescope").load_extension("fzf")
-      end,
-    },
-  },
+
   -- Supertab -- https://www.lazyvim.org/configuration/recipes#supertab
   {
     "L3MON4D3/LuaSnip",
@@ -56,4 +47,20 @@ return {
     end,
   },
   -- end supertab
+
+  -- Go forward/backward with square brackets
+  {
+    "echasnovski/mini.bracketed",
+    event = "BufReadPost",
+    config = function()
+      local bracketed = require("mini.bracketed")
+      bracketed.setup({
+        file = { suffix = "" },
+        window = { suffix = "" },
+        quickfix = { suffix = "" },
+        yank = { suffix = "" },
+        treesitter = { suffix = "n" },
+      })
+    end,
+  },
 }

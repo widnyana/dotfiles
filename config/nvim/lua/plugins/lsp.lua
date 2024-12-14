@@ -24,7 +24,6 @@ return {
         "gd",
         function()
           -- DO NOT REUSE WINDOW
-          require("telescope.builtin").lsp_definitions({ reuse_win = false })
         end,
         desc = "Goto Definition",
         has = "definition",
@@ -39,9 +38,9 @@ return {
             return require("lspconfig.util").root_pattern(".git")(...)
           end,
           on_attach = function(client)
-						-- this is important, otherwise tsserver will format ts/js
-						-- files which we *really* don't want.
-						client.server_capabilities.documentFormattingProvider = false
+            -- this is important, otherwise tsserver will format ts/js
+            -- files which we *really* don't want.
+            client.server_capabilities.documentFormattingProvider = false
           end,
           single_file_support = false,
           settings = {
@@ -87,16 +86,16 @@ return {
               enable = false,
               ignore = {
                 "E4",
-                "E7"
-              }
-            }
-          }
+                "E7",
+              },
+            },
+          },
         },
 
         pyright = {
           enabled = python_lsp == "pyright",
           autostart = python_lsp == "pyright",
-          mason = python_lsp == "pyright"
+          mason = python_lsp == "pyright",
         },
 
         -- YAML
@@ -188,5 +187,14 @@ return {
       }
       vim.g.vimtex_quickfix_method = vim.fn.executable("pplatex") == 1 and "pplatex" or "latexlog"
     end,
+  },
+
+  {
+    "simrat39/symbols-outline.nvim",
+    keys = { { "<leader>cs", "<cmd>SymbolsOutline<cr>", desc = "Symbols Outline" } },
+    cmd = "SymbolsOutline",
+    opts = {
+      position = "right",
+    },
   },
 }

@@ -2,6 +2,6 @@ compile-bytecode = true
 cache-dir = "/home/wid/Development/sdks/uv/cache"
 
 [[index]]
-url = "https://test.pypi.org/simple"
+url = "https://pypi.org/simple"
 default = true
 

@@ -32,7 +32,7 @@ fi
 
 #: Minikube
 if type "minikube" >> /dev/null; then
-    export MINIKUBE_HOME=$HOME/Infrastructure/labs/minikube
+    export MINIKUBE_HOME=$HOME/Development/Infrastructure/labs/minikube/_MINIKUBE_HOME
     export MINIKUBE_IN_STYLE=false
     mkdir -p "${MINIKUBE_HOME}"
     source <(minikube completion zsh)
@@ -101,8 +101,8 @@ if type "argocd" > /dev/null; then
 fi
 
 #: Vagrant
-export VAGRANT_HOME=$HOME/Development/.vagrant.d
-export VAGRANT_DEFAULT_PROVIDER=libvirt
+export VAGRANT_HOME="${HOME}/Development/Infrastructure/vagrant.d"
+export VAGRANT_DEFAULT_PROVIDER=virtualbox
 
 #  ┏┓• ┓  ┓ 
 #  ┃┓┓╋┃┏┓┣┓
@@ -158,6 +158,7 @@ fi
 #: Google Cloud SDK
 if type "gcloud" > /dev/null; then
   export USE_GKE_GCLOUD_AUTH_PLUGIN=True
+  export CLOUDSDK_PYTHON=$(which python3)
   export CLOUDSDK_PYTHON_SITEPACKAGES=1
   export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
   source /usr/lib64/google-cloud-sdk/completion.$(basename ${SHELL}).inc

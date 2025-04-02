@@ -21,7 +21,6 @@ M.mason_ensure_installed = {
   "basedpyright",
   "golangci-lint",
   "luacheck",
-  "ruff",
   "selene",
   "shellcheck",
   "vale",

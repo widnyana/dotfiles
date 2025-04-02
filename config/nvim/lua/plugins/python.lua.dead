@@ -25,7 +25,7 @@ return {
   end,
   {
     "nvim-treesitter/nvim-treesitter",
-    opts = { ensure_installed = { "ninja", "rst" } },
+    opts = { ensure_installed = { "rst" } },
   },
   {
     "neovim/nvim-lspconfig",
@@ -131,4 +131,3 @@ return {
     },
   },
 }
-

@@ -8,9 +8,9 @@ layout {
     default_tab_template {
         children
         pane size=1 borderless=true {
-            plugin location="file:plugins/zjstatus.wasm" {
+            plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
                 format_left  "#[fg=black,bg=blue,bold]{session}  #[fg=blue,bg=#181825]{tabs}"
-                format_right "{datetime} #[fg=#000000,bg=#4C4C59]{command_kube_ctx}{command_kube_ns}"
+                format_right "{command_kube_ctx}{command_kube_ns} {datetime}"
                 format_space "#[bg=#181825]"
 
                 hide_frame_for_single_pane "true"
@@ -26,7 +26,7 @@ layout {
 
 
                 datetime          "#[fg=#6C7086,bg=#b1bbfa,bold] {format} "
-                datetime_format   "%A, %d %b %Y %H:%M"
+                datetime_format   "%d/%m/%Y %H:%M"
                 datetime_timezone "Asia/Jakarta"
 
                 command_git_branch_command     "git rev-parse --abbrev-ref HEAD"

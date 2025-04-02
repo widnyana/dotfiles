@@ -1,18 +1,11 @@
+// tmux to zellij
+// pane == tab
+// Window == pane
+
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
 keybinds {
     normal {
         // uncomment this and adjust key if using copy_on_select=false
-        bind "Alt c" { Copy; }
-
-        bind "Alt 1" { GoToTab 1; }
-        bind "Alt 2" { GoToTab 2; }
-        bind "Alt 3" { GoToTab 3; }
-        bind "Alt 4" { GoToTab 4; }
-        bind "Alt 5" { GoToTab 5; }
-        bind "Alt 6" { GoToTab 6; }
-        bind "Alt 7" { GoToTab 7; }
-        bind "Alt 8" { GoToTab 8; }
-        bind "Alt 9" { GoToTab 9; }
     }
     locked {
         bind "Ctrl g" { SwitchToMode "Normal"; }
@@ -39,13 +32,13 @@ keybinds {
         bind "p" { SwitchFocus; }
         bind "n" { NewPane; SwitchToMode "Normal"; }
         bind "d" { NewPane "Down"; SwitchToMode "Normal"; }
-        bind "r" { NewPane "Right"; SwitchToMode "Normal"; }
+        bind "c" { NewPane "Right"; SwitchToMode "Normal"; }
         bind "x" { CloseFocus; SwitchToMode "Normal"; }
         bind "f" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
         bind "z" { TogglePaneFrames; SwitchToMode "Normal"; }
         bind "w" { ToggleFloatingPanes; SwitchToMode "Normal"; }
         bind "e" { TogglePaneEmbedOrFloating; SwitchToMode "Normal"; }
-        bind "c" { SwitchToMode "RenamePane"; PaneNameInput 0;}
+        bind "r" { SwitchToMode "RenamePane"; PaneNameInput 0;}
     }
     move {
         bind "Ctrl h" { SwitchToMode "Normal"; }
@@ -133,7 +126,7 @@ keybinds {
     }
     tmux {
         bind "[" { SwitchToMode "Scroll"; }
-        bind "Ctrl b" { Write 2; SwitchToMode "Normal"; }
+        bind "Ctrl a" { Write 2; SwitchToMode "Normal"; }
         bind "\"" { NewPane "Down"; SwitchToMode "Normal"; }
         bind "%" { NewPane "Right"; SwitchToMode "Normal"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
@@ -168,6 +161,15 @@ keybinds {
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
+        bind "Ctrl y" {
+            LaunchOrFocusPlugin "file:plugins/zellij_forgot.wasm" {
+                "LOAD_ZELLIJ_BINDINGS" "true"
+                "buy eggs" "5x"
+                "learn rust" "5h"
+                "clean up code" "tomorrow"
+                floating true
+            }
+        }
     }
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
@@ -191,7 +193,7 @@ keybinds {
         bind "Ctrl h" { SwitchToMode "Move"; }
     }
     shared_except "tmux" "locked" {
-        bind "Ctrl b" { SwitchToMode "Tmux"; }
+        bind "Ctrl a" { SwitchToMode "Tmux"; }
     }
 }
 
@@ -258,7 +260,7 @@ session_serialization true
 // Options:
 //   - true
 //   - false (default)
-// serialize_pane_viewport true
+serialize_pane_viewport true
 
 // Scrollback lines to serialize along with the pane viewport when serializing sessions, 0
 // defaults to the scrollback size. If this number is higher than the scrollback size, it will
@@ -271,58 +273,6 @@ scrollback_lines_to_serialize 10000
 // Once these themes are defined, one of them should to be selected in the "theme" section of this file
 //
 themes {
-    dracula {
-        fg 248 248 242
-        bg 40 42 54
-        red 255 85 85
-        green 80 250 123
-        yellow 241 250 140
-        blue 98 114 164
-        magenta 255 121 198
-        orange 255 184 108
-        cyan 139 233 253
-        black 0 0 0
-        white 255 255 255
-    }
-    dayfox {
-        bg "#f6f2ee"
-        fg "#3d2b5a"
-        red "#a5222f"
-        green "#396847"
-        blue "#2848a9"
-        yellow "#ac5402"
-        magenta "#6e33ce"
-        orange "#955f61"
-        cyan "#287980"
-        black "#d3c7bb"
-        white "#643f61"
-    }
-    nightfox {
-        bg "#192330"
-        fg "#cdcecf"
-        red "#c94f6d"
-        green "#81b29a"
-        blue "#719cd6"
-        yellow "#dbc074"
-        magenta "#9d79d6"
-        orange "#f4a261"
-        cyan "#63cdcf"
-        black "#29394f"
-        white "#aeafb0"
-    }
-    terafox {
-        bg "#152528"
-        fg "#e6eaea"
-        red "#e85c51"
-        green "#7aa4a1"
-        blue "#5a93aa"
-        yellow "#fda47f"
-        magenta "#ad5c7c"
-        orange "#ff8349"
-        cyan "#a1cdd8"
-        black "#254147"
-        white "#cbd9d8"
-    }
 }
 
 ui {
@@ -335,17 +285,17 @@ ui {
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
-theme "nightfox"
+theme "cyber-noir"
 
 // The name of the default layout to load on startup
 // Default: "default"
 //
-// default_layout "compact"
+default_layout "slanted"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
 //
-// default_mode "locked"
+default_mode "normal"
 
 // Toggle enabling the mouse mode.
 // On certain configurations, or terminals this could
@@ -386,7 +336,7 @@ copy_clipboard "system"
 // Enable or disable automatic copy (and clear) of selection when releasing mouse
 // Default: true
 //
-copy_on_select false
+copy_on_select true
 
 // Path to the default editor to use to edit pane scrollbuffer
 // Default: $EDITOR or $VISUAL

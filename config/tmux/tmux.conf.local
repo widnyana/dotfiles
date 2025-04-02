@@ -351,7 +351,6 @@ tmux_conf_uninstall_plugins_on_reload=true
 # List of plugins
 set -g @plugin 'sainnhe/tmux-fzf'
 set -g @plugin 'aserowy/tmux.nvim'
-set -g @plugin 'joshmedeski/t-smart-tmux-session-manager'
 set -g @plugin 'tmux-plugins/tmux-sidebar'
 set -g @plugin 'tmux-plugins/tmux-resurrect'
 set -g @plugin 'tmux-plugins/tmux-continuum'
@@ -359,8 +358,7 @@ set -g @plugin 'tmux-plugins/tmux-prefix-highlight'
 set -g @plugin 'tmux-plugins/tmux-net-speed'
 set -g @plugin 'tmux-plugins/tmux-fpp'
 set -g @plugin 'tmux-plugins/tmux-copycat'
-#set -g @plugin 'lljbash/tmux-update-display'
-set -g @plugin 'brokenricefilms/tmux-fzf-session-switch'
+set -g @plugin 'cutbypham/tmux-fzf-session-switch'
 
 
 # -- custom variables ----------------------------------------------------------
@@ -368,13 +366,16 @@ set -g @plugin 'brokenricefilms/tmux-fzf-session-switch'
 # tmux continuum
 set -g @continuum-boot 'on'
 set -g @continuum-restore 'on'
-set -g @continuum-save-interval '60'
+set -g @continuum-save-interval '15'
 set -g @fpp-path ~/.local/bin/fpp
 
 ## -- Neovim TMUX integration
 set-option -sa terminal-features ',alacritty:RGB'
 
-
+## NVIm - 3rd/image.nvim
+# for showing image inside terminal
+set -gq allow-passthrough on
+set -g visual-activity    off
 
 # -- custom variables ----------------------------------------------------------
 

@@ -1,0 +1,8 @@
+background-opacity = 0.9
+background-blur = true
+theme = ayu
+window-subtitle = false
+title = "~"
+shell-integration = detect
+window-new-tab-position = end
+font-size = 10

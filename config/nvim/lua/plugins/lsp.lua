@@ -73,6 +73,15 @@ return {
           root_dir = require("lspconfig").util.root_pattern("biome.json"),
           single_file_support = false,
         },
+
+        -- JSON
+        jsonls = {
+          schemas = require("schemastore").json.schemas({
+            select = {},
+          }),
+          validate = { enable = true },
+        },
+
         -- Python
         ruff = {
           enabled = python_lsp == "ruff",
@@ -101,8 +110,22 @@ return {
         -- YAML
         yamlls = {
           settings = {
+            redhat = {
+              telemetry = { enabled = false },
+            },
+            schemas = require("schemastore").yaml.schemas({
+              ignore = {},
+            }),
             yaml = {
               keyOrdering = false,
+              completion = true,
+              hover = true,
+              validate = true,
+              schemaStore = {
+                enable = false,
+                url = "",
+              },
+              schemas = require("schemastore").yaml.schemas(),
             },
           },
         },
@@ -175,6 +198,9 @@ return {
         },
       },
       setup = {},
+      dependencies = {
+        "b0o/schemastore.nvim",
+      },
     },
   },
   {

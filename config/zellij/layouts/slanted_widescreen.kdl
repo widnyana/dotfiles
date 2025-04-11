@@ -2,11 +2,14 @@ layout {
     tab {
         pane split_direction="vertical" {
             pane
+            pane split_direction="horizontal" {
+                pane
+                pane
+            }
         }
     }
 
     default_tab_template {
-        
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
                 format_left  "#[fg=black,bg=blue,bold]{session}  #[fg=blue,bg=#181825]{tabs}"
@@ -24,7 +27,6 @@ layout {
                 tab_active_fullscreen   "#[fg=#9399B2,bg=#181825,bold,italic] {index} {name} [] "
                 tab_active_sync         "#[fg=#9399B2,bg=#181825,bold,italic] {index} {name} <> "
 
-
                 datetime          "#[fg=#6C7086,bg=#b1bbfa,bold] {format} "
                 datetime_format   "%d/%m/%Y %H:%M"
                 datetime_timezone "Asia/Jakarta"
@@ -36,7 +38,7 @@ layout {
 
                 command_kube_ctx_command     "kubectl config current-context 2>/dev/null"
                 command_kube_ctx_format      "#[fg=yellow,bold]{stdout}:"
-                command_kube_ctx_interval    "10"
+                command_kube_ctx_interval    "5"
                 command_kube_ctx_rendermode  "static"
 
                 // command_kube_ns_command      "kubectl config view --minify --output 'jsonpath={..namespace}' | grep -q . && kubectl config view --minify --output 'jsonpath={..namespace}' || echo "default'"
@@ -46,7 +48,6 @@ layout {
                 command_kube_ns_rendermode  "static"
             }
         }
-
         children
     }
 }

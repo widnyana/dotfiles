@@ -10,6 +10,7 @@ keybinds {
     locked {
         bind "Ctrl g" { SwitchToMode "Normal"; }
     }
+
     resize {
         bind "Ctrl n" { SwitchToMode "Normal"; }
         bind "h" "Left" { Resize "Increase Left"; }
@@ -209,6 +210,18 @@ plugins {
     filepicker location="zellij:strider" {
         cwd "/"
     }
+
+    configuration location="zellij:configuration"
+    plugin-manager location="zellij:plugin-manager"
+}
+
+load_plugins {
+    "https://github.com/dj95/zjstatus/releases/download/v0.20.2/zjframes.wasm" {
+        hide_frame_for_single_pane       "false"
+        hide_frame_except_for_search     "false"
+        hide_frame_except_for_scroll     "false"
+        hide_frame_except_for_fullscreen "false"
+    }
 }
 
 // Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP
@@ -290,7 +303,7 @@ theme "cyber-noir"
 // The name of the default layout to load on startup
 // Default: "default"
 //
-default_layout "slanted"
+default_layout "slanted_widescreen"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal

@@ -21,7 +21,7 @@ require("lazy").setup({
       "LazyVim/LazyVim",
       import = "lazyvim.plugins",
       opts = {
-        colorscheme = "solarized-osaka",
+        colorscheme = "habamax",
       },
     },
     -- import any extras modules here
@@ -54,7 +54,6 @@ require("lazy").setup({
       "craftzdog/solarized-osaka.nvim",
       "tokyonight",
       "habamax",
-      "solarized-osaka",
       "kanagawa",
     },
   },

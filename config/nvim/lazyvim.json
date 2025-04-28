@@ -1,7 +1,6 @@
 {
   "extras": [
     "lazyvim.plugins.extras.editor.refactoring",
-    "lazyvim.plugins.extras.formatting.prettier",
     "lazyvim.plugins.extras.lang.git",
     "lazyvim.plugins.extras.lang.go",
     "lazyvim.plugins.extras.lang.helm",

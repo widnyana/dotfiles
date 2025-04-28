@@ -1,5 +1,22 @@
 return {
   {
+    "zaldih/themery.nvim",
+    lazy = false,
+    config = function()
+      require("themery").setup({
+        livePreview = true, -- Apply theme while picking. Default to true.
+        themes = {
+          "kanagawa-lotus",
+          "kanagawa-dragon",
+          "rose-pine-dawn",
+          "rose-pine",
+          "rose-pine-moon",
+          "rose-pine-main",
+        },
+      })
+    end,
+  },
+  {
     "craftzdog/solarized-osaka.nvim",
     lazy = false,
     priority = 1000,
@@ -52,6 +69,22 @@ return {
         background = { -- map the value of 'background' option to a theme
           dark = "wave", -- try "dragon" !
           light = "lotus",
+        },
+      }
+    end,
+  },
+  {
+    "rose-pine/neovim",
+    name = "rose-pine",
+    priority = 1000,
+
+    opts = function()
+      return {
+        variant = "moon",
+        enable = {
+          terminal = true,
+          legacy_highlights = true, -- Improve compatibility for previous versions of Neovim
+          migrations = true, -- Handle deprecated options automatically
         },
       }
     end,

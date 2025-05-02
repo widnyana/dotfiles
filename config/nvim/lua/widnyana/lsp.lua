@@ -40,6 +40,10 @@ M.mason_ensure_installed = {
   "stylua",
   "usort",
   "yamlfmt",
+
+  --web3
+  "nomicfoundation-solidity-language-server",
+  "solhint",
 }
 
 M.treesitter_ensure_installed = {
@@ -49,6 +53,9 @@ M.treesitter_ensure_installed = {
   -- Typescript
   "typescript",
   "tsx",
+
+  -- Web3
+  "solidity",
 }
 
 function M.toggleInlayHints()

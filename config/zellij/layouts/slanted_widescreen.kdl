@@ -45,7 +45,7 @@ layout {
                 command_kube_ns_command    "kubectl config view --minify --output 'jsonpath={..namespace}'"
                 command_kube_ns_format      "#[fg:green]{stdout}"
                 command_kube_ns_interval    "10"
-                command_kube_ns_rendermode  "static"
+                command_kube_ns_rendermode  "dynamic"
             }
         }
         children

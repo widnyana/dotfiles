@@ -1,4 +1,5 @@
 local python_lsp = "ruff"
+local mason_lspconfig = require("mason-lspconfig")
 
 return {
   -- tools
@@ -18,6 +19,7 @@ return {
   -- lsp servers
   {
     "neovim/nvim-lspconfig",
+    lazy = false,
     init = function()
       local keys = require("lazyvim.plugins.lsp.keymaps").get()
       keys[#keys + 1] = {
@@ -31,43 +33,7 @@ return {
     end,
     opts = {
       inlay_hints = { enabled = true },
-      ---@type lspconfig.options
       servers = {
-        tsserver = {
-          root_dir = function(...)
-            return require("lspconfig.util").root_pattern(".git")(...)
-          end,
-          on_attach = function(client)
-            -- this is important, otherwise tsserver will format ts/js
-            -- files which we *really* don't want.
-            client.server_capabilities.documentFormattingProvider = false
-          end,
-          single_file_support = false,
-          settings = {
-            typescript = {
-              inlayHints = {
-                includeInlayParameterNameHints = "literal",
-                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHints = false,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
-              },
-            },
-            javascript = {
-              inlayHints = {
-                includeInlayParameterNameHints = "all",
-                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
-                includeInlayFunctionParameterTypeHints = true,
-                includeInlayVariableTypeHints = true,
-                includeInlayPropertyDeclarationTypeHints = true,
-                includeInlayFunctionLikeReturnTypeHints = true,
-                includeInlayEnumMemberValueHints = true,
-              },
-            },
-          },
-        },
 
         biome = {
           root_dir = require("lspconfig").util.root_pattern("biome.json"),
@@ -82,57 +48,10 @@ return {
           validate = { enable = true },
         },
 
-        -- Python
-        ruff = {
-          enabled = python_lsp == "ruff",
-          keys = {},
-          settings = {
-            configurationPreference = "editorFirst",
-            lineLength = 120,
-            organizeImports = true,
-            logLevel = "error",
-            lint = {
-              enable = false,
-              ignore = {
-                "E4",
-                "E7",
-              },
-            },
-          },
-        },
-
-        pyright = {
-          enabled = python_lsp == "pyright",
-          autostart = python_lsp == "pyright",
-          mason = python_lsp == "pyright",
-        },
-
-        -- YAML
-        yamlls = {
-          settings = {
-            redhat = {
-              telemetry = { enabled = false },
-            },
-            schemas = require("schemastore").yaml.schemas({
-              ignore = {},
-            }),
-            yaml = {
-              keyOrdering = false,
-              completion = true,
-              hover = true,
-              validate = true,
-              schemaStore = {
-                enable = false,
-                url = "",
-              },
-              schemas = require("schemastore").yaml.schemas(),
-            },
-          },
-        },
 
         -- LUA
         lua_ls = {
-          -- enabled = false,
+          enabled = true,
           single_file_support = true,
           settings = {
             Lua = {
@@ -184,6 +103,7 @@ return {
                   ["unused"] = "Opened",
                 },
                 unusedLocalExclude = { "_*" },
+                globals = { "vim" },
               },
               format = {
                 enable = false,
@@ -196,6 +116,105 @@ return {
             },
           },
         },
+
+        -- python
+        pyright = {
+          enabled = python_lsp == "pyright",
+          autostart = python_lsp == "pyright",
+          mason = python_lsp == "pyright",
+        },
+
+        ruff = {
+          enabled = python_lsp == "ruff",
+          keys = {},
+          settings = {
+            configurationPreference = "editorFirst",
+            lineLength = 120,
+            organizeImports = true,
+            logLevel = "error",
+            lint = {
+              enable = false,
+              ignore = {
+                "E4",
+                "E7",
+              },
+            },
+          },
+        },
+
+        -- Rust
+        rust_analyzer = {
+          on_attach = mason_lspconfig.on_attach,
+        },
+  
+
+        -- solidity
+        solidity = {
+          on_attach = mason_lspconfig.on_attach,
+          default_config = require("widnyana.plugins.lsp.solidity").opts,
+        },
+
+        -- typescript
+        tsserver = {
+          root_dir = function(...)
+            return require("lspconfig.util").root_pattern(".git")(...)
+          end,
+          on_attach = function(client)
+            -- this is important, otherwise tsserver will format ts/js
+            -- files which we *really* don't want.
+            client.server_capabilities.documentFormattingProvider = false
+          end,
+          single_file_support = false,
+          settings = {
+            typescript = {
+              inlayHints = {
+                includeInlayParameterNameHints = "literal",
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = false,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+            javascript = {
+              inlayHints = {
+                includeInlayParameterNameHints = "all",
+                includeInlayParameterNameHintsWhenArgumentMatchesName = false,
+                includeInlayFunctionParameterTypeHints = true,
+                includeInlayVariableTypeHints = true,
+                includeInlayPropertyDeclarationTypeHints = true,
+                includeInlayFunctionLikeReturnTypeHints = true,
+                includeInlayEnumMemberValueHints = true,
+              },
+            },
+          },
+        },
+
+        -- YAML
+        yamlls = {
+          settings = {
+            redhat = {
+              telemetry = { enabled = false },
+            },
+            schemas = require("schemastore").yaml.schemas({
+              ignore = {},
+            }),
+            yaml = {
+              keyOrdering = false,
+              completion = true,
+              hover = true,
+              validate = true,
+              schemaStore = {
+                enable = false,
+                url = "",
+              },
+              schemas = require("schemastore").yaml.schemas(),
+            },
+          },
+        },
+
+
       },
       setup = {},
       dependencies = {

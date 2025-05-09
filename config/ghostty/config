@@ -1,8 +1,19 @@
-background-opacity = 0.9
+adjust-cell-height = 10%
+bold-is-bright = true
 background-blur = true
-theme = ayu
-window-subtitle = false
-title = "~"
-shell-integration = detect
-window-new-tab-position = end
+background-opacity = 0.9
 font-size = 10
+freetype-load-flags = false
+shell-integration = detect
+theme = Rapture
+title = "~"
+
+
+window-decoration = auto
+window-new-tab-position = end
+window-padding-balance = true
+window-subtitle = false
+window-theme = ghostty
+window-height = 1024
+window-width = 1600
+window-save-state = default

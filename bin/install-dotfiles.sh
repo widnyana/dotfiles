@@ -5,7 +5,7 @@ set -x
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 DOT_DIR="${HOME}/.dotfiles"
 
-pushd $DOT_DIR
+pushd "${DOT_DIR}"
 
 ### Git
 ln -sfn "${HOME}/.dotfiles/git/gitconfig"   "${HOME}/.gitconfig"
@@ -22,13 +22,14 @@ if [[ ! -d "${OMZ_PATH}" ]]; then
 
     #: attach custom loader
     echo "source ${DOT_DIR}/loader.zsh" > "${OMZ_PATH}/custom/loader.zsh"
+    # shellcheck source=/dev/null
     source ~/.zshrc
 fi
 
 ## ZSH Completions
 ZSH_COMPLETIONS_DIR="${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
 if [[ ! -d $ZSH_COMPLETIONS_DIR ]]; then 
-  git clone https://github.com/zsh-users/zsh-completions ${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions
+  git clone https://github.com/zsh-users/zsh-completions "${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
     git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
 fi
 
@@ -55,11 +56,22 @@ fi
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
 ln -sfn "${HOME}/.dotfiles/config/nvim-v2"         "${CONFIG_DIR}/nvim"
 
-### Alacritty
+#  ▄▖▜       ▘▗ ▗   
+#  ▌▌▐ ▀▌▛▘▛▘▌▜▘▜▘▌▌
+#  ▛▌▐▖█▌▙▖▌ ▌▐▖▐▖▙▌
+#
 if [[ ! -d "${CONFIG_DIR}/alacritty" ]]; then 
     mkdir -p        "${CONFIG_DIR}/alacritty"
     mkdir -p        "${CONFIG_DIR}/alacritty/themes"
     ln -sfn         "${DOT_DIR}/config/alacritty/alacritty.toml"  "${CONFIG_DIR}/alacritty/alacritty.toml"
+fi
+
+#    ▌     ▗ ▗   
+#  ▛▌▛▌▛▌▛▘▜▘▜▘▌▌
+#  ▙▌▌▌▙▌▄▌▐▖▐▖▙▌
+#  ▄▌          ▄▌
+if [[ ! -d "${CONFIG_DIR}/ghostty" ]]; then 
+    ln -sfn         "${DOT_DIR}/config/ghostty"  "${CONFIG_DIR}/ghostty"
 fi
 
 ### mkcert
@@ -78,8 +90,19 @@ if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
     ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise/config.toml"
 
     curl https://mise.jdx.dev/install.sh | sh
-    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > | "$ZSH_CACHE_DIR/completions/_dind" &| "${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
+    "${HOME}/.local/bin/mise" completion zsh 2> /dev/null | tee \
+        "$ZSH_CACHE_DIR/completions/_mise" \
+        "$DOT_DIR/vendor/oh-my-zsh/completions/_mise" > /dev/null
 fi
+
+#    ▗   ▘  
+#  ▀▌▜▘▌▌▌▛▌
+#  █▌▐▖▙▌▌▌▌
+#
+if [[ ! -d "${CONFIG_DIR}/atuin" ]]; then 
+    ln -sfn "${DOT_DIR}/config/atuin"  "${CONFIG_DIR}/atuin"
+fi
+
 
 ### Tmux
 if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then 

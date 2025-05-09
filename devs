@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # set default editor
 export EDITOR=nvim
 
@@ -9,35 +10,14 @@ if [[ -x "$(command -v direnv)" ]]; then
   eval "$(direnv hook zsh)"
 fi
 
-#     •
-#  ┏┳┓┓┏┏┓
-#  ┛┗┗┗┛┗
-# https://github.com/jdx/mise        
-if [[ -x "$(command -v mise)" ]]; then
-  # https://mise.jdx.dev/configuration.html#environment-variables
-  export MISE_DATA_DIR="${HOME}/Development/sdks/mise"
-  export MISE_ALWAYS_KEEP_DOWNLOAD=0
-  export MISE_NOT_FOUND_AUTO_INSTALL=true
-  export MISE_NODE_COREPACK=1
-  export MISE_POETRY_AUTO_INSTALL=1
-
-  #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
-  eval "$(mise activate zsh --shims)" # should be first
-  eval "$(mise activate zsh)"
-fi
-
-if [[ -x "$(command -v rye)" ]]; then
-  export RYE_HOME="${HOME}/Development/sdks/rye"
-  export UV_LINK_MODE=copy
-fi  
-
 
 #  ┏┓  ┓             ┓  ┏┓┓•  •  
 #  ┣ ┏┓┃┏┓┏┓┏┓  ┏┓┏┓┏┫  ┣ ┃┓┓┏┓┏┓
 #  ┗┛┛ ┗┗┻┛┗┗┫  ┗┻┛┗┗┻  ┗┛┗┗┛┗┗┛ 
 #            ┛                   
-if [ -f ~/.kerlrc ]; then
-  source ~/.kerlrc
+if [ -f "${HOME}/.kerlrc" ]; then
+  # shellcheck source=/dev/null
+  source "${HOME}/.kerlrc"
 else 
   export KERL_BASE_DIR=$HOME/Development/bin/.kerl
   export KERL_DEFAULT_INSTALL_DIR=$KERL_BASE_DIR/installs
@@ -48,6 +28,8 @@ else
 
   mkdir -p "${KERL_BASE_DIR}"
 fi 
+
+# shellcheck source=/dev/null
 test -s "$HOME/Development/.kiex/scripts/kiex" && source "$HOME/Development/.kiex/scripts/kiex"
 
 
@@ -57,14 +39,11 @@ test -s "$HOME/Development/.kiex/scripts/kiex" && source "$HOME/Development/.kie
 #  / /\  /| |>  < 
 #  \_\ \/ |_/_/\_\
 #                 
-if [ -d /nix ] && [ -f $HOME/.nix-profile/etc/profile.d/nix.sh ]; then
-  source $HOME/.nix-profile/etc/profile.d/nix.sh
+if [ -d /nix ] && [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.nix-profile/etc/profile.d/nix.sh"
 fi
 
-
-if [ $TILIX_ID ] || [ $VTE_VERSION ]; then
-  source /etc/profile.d/vte.sh
-fi
 
 #: Flutter
 if [ -d "${HOME}/Development/sdks/flutter" ]; then 
@@ -87,9 +66,9 @@ fi
 
 # always use nvim, if available
 if [[ -x "$(command -v nvim)" ]]; then
-  alias vim=$(which nvim)
-  alias vi=$(which nvim)
-  alias nv=$(which nvim)
+  alias vim='$(which nvim)'
+  alias vi='$(which nvim)'
+  alias nv='$(which nvim)'
 fi
 
 

@@ -1,4 +1,38 @@
-if type "starship" >> /dev/null; then
-  source <(starship completions zsh)
+#!/usr/bin/env bash
+
+#     ▘
+#  ▛▛▌▌▛▘█▌
+#  ▌▌▌▌▄▌▙▖
+# https://github.com/jdx/mise
+if [[ -x "$(command -v mise)" ]]; then
+  # https://mise.jdx.dev/configuration.html#environment-variables
+  export MISE_DATA_DIR="${HOME}/Development/sdks/mise"
+  export MISE_ALWAYS_KEEP_DOWNLOAD=0
+  export MISE_NOT_FOUND_AUTO_INSTALL=true
+  export MISE_NODE_COREPACK=1
+  export MISE_POETRY_AUTO_INSTALL=1
+
+  #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
+  eval "$(mise activate zsh --shims)" # should be first
+  eval "$(mise activate zsh)"
 fi
 
+#    ▗   ▘
+#  ▀▌▜▘▌▌▌▛▌
+#  █▌▐▖▙▌▌▌▌
+#
+if type "atuin" >>/dev/null; then
+  # shellcheck source=/dev/null
+  source <(atuin gen-completions --shell zsh)
+  # shellcheck source=/dev/null
+  source <(atuin init --disable-up-arrow zsh)
+fi
+
+#    ▗       ▌ ▘
+#  ▛▘▜▘▀▌▛▘▛▘▛▌▌▛▌
+#  ▄▌▐▖█▌▌ ▄▌▌▌▌▙▌
+#               ▌
+if type "starship" >>/dev/null; then
+  # shellcheck source=/dev/null
+  source <(starship completions zsh)
+fi

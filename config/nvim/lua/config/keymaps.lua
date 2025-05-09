@@ -39,7 +39,3 @@ keymap.set("n", "sl", "<C-w>l")
 keymap.set("n", "<C-j>", function()
   vim.diagnostic.goto_next()
 end, opts)
-
-keymap.set("n", "<leader>i", function()
-  require("widnyana.lsp").toggleInlayHints()
-end)

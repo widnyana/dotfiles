@@ -222,6 +222,10 @@ load_plugins {
         hide_frame_except_for_scroll     "false"
         hide_frame_except_for_fullscreen "false"
     }
+
+    "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm" {
+
+  }
 }
 
 // Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP

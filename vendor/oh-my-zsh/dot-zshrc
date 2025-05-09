@@ -76,10 +76,12 @@ DISABLE_AUTO_TITLE="true"
 plugins=(
     git
     tmux
+    zellij
     fzf
     themes
     mise
     docker
+    
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src

@@ -1,27 +1,23 @@
+#!/usr/bin/env bash
 
+if [[ -x "$(command -v rye)" ]]; then
+  export RYE_HOME="${HOME}/Development/sdks/rye"
+  export UV_LINK_MODE=copy
+  export RYE_NO_AUTO_INSTALL=1
+fi  
 #: https://pipenv.pypa.io/en/latest/
 if type "pipenv" > /dev/null; then
-    PIPENV_CACHE_DIR=$HOME/Development/.cache/pipenv
-    PIP_CACHE_DIR=$HOME/Development/.cache/pip
+    export PIPENV_CACHE_DIR=$HOME/Development/.cache/pipenv
+    export PIP_CACHE_DIR=$HOME/Development/.cache/pip
 fi
 
 #: load virtualenv
 export WORKON_HOME=$HOME/Development/.virtualenvs
 export PROJECT_HOME=$HOME/Development/projects/python
-# venvl="/usr/share/virtualenvwrapper/virtualenvwrapper_lazy.sh"
-# if [ ! -z "$venvl" ]; then
-#   source $venvl
-# fi
-
 
 export PYENV_ROOT="$HOME/.pyenv"
 command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
 
 if [[ -x "$(command -v pyenv)" ]]; then
     eval "$(pyenv init -)"
-fi
-
-
-if [[ -x "$(command -v rye)" ]]; then
-  export RYE_NO_AUTO_INSTALL=1
 fi

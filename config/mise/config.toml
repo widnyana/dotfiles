@@ -1,7 +1,7 @@
 [tools]
 "aqua:derailed/k9s" = "latest"
 "cargo:eza" = "latest"
-"starship" = "1"
+"starship" = "latest"
 "ubi:houseabsolute/precious" = "latest"
 "ubi" = "latest"
 bat = "latest"
@@ -10,7 +10,7 @@ go = "latest"
 java = "11"
 just = "1"
 maven = "3"
-node = "22"
+node = "18.20.8"
 opentofu = "1.9"
 rye = "latest"
 shellcheck = "latest"
@@ -18,15 +18,19 @@ shfmt = "latest"
 usage = "latest"
 uv = "latest"
 zig = "latest"
+"aqua:foundry-rs/foundry" = "1.1.0"
+"aqua:atuinsh/atuin" = "latest"
+"aqua:gohugoio/hugo/hugo-extended" = "0.147.2"
 
 [settings]
-always_keep_download = false  # deleted after install by default
-always_keep_install = true    # deleted on failure by default
+always_keep_download = false             # deleted after install by default
+always_keep_install = true               # deleted on failure by default
 jobs = 4
 not_found_auto_install = true
-paranoid = false              # see https://mise.jdx.dev/paranoid.html
+paranoid = false                         # see https://mise.jdx.dev/paranoid.html
 env_file = '.env'
 activate_aggressive = false
-asdf_compat = true            # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`
-http_timeout = '10'           # set the timeout for http requests in seconds, see `MISE_HTTP_TIMEOUT`
+asdf_compat = true                       # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`
+http_timeout = '10'                      # set the timeout for http requests in seconds, see `MISE_HTTP_TIMEOUT`
 experimental = true
+idiomatic_version_file_enable_tools = []

@@ -124,10 +124,19 @@ keybinds {
             };
             SwitchToMode "Normal"
         }
+        bind "p" {
+            LaunchOrFocusPlugin "plugin-manager" {
+                floating true
+                move_to_focused_tab true
+            };
+            SwitchToMode "Normal"
+        }
     }
-    tmux {
-        bind "[" { SwitchToMode "Scroll"; }
+    tmux clear-defaults=true {
         bind "Ctrl a" { Write 2; SwitchToMode "Normal"; }
+        bind "[" { SwitchToMode "Scroll"; }
+        bind "]" { EditScrollback; SwitchToMode "Normal"; }
+
         bind "\"" { NewPane "Down"; SwitchToMode "Normal"; }
         bind "%" { NewPane "Right"; SwitchToMode "Normal"; }
         bind "z" { ToggleFocusFullscreen; SwitchToMode "Normal"; }
@@ -162,13 +171,11 @@ keybinds {
         bind "Alt -" { Resize "Decrease"; }
         bind "Alt [" { PreviousSwapLayout; }
         bind "Alt ]" { NextSwapLayout; }
+
         bind "Ctrl y" {
-            LaunchOrFocusPlugin "file:plugins/zellij_forgot.wasm" {
-                "LOAD_ZELLIJ_BINDINGS" "true"
-                "buy eggs" "5x"
-                "learn rust" "5h"
-                "clean up code" "tomorrow"
+            LaunchOrFocusPlugin "file:~/.config/zellij/plugins/zellij_forgot.wasm" {
                 floating true
+                move_to_focused_tab true
             }
         }
     }
@@ -213,6 +220,103 @@ plugins {
 
     configuration location="zellij:configuration"
     plugin-manager location="zellij:plugin-manager"
+
+    zjstatus location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+        // -- Catppuccin Macchiato --
+        color_rosewater "#f4dbd6"
+        color_flamingo "#f0c6c6"
+        color_pink "#f5bde6"
+        color_mauve "#c6a0f6"
+        color_red "#ed8796"
+        color_maroon "#ee99a0"
+        //   color_peach "#f5a97f"
+        color_peach "#faf4ed"
+        color_yellow "#eed49f"
+        color_green "#a6da95"
+        color_teal "#8bd5ca"
+        color_sky "#91d7e3"
+        color_sapphire "#7dc4e4"
+        color_blue "#8aadf4"
+        color_lavender "#b7bdf8"
+        color_text "#cad3f5"
+        color_subtext1 "#b8c0e0"
+        color_subtext0 "#a5adcb"
+        color_overlay2 "#939ab7"
+        color_overlay1 "#8087a2"
+        color_overlay0 "#6e738d"
+        color_surface2 "#5b6078"
+        color_surface1 "#494d64"
+        color_surface0 "#363a4f"
+        color_base "#24273a"
+        color_mantle "#1e2030"
+        color_crust "#181926"
+
+        hide_frame_for_single_pane "true"
+        mode_normal "#[bg=$green,fg=$crust,bold] NORMAL#[bg=$surface0,fg=$green]"
+        mode_tmux "#[bg=$mauve,fg=$crust,bold] TMUX#[bg=$surface0,fg=$mauve]"
+        mode_locked "#[bg=$red,fg=$crust,bold] LOCKED  #[bg=$surface0,fg=$red]"
+        mode_pane "#[bg=$teal,fg=$crust,bold] PANE#[bg=$surface0,fg=teal]"
+        mode_tab "#[bg=$teal,fg=$crust,bold] TAB#[bg=$surface0,fg=$teal]"
+        mode_scroll "#[bg=$flamingo,fg=$crust,bold] SCROLL#[bg=$surface0,fg=$flamingo]"
+        mode_enter_search "#[bg=$flamingo,fg=$crust,bold] ENT-SEARCH#[bg=$surfaco,fg=$flamingo]"
+        mode_search "#[bg=$flamingo,fg=$crust,bold] SEARCHARCH#[bg=$surfac0,fg=$flamingo]"
+        mode_resize "#[bg=$yellow,fg=$crust,bold] RESIZE#[bg=$surfac0,fg=$yellow]"
+        mode_rename_tab "#[bg=$yellow,fg=$crust,bold] RENAME-TAB#[bg=$surface0,fg=$yellow]"
+        mode_rename_pane "#[bg=$yellow,fg=$crust,bold] RENAME-PANE#[bg=$surface0,fg=$yellow]"
+        mode_move "#[bg=$yellow,fg=$crust,bold] MOVE#[bg=$surface0,fg=$yellow]"
+        mode_session "#[bg=$crust,fg=$crust,bold] SESSION#[bg=$surface0,fg=$crust]"
+        mode_prompt "#[bg=$crust,fg=$crust,bold] PROMPT#[bg=$surface0,fg=$crust]"
+
+        border_char "─"
+        border_format "#[bg=$surface0]{char}"
+        border_position "top"
+
+        datetime        "{format}"
+        datetime_format "%A, %d %b %Y %H:%M"
+        datetime_timezone "Asia/Jakarta"
+
+        tab_normal "#[bg=$surface0,fg=$blue]#[bg=$blue,fg=$crust,bold]{index} #[bg=$surface1,fg=$blue,bold] {name}{floating_indicator}#[bg=$surface0,fg=$surface1]"
+        tab_normal_fullscreen "#[bg=$surface0,fg=$blue]#[bg=$blue,fg=$crust,bold]{index} #[bg=$surface1,fg=$blue,bold] {name}{fullscreen_indicator}#[bg=$surface0,fg=$surface1]"
+        tab_normal_sync "#[bg=$surface0,fg=$blue]#[bg=$blue,fg=$crust,bold]{index} #[bg=$surface1,fg=$blue,bold] {name}{sync_indicator}#[bg=$surface0,fg=$surface1]"
+        tab_active "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{floating_indicator}#[bg=$surface0,fg=$surface1]"
+        tab_active_fullscreen "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{fullscreen_indicator}#[bg=$surface0,fg=$surface1]"
+        tab_active_sync "#[bg=$surface0,fg=$peach]#[bg=$peach,fg=$crust,bold]{index} #[bg=$surface1,fg=$peach,bold] {name}{sync_indicator}#[bg=$surface0,fg=$surface1]"
+        tab_separator "#[bg=$surface0] "
+        tab_sync_indicator " "
+        tab_fullscreen_indicator " 󰊓"
+        tab_floating_indicator " 󰹙"
+
+        notification_format_unread "#[bg=surface0,fg=$yellow]#[bg=$yellow,fg=$crust] #[bg=$surface1,fg=$yellow] {message}#[bg=$surface0,fg=$yellow]"
+        notification_format_no_notifications ""
+        notification_show_interval "10"
+    
+        command_host_command "uname -n"
+        command_host_format "{stdout}"
+        command_host_interval "0"
+        command_host_rendermode "static"
+    
+        command_user_command "whoami"
+        command_user_format "{stdout}"
+        command_user_interval "10"
+        command_user_rendermode "static"
+    
+        command_kube_ctx_command     "kubectl config current-context 2>/dev/null"
+        command_kube_ctx_format      "{stdout}:"
+        command_kube_ctx_interval    "5"
+        command_kube_ctx_rendermode  "static"
+
+        command_kube_ns_command    "kubectl config view --minify --output 'jsonpath={..namespace}'"
+        command_kube_ns_format      "{stdout}"
+        command_kube_ns_interval    "10"
+        command_kube_ns_rendermode  "dynamic"
+
+        format_left "#[bg=$surface0,fg=$sapphire]#[bg=$sapphire,fg=$crust,bold] {session} #[bg=$surface0] {mode} #[bg=$surface0,fg=$crust]{tabs}"
+        format_right "#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󱦥 #[bg=$surface1,fg=$maroon,bold] {command_kube_ctx}{command_kube_ns} #[bg=$surface0,fg=$flamingo]#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󰃭 #[bg=$surface1,fg=$maroon,bold] {datetime}#[bg=$surface0,fg=$surface1]"
+        format_space "#[bg=$surface0]"
+        format_hide_on_overlength "true"
+        format_precedence "lrc"
+
+    }
 }
 
 load_plugins {
@@ -223,9 +327,7 @@ load_plugins {
         hide_frame_except_for_fullscreen "false"
     }
 
-    "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm" {
-
-  }
+    "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm" {}
 }
 
 // Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP
@@ -234,7 +336,7 @@ load_plugins {
 //   - detach (Default)
 //   - quit
 //
-on_force_close "quit"
+on_force_close "detach"
 
 //  Send a request for a simplified ui (without arrow fonts) to plugins
 //  Options:
@@ -302,12 +404,13 @@ ui {
 // Choose the theme that is specified in the themes section.
 // Default: default
 //
-theme "cyber-noir"
+// theme "cyber-noir"
+theme "nightfox"
 
 // The name of the default layout to load on startup
 // Default: "default"
 //
-default_layout "slanted_widescreen"
+default_layout "calisia"
 
 // Choose the mode that zellij uses when starting up.
 // Default: normal
@@ -386,3 +489,8 @@ styled_underlines true
 // Default: false
 //
 disable_session_metadata false
+
+
+// Whether to show release notes on first version run
+show_release_notes true
+show_startup_tips false

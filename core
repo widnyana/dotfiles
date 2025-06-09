@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#    ▗       ▌ ▘
+#  ▛▘▜▘▀▌▛▘▛▘▛▌▌▛▌
+#  ▄▌▐▖█▌▌ ▄▌▌▌▌▙▌
+#               ▌
+if type "starship" >>/dev/null; then
+  # shellcheck source=/dev/null
+  source <(starship completions zsh)
+fi
+
 #     ▘
 #  ▛▛▌▌▛▘█▌
 #  ▌▌▌▌▄▌▙▖
@@ -25,14 +34,6 @@ if type "atuin" >>/dev/null; then
   # shellcheck source=/dev/null
   source <(atuin gen-completions --shell zsh)
   # shellcheck source=/dev/null
-  source <(atuin init --disable-up-arrow zsh)
+  source <(atuin init zsh)
 fi
 
-#    ▗       ▌ ▘
-#  ▛▘▜▘▀▌▛▘▛▘▛▌▌▛▌
-#  ▄▌▐▖█▌▌ ▄▌▌▌▌▙▌
-#               ▌
-if type "starship" >>/dev/null; then
-  # shellcheck source=/dev/null
-  source <(starship completions zsh)
-fi

@@ -52,7 +52,6 @@ fi
 
 #: docker
 if type "docker" > /dev/null; then
-  export DOCKER_HOST="unix:///run/docker.sock"
   export BUILDKIT_PROGRESS=plain
   alias podman=docker
   alias podman-compose=docker-compoe
@@ -67,7 +66,6 @@ fi
 if [[ -x "$(command -v helm)" ]]; then
   source <(helm completion zsh)
 fi
-
 
 
 export PATH="${PATH}:$HOME/.istioctl/bin"

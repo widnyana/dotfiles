@@ -1,0 +1,38 @@
+#!/bin/bash
+
+MODE=$1
+DNSD="/etc/systemd/resolved.conf.d"
+
+if [[ $EUID -eq 0 ]]; then
+	echo "⚠️  Run this without sudo — script will elevate as needed."
+	exit 1
+fi
+
+if [[ "$MODE" != "home" && "$MODE" != "away" ]]; then
+	echo "Usage: switch-dns-mode [home|away]"
+	echo "This will update DNS config and restart systemd-resolved via sudo."
+	exit 1
+fi
+
+echo "🔐 This script requires sudo to modify DNS config."
+sudo -v || {
+	echo "❌ Sudo auth failed."
+	exit 1
+}
+
+if [[ "$MODE" == "home" ]]; then
+	echo "🟢 Switching to HOME DNS mode..."
+	sudo mv -v "$DNSD/home-dns.conf.dead" "$DNSD/home-dns.conf"
+	sudo mv -v "$DNSD/dnscrypt.conf" "$DNSD/dnscrypt.conf.dead"
+	sudo systemctl disable --now dnscrypt-proxy
+else
+	echo "🔵 Switching to AWAY DNS mode..."
+	sudo mv -v "$DNSD/home-dns.conf" "$DNSD/home-dns.conf.dead"
+	sudo mv -v "$DNSD/dnscrypt.conf.dead" "$DNSD/dnscrypt.conf"
+	sudo systemctl enable --now dnscrypt-proxy
+fi
+
+sudo systemctl restart systemd-resolved.service
+
+echo "🧹 Flushing systemd-resolved DNS cache..."
+sudo resolvectl flush-caches

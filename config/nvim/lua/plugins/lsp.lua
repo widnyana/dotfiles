@@ -151,7 +151,7 @@ return {
         -- solidity
         solidity = {
           on_attach = mason_lspconfig.on_attach,
-          default_config = require("widnyana.plugins.lsp.solidity").opts,
+          default_config = require("widnyana.plugins.lang.solidity").opts,
         },
 
         -- typescript
@@ -233,7 +233,6 @@ return {
       vim.g.vimtex_quickfix_method = vim.fn.executable("pplatex") == 1 and "pplatex" or "latexlog"
     end,
   },
-
   {
     "simrat39/symbols-outline.nvim",
     keys = { { "<leader>cs", "<cmd>SymbolsOutline<cr>", desc = "Symbols Outline" } },

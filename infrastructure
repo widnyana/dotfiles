@@ -78,10 +78,10 @@ export PATH="${PATH}:$HOME/.istioctl/bin"
 ###########################
 
 #: terraform autocompleter
-if type "terraform" > /dev/null; then
-  alias tf="$(which terraform)"
-  complete -o nospace -C $(which terraform) terraform
-fi
+#if type "terraform" > /dev/null; then
+#  alias tf="$(which terraform)"
+#  complete -o nospace -C $(which terraform) terraform
+#fi
 
 #: terraformer
 if type "terraformer" > /dev/null; then
@@ -161,3 +161,12 @@ if type "gcloud" > /dev/null; then
   export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
   source /usr/lib64/google-cloud-sdk/completion.$(basename ${SHELL}).inc
 fi 
+
+if [[ -f $HOME/Development/sdks/mise/installs/opentofu/latest/tofu ]]; then 
+  complete -o nospace -C $HOME/Development/sdks/mise/installs/opentofu/latest/tofu tofu
+fi
+
+if [[ -f $HOME/Development/sdks/mise/installs/terragrunt/latest/bin/terragrunt ]]; then 
+  complete -o nospace -C $HOME/Development/sdks/mise/installs/terragrunt/latest/bin/terragrunt terragrunt
+  alias tg=terragrunt
+fi

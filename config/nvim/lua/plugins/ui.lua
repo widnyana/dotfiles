@@ -63,6 +63,16 @@ return {
         bind_to_cwd = true,
         follow_current_file = { enabled = true },
         use_libuv_file_watcher = true,
+        filtered_items = {
+          visible = true,
+          hide_dotfiles = false,
+          hide_gitignored = true,
+          hide_by_name = {
+            ".git",
+            "node_modules",
+            "target",
+          },
+        },
       },
       window = {
         position = "right",
@@ -104,7 +114,8 @@ return {
     },
     config = function(_, opts)
       local function on_move(data)
-        LazyVim.lsp.on_rename(data.source, data.destination)
+        -- LazyVim.lsp.on_rename(data.source, data.destination)
+        Snacks.rename.on_rename_file(data.source, data.destination)
       end
 
       local events = require("neo-tree.events")

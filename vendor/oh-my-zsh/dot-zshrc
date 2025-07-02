@@ -125,4 +125,4 @@ eval "$(starship init zsh)"
 ## loader.zsh is managed by $HOME/.dotfiles/bin/install-dotfiles.sh via $OMZ_PATH/custom directory
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C ${MISE_DATE_DIR}/installs/opentofu/1.9.0/bin/tofu tofu
+complete -o nospace -C ${MISE_DATA_DIR}/installs/opentofu/latest/tofu tofu

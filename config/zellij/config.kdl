@@ -441,8 +441,8 @@ scroll_buffer_size 10000
 // Examples:
 //
 // copy_command "xclip -selection clipboard" // x11
-// copy_command "pbcopy"                     // osx
-copy_command "wl-copy"                    // wayland
+copy_command "pbcopy"                     // osx
+// copy_command "wl-copy"                    // wayland
 
 // Choose the destination for copied text
 // Allows using the primary selection buffer (on x11/wayland) instead of the system clipboard.
@@ -472,11 +472,11 @@ mirror_session false
 
 // The folder in which Zellij will look for layouts
 //
-layout_dir "/home/wid/.config/zellij/layouts"
+layout_dir "/Users/wid/.config/zellij/layouts"
 
 // The folder in which Zellij will look for themes
 //
-theme_dir "/home/wid/.config/zellij/themes"
+theme_dir "/Users/wid/.config/zellij/themes"
 
 // Enable or disable the rendering of styled and colored underlines (undercurl).
 // May need to be disabled for certain unsupported terminals

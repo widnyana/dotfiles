@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+#──────────────────────────────────────────────────────────────────────────────
+# Damarseta · Infrastructure with Intent. Aligned. Reliable.
+# Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
+#──────────────────────────────────────────────────────────────────────────────
+# Context: Verification test
+# Purpose: Testing gitignore support
+
 set -euo pipefail
 set -x
 
@@ -29,8 +36,8 @@ fi
 ## ZSH Completions
 ZSH_COMPLETIONS_DIR="${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
 if [[ ! -d $ZSH_COMPLETIONS_DIR ]]; then 
-  git clone https://github.com/zsh-users/zsh-completions "${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
-    git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
+#   git clone https://github.com/zsh-users/zsh-completions "${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
+git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
 fi
 
 ### fzf - A command-line fuzzy finder
@@ -77,10 +84,10 @@ fi
 ### mkcert
 if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
     echo -e "installing FiloSottile/mkcert..."
-    sudo dnf install nss-tools -y -q
-    wget   -q --show-progress --progress=bar-O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-    chmod +x "/tmp/mkcert"
-    mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
+    # sudo dnf install nss-tools -y -q
+    # wget   -q --show-progress --progress=bar-O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+    # chmod +x "/tmp/mkcert"
+    # mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
 fi
 
 ### mise - https://mise.jdx.dev

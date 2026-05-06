@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROVIDER="${1:-claude}"
+
+TARGET="$HOME/.claude/settings.json"
+GLM="$HOME/.claude/settings.json.glm"
+ORIG="$HOME/.claude/settings.json.orig"
+
+case "$PROVIDER" in
+  glm)
+    ln -sfn "$GLM" "$TARGET"
+    echo "Switched to GLM config"
+    ;;
+  claude)
+    ln -sfn "$ORIG" "$TARGET"
+    echo "Switched to Claude config"
+    ;;
+  *)
+    echo "Invalid provider: $PROVIDER" >&2
+    echo 'Use "glm" or "claude"' >&2
+    exit 1
+    ;;
+esac
+

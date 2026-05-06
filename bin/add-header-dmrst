@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Damarseta Header Injector — https://damarseta.id
+# Injects a standardized file header with optional --context and --purpose
+# ──────────────────────────────────────────────────────────────────────────────
+
+YEAR=$(date +%Y)
+TAGLINE="Damarseta · Infrastructure with Intent. Aligned. Reliable."
+COPYRIGHT="Copyright (c) ${YEAR} wid@damarseta.id · https://damarseta.id"
+MARKER="${TAGLINE}"
+
+PURPOSE=""
+CONTEXT=""
+
+SUPPORTED_EXTENSIONS=("sh" "bash" "yml" "yaml" "tf" "hcl" "terragrunt.hcl")
+
+get_comment_style() {
+  case "$1" in
+    sh|bash|yml|yaml) echo "#" ;;
+    tf|hcl|terragrunt.hcl) echo "//" ;;
+    *) return 1 ;;
+  esac
+}
+
+generate_header() {
+  local comment="$1"
+  echo "${comment} ──────────────────────────────────────────────────────────────────────────────"
+  echo "${comment} ${TAGLINE}"
+  echo "${comment} ${COPYRIGHT}"
+  echo "${comment} ──────────────────────────────────────────────────────────────────────────────"
+  [[ -n "$CONTEXT" ]] && echo "${comment} Context: $CONTEXT"
+  [[ -n "$PURPOSE" ]] && echo "${comment} Purpose: $PURPOSE"
+  echo
+}
+
+is_git_repo() {
+  git rev-parse --git-dir >/dev/null 2>&1
+}
+
+is_git_ignored() {
+  local file="$1"
+  git check-ignore "$file" >/dev/null 2>&1
+}
+
+inject_header() {
+  local file="$1"
+  local ext="${file##*.}"
+
+  if ! COMMENT=$(get_comment_style "$ext"); then
+    echo "Skip: Unsupported extension for $file"
+    return
+  fi
+
+  if grep -Fq "$MARKER" "$file"; then
+    echo "Skip: Header already present in $file"
+    return
+  fi
+
+  local tmp
+  tmp=$(mktemp)
+  
+  # Check if file starts with shebang
+  local first_line
+  first_line=$(head -n1 "$file")
+  
+  if [[ "$first_line" =~ ^#! ]]; then
+    # File has shebang - place header after it
+    {
+      echo "$first_line"
+      generate_header "$COMMENT"
+      tail -n +2 "$file"
+    } > "$tmp"
+  else
+    # No shebang - place header at beginning
+    {
+      generate_header "$COMMENT"
+      cat "$file"
+    } > "$tmp"
+  fi
+
+  mv "$tmp" "$file"
+  echo "Injected header into $file"
+}
+
+# Parse args
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --purpose)
+      PURPOSE="$2"
+      shift 2
+      ;;
+    --context)
+      CONTEXT="$2"
+      shift 2
+      ;;
+    *)
+      TARGET="$1"
+      shift
+      ;;
+  esac
+done
+
+[[ -z "${TARGET:-}" ]] && {
+  echo "Usage: $0 [--purpose str] [--context str] <target-file-or-dir>"
+  exit 1
+}
+
+if [[ -d "$TARGET" ]]; then
+  find "$TARGET" -type f \( \
+    -name "*.sh" -o \
+    -name "*.bash" -o \
+    -name "*.yml" -o \
+    -name "*.yaml" -o \
+    -name "*.tf" -o \
+    -name "*.hcl" -o \
+    -name "terragrunt.hcl" \
+  \) | while read -r file; do
+    # Skip git-ignored files if in a git repository
+    if is_git_repo && is_git_ignored "$file"; then
+      echo "Skip: $file (git-ignored)"
+      continue
+    fi
+    inject_header "$file"
+  done
+else
+  inject_header "$TARGET"
+fi

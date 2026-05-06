@@ -1,4 +1,11 @@
 #!/bin/bash
+#──────────────────────────────────────────────────────────────────────────────
+# Damarseta · Infrastructure with Intent. Aligned. Reliable.
+# Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
+#──────────────────────────────────────────────────────────────────────────────
+# Context: Verification test
+# Purpose: Testing gitignore support
+
 #./clean-orphans.sh <namespace>
 # Fixes error "unable to fetch certificate that owns the secret" in cert-manager
 set -e

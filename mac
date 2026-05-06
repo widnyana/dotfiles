@@ -1,2 +1,7 @@
 alias stree='open -a SourceTree'
 
+
+export PATH="$HOME/Applications/CMake.app/Contents/bin/:$HOME/.orbstack/bin:/usr/local/sessionmanagerplugin/bin:${PATH}"
+
+# GPG Suite
+export GPG_TTY=$(tty)

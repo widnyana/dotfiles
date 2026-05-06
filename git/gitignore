@@ -16,7 +16,14 @@ test.py
 # should be manually updated
 .obsidian/workspace.json
 
+**/.DS_Store
 
 **/.claude/settings.local.json
-
+**/CLAUDE.md
 **/CLAUDE.local.md
+**/.serena/
+**/private/
+!**/docs/plans/**
+!**/docs/brainstorm/**
+.claude
+

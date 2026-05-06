@@ -66,7 +66,7 @@ fi
 
 #: finalize $PATH
 echo -e "Finalizing \$PATH"
-FINAL_PATH=$(python ${_DOT_DIR}/bin/_pathnodupe.py)
+FINAL_PATH=$(python3 ${_DOT_DIR}/bin/_pathnodupe.py)
 export PATH=${FINAL_PATH}
 
 ## Completions

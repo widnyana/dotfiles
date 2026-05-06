@@ -71,6 +71,16 @@ fi
 export PATH="${PATH}:$HOME/.istioctl/bin"
 
 
+###########################
+# OpenTofu / Terraform
+###########################
+export TG_PROVIDER_CACHE=1
+export TG_PROVIDER_CACHE_DIR="${HOME}/Development/sdks/terragrunt/cache"
+export TF_REGISTRY_CLIENT_TIMEOUT=15
+export TF_PROVIDER_DOWNLOAD_RETRY=2
+
+
+
 #  ┓┏   ┓ •       
 #  ┣┫┏┓┏┣┓┓┏┏┓┏┓┏┓
 #  ┛┗┗┻┛┛┗┗┗┗┛┛ ┣┛

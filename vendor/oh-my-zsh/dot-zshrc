@@ -75,8 +75,6 @@ DISABLE_AUTO_TITLE="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
     git
-    tmux
-    zellij
     fzf
     themes
     mise
@@ -126,3 +124,9 @@ eval "$(starship init zsh)"
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C ${MISE_DATA_DIR}/installs/opentofu/latest/tofu tofu
+
+
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
+export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+

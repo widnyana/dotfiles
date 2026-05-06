@@ -7,3 +7,4 @@ boxes/*.box
 .tmux/plugins/*
 .tmux/resurrect/*
 
+bin/test-ignored.sh

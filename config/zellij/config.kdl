@@ -178,7 +178,17 @@ keybinds {
                 move_to_focused_tab true
             }
         }
+
+        // quickly searching and switching between tabs
+        bind "Ctrl u" {
+            LaunchOrFocusPlugin "file:~/.config/zellij/plugins/room.wasm" {
+                floating true
+                ignore_case true
+                quick_jump true
+            }
+        }
     }
+
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
     }
@@ -251,16 +261,16 @@ plugins {
         color_mantle "#1e2030"
         color_crust "#181926"
 
-        hide_frame_for_single_pane "true"
+        hide_frame_for_single_pane "false"
         mode_normal "#[bg=$green,fg=$crust,bold] NORMAL#[bg=$surface0,fg=$green]"
         mode_tmux "#[bg=$mauve,fg=$crust,bold] TMUX#[bg=$surface0,fg=$mauve]"
         mode_locked "#[bg=$red,fg=$crust,bold] LOCKED  #[bg=$surface0,fg=$red]"
         mode_pane "#[bg=$teal,fg=$crust,bold] PANE#[bg=$surface0,fg=teal]"
         mode_tab "#[bg=$teal,fg=$crust,bold] TAB#[bg=$surface0,fg=$teal]"
         mode_scroll "#[bg=$flamingo,fg=$crust,bold] SCROLL#[bg=$surface0,fg=$flamingo]"
-        mode_enter_search "#[bg=$flamingo,fg=$crust,bold] ENT-SEARCH#[bg=$surfaco,fg=$flamingo]"
-        mode_search "#[bg=$flamingo,fg=$crust,bold] SEARCHARCH#[bg=$surfac0,fg=$flamingo]"
-        mode_resize "#[bg=$yellow,fg=$crust,bold] RESIZE#[bg=$surfac0,fg=$yellow]"
+        mode_enter_search "#[bg=$flamingo,fg=$crust,bold] ENT-SEARCH#[bg=$surface0,fg=$flamingo]"
+        mode_search "#[bg=$flamingo,fg=$crust,bold] SEARCHARCH#[bg=$surface0,fg=$flamingo]"
+        mode_resize "#[bg=$yellow,fg=$crust,bold] RESIZE#[bg=$surface0,fg=$yellow]"
         mode_rename_tab "#[bg=$yellow,fg=$crust,bold] RENAME-TAB#[bg=$surface0,fg=$yellow]"
         mode_rename_pane "#[bg=$yellow,fg=$crust,bold] RENAME-PANE#[bg=$surface0,fg=$yellow]"
         mode_move "#[bg=$yellow,fg=$crust,bold] MOVE#[bg=$surface0,fg=$yellow]"
@@ -289,17 +299,17 @@ plugins {
         notification_format_unread "#[bg=surface0,fg=$yellow]#[bg=$yellow,fg=$crust] #[bg=$surface1,fg=$yellow] {message}#[bg=$surface0,fg=$yellow]"
         notification_format_no_notifications ""
         notification_show_interval "10"
-    
+
         command_host_command "uname -n"
         command_host_format "{stdout}"
-        command_host_interval "0"
+        command_host_interval "3600"
         command_host_rendermode "static"
-    
+
         command_user_command "whoami"
         command_user_format "{stdout}"
         command_user_interval "10"
         command_user_rendermode "static"
-    
+
         command_kube_ctx_command     "kubectl config current-context 2>/dev/null"
         command_kube_ctx_format      "{stdout}:"
         command_kube_ctx_interval    "5"
@@ -320,7 +330,7 @@ plugins {
 }
 
 load_plugins {
-    "https://github.com/dj95/zjstatus/releases/download/v0.20.2/zjframes.wasm" {
+    "https://github.com/dj95/zjstatus/releases/download/v0.23.0/zjframes.wasm" {
         hide_frame_for_single_pane       "false"
         hide_frame_except_for_search     "false"
         hide_frame_except_for_scroll     "false"
@@ -442,7 +452,7 @@ scroll_buffer_size 10000
 //
 // copy_command "xclip -selection clipboard" // x11
 // copy_command "pbcopy"                     // osx
-copy_command "wl-copy"                    // wayland
+// copy_command "wl-copy"                 // wayland — disabled; OSC 52 works over SSH to Mac
 
 // Choose the destination for copied text
 // Allows using the primary selection buffer (on x11/wayland) instead of the system clipboard.
@@ -489,7 +499,6 @@ styled_underlines true
 // Default: false
 //
 disable_session_metadata false
-
 
 // Whether to show release notes on first version run
 show_release_notes true

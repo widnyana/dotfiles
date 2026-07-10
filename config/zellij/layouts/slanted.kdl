@@ -13,7 +13,7 @@ layout {
                 format_right "{command_kube_ctx}{command_kube_ns} {datetime}"
                 format_space "#[bg=#181825]"
 
-                hide_frame_for_single_pane "true"
+                hide_frame_for_single_pane "false"
 
                 mode_normal  "#[bg=blue] "
 

@@ -18,7 +18,6 @@ vim.opt.rtp:prepend(vim.env.LAZY or lazypath)
 _G.U = require("widnyana.utils") or {}
 U.config = require("widnyana.config")
 
-
 require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
@@ -34,14 +33,8 @@ require("lazy").setup({
     -- { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.ui.mini-animate" },
     -- import/override with your plugins
-    { import = "lazyvim.plugins.extras.editor.harpoon2" },
-    { import = "lazyvim.plugins.extras.editor.aerial" },
     { import = "lazyvim.plugins.extras.util.gitui" },
-    { import = "lazyvim.plugins.extras.lang.tex" },
     { import = "lazyvim.plugins.extras.lang.yaml" },
-    { import = "lazyvim.plugins.extras.lang.terraform" },
-    { import = "lazyvim.plugins.extras.lang.typescript" },
-    { import = "lazyvim.plugins.extras.lang.python" },
     { import = "plugins" },
     { import = "widnyana/plugins" },
   },

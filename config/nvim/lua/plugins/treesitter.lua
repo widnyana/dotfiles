@@ -30,7 +30,7 @@ return {
       }
     end,
     config = function(_, opts)
-      require("nvim-treesitter.configs").setup(opts)
+      require("nvim-treesitter").setup(opts)
 
       -- MDX
       vim.filetype.add({
@@ -43,7 +43,7 @@ return {
   },
   {
 
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, wid_lspconf.mason_ensure_installed)
     end,

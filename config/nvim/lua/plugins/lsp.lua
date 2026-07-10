@@ -4,7 +4,7 @@ local mason_lspconfig = require("mason-lspconfig")
 return {
   -- tools
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
       vim.list_extend(opts.ensure_installed, {
         "stylua",
@@ -20,20 +20,22 @@ return {
   {
     "neovim/nvim-lspconfig",
     lazy = false,
-    init = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = {
-        "gd",
-        function()
-          -- DO NOT REUSE WINDOW
-        end,
-        desc = "Goto Definition",
-        has = "definition",
-      }
-    end,
     opts = {
       inlay_hints = { enabled = true },
       servers = {
+        -- Global LSP keymaps configuration
+        ["*"] = {
+          keys = {
+            {
+              "gd",
+              function()
+                -- DO NOT REUSE WINDOW
+              end,
+              desc = "Goto Definition",
+              has = "definition",
+            },
+          },
+        },
 
         biome = {
           root_dir = require("lspconfig").util.root_pattern("biome.json"),
@@ -47,7 +49,6 @@ return {
           }),
           validate = { enable = true },
         },
-
 
         -- LUA
         lua_ls = {
@@ -146,7 +147,6 @@ return {
         rust_analyzer = {
           on_attach = mason_lspconfig.on_attach,
         },
-  
 
         -- solidity
         solidity = {
@@ -213,8 +213,6 @@ return {
             },
           },
         },
-
-
       },
       setup = {},
       dependencies = {

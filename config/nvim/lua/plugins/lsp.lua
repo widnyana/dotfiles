@@ -1,36 +1,21 @@
 local python_lsp = "ruff"
-local mason_lspconfig = require("mason-lspconfig")
+local wid_lspconf = require("widnyana.lsp")
 
 return {
   -- tools
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = function(_, opts)
-      vim.list_extend(opts.ensure_installed, {
-        "stylua",
-        "selene",
-        "luacheck",
-        "rust-analyzer",
-        "shellcheck",
-        "shfmt",
-      })
+      vim.list_extend(opts.ensure_installed, wid_lspconf.mason_ensure_installed)
     end,
   },
   -- lsp servers
   {
     "neovim/nvim-lspconfig",
     lazy = false,
-    init = function()
-      local keys = require("lazyvim.plugins.lsp.keymaps").get()
-      keys[#keys + 1] = {
-        "gd",
-        function()
-          -- DO NOT REUSE WINDOW
-        end,
-        desc = "Goto Definition",
-        has = "definition",
-      }
-    end,
+    keys = {
+      { "gd", function() end, desc = "Goto Definition" },
+    },
     opts = {
       inlay_hints = { enabled = true },
       servers = {
@@ -143,14 +128,11 @@ return {
         },
 
         -- Rust
-        rust_analyzer = {
-          on_attach = mason_lspconfig.on_attach,
-        },
+        rust_analyzer = {},
   
 
         -- solidity
         solidity = {
-          on_attach = mason_lspconfig.on_attach,
           default_config = require("widnyana.plugins.lang.solidity").opts,
         },
 

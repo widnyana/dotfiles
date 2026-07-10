@@ -4,7 +4,3 @@ export GOPRIVATE="$GOPRIVATE,pkg.damarseta.id/*"
 alias goget='go get -x'
 alias gop='export GOPATH=$GOPATH:$(pwd)'
 alias gor='go run'
-
-
-export GOPROXY=https://goproxy.io,direct
-

@@ -4,6 +4,7 @@
 .envrc.prod
 .envrc.staging
 .env
+.env.*
 .vscode
 node_modules
 sample-data
@@ -12,11 +13,37 @@ junkdata
 *.tfplan
 *.out
 test.py
+.wakatime-project
+.trash/**
 
 # should be manually updated
 .obsidian/workspace.json
 
-
 **/.claude/settings.local.json
+.mcp-config.json
+.mcp.json
+.qwen/
+.serena/
 
-**/CLAUDE.local.md
+
+scripts/deploy.sh
+tmp/
+.serena/*
+claudedocs/*
+.worktrees/*
+.worktree/*
+**/todos/**
+**/.playwright-mcp/**
+!**/docs/brainstorms/**
+!**/docs/plans/**
+!**/docs/solutions/**
+next_prompt.txt
+**/claudedocs/**
+**/.claude/worktrees/**
+**/.claude/skills/**
+**/.claude/backups/**
+
+# Solana AI
+.superstack/
+TODO
+sprint-logs/

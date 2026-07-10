@@ -72,6 +72,8 @@
 
 [user]
 	useConfigOnly = true
+	name = widnyana
+	email = wid@widnyana.web.id
 
 [pull]
 	rebase = true
@@ -84,3 +86,11 @@
 [pack]
 	windowMemory = 100m
 	packSizeLimit = 100m
+[credential]
+	helper = !gh auth git-credential
+[credential "https://github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper = 
+	helper = !/usr/bin/gh auth git-credential

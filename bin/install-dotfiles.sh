@@ -3,8 +3,8 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Bootstraps a machine from this dotfiles repo: installs oh-my-zsh, fzf, rust,
+# vim-plug, mise, tmux, and related tool configs/symlinks. Safe to re-run.
 
 set -euo pipefail
 
@@ -22,7 +22,7 @@ if [[ $machine == "Mac" ]]; then
   if ! [[ -x $(command -v "brew") ]]; then
     # install homebrew
     xcode-select --install || true
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | /bin/bash
   fi
 fi
 
@@ -39,22 +39,20 @@ ln -sfn "${HOME}/.dotfiles/config/git" "${CONFIG_DIR}/git"
 OMZ_PATH="${HOME}/.oh-my-zsh"
 if [[ ! -d "${OMZ_PATH}" ]]; then
     echo "installing oh-my-zsh..."
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+    curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | RUNZSH=no sh
 
     mkdir -p "${OMZ_PATH}/cache"
     ln -sfn  "${DOT_DIR}/vendor/oh-my-zsh/completions" "${OMZ_PATH}/cache/"
 
     #: attach custom loader
     echo "source ${DOT_DIR}/loader.zsh" > "${OMZ_PATH}/custom/loader.zsh"
-    # shellcheck source=/dev/null
-    source ~/.zshrc
+    echo "oh-my-zsh installed. Restart your shell (or run 'exec zsh') to load it."
 fi
 
 ## ZSH Completions
 ZSH_COMPLETIONS_DIR="${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
-if [[ ! -d $ZSH_COMPLETIONS_DIR ]]; then 
-#   git clone https://github.com/zsh-users/zsh-completions "${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
-git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
+if [[ ! -d "${ZSH_COMPLETIONS_DIR}" ]]; then
+    git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
 fi
 
 ### fzf - A command-line fuzzy finder
@@ -99,22 +97,30 @@ fi
 #  ▛▌▛▌▛▌▛▘▜▘▜▘▌▌
 #  ▙▌▌▌▙▌▄▌▐▖▐▖▙▌
 #  ▄▌          ▄▌
-if [[ ! -d "${CONFIG_DIR}/ghostty" ]]; then 
+if [[ ! -d "${CONFIG_DIR}/ghostty" ]]; then
     ln -sfn         "${DOT_DIR}/config/ghostty"  "${CONFIG_DIR}/ghostty"
 fi
 
+#  ▀▌     ▘  ▘
+#  ▄▌▛▘▌▌▌▌▛▌
+#  ▙▌▙▖▙▌▌▌▌▌
+#
+if [[ ! -L "${CONFIG_DIR}/zellij" ]]; then
+    [[ -d "${CONFIG_DIR}/zellij" ]] && mv "${CONFIG_DIR}/zellij" "${CONFIG_DIR}/zellij.bak"
+    ln -sfn         "${DOT_DIR}/config/zellij"  "${CONFIG_DIR}/zellij"
+fi
+
 ### mkcert
-if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
+if ! command -v mkcert > /dev/null 2>&1; then
     echo -e "installing FiloSottile/mkcert..."
-    # sudo dnf install nss-tools -y -q
-    # wget   -q --show-progress --progress=bar-O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-    # chmod +x "/tmp/mkcert"
-    # mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
+    if [[ $machine == "Mac" ]]; then
+        brew install mkcert nss
+    fi
 fi
 
 ### burntsushi/ripgrep
-if [[ -f "$DOT_DIR/config/ripgrep/ripgreprc" ]]; then 
-  ln -sfn "$DOT_DIR/config/ripgrep/ripgreprc"  $HOME/.ripgreprc
+if [[ -f "$DOT_DIR/config/ripgrep/ripgreprc" ]]; then
+  ln -sfn "$DOT_DIR/config/ripgrep/ripgreprc"  "$HOME/.ripgreprc"
 fi
 
 ### mise - https://mise.jdx.dev
@@ -124,8 +130,10 @@ if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
     ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise/config.toml"
 
     curl https://mise.jdx.dev/install.sh | sh
+    MISE_CACHE_DIR="${ZSH_CACHE_DIR:-${OMZ_PATH}/cache}"
+    mkdir -p "${MISE_CACHE_DIR}/completions"
     "${HOME}/.local/bin/mise" completion zsh 2> /dev/null | tee \
-        "$ZSH_CACHE_DIR/completions/_mise" \
+        "${MISE_CACHE_DIR}/completions/_mise" \
         "$DOT_DIR/vendor/oh-my-zsh/completions/_mise" > /dev/null
 fi
 
@@ -147,13 +155,15 @@ if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then
 fi
 
 ### install all required tools via mise
-$(which mise) install -y
+"$(command -v mise)" install -y
 
 # =====================================================================================================================
 
 
 ### kube-tmux: kubernetes-context integration for tmux
-go install "github.com/go-tmux/kube-tmux@latest"
+if ! command -v kube-tmux > /dev/null 2>&1; then
+  go install "github.com/go-tmux/kube-tmux@latest"
+fi
 
 ln -sfn "${DOT_DIR}/config/k9s" "${CONFIG_DIR}/k9s"
 

@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# Variables
+DB_HOST="$1"
+DB_PORT="$2"
+DB_NAME="$3"
+DB_USER="$4"
+DUMP_DIR="$5"
+
+
+# Function to check if the necessary parameters are provided
+function check_params() {
+    if [[ -z "$DB_HOST" || -z "$DB_PORT" || -z "$DB_NAME" || -z "$DB_USER" || -z "$DUMP_DIR" ]]; then
+        echo "Usage: $0 <db_host> <db_port> <database_name> <username> <output_directory>"
+        exit 1
+    fi
+}
+
+# Ensure parameters are provided
+check_params
+
+# Ensure the output directory exists
+mkdir -p "$DUMP_DIR"
+
+# Part 1: Iterate through each schema, then dump the schema for each table in each schema
+echo "Starting schema-only dump for each table in each schema..."
+SCHEMAS=$(psql -h "${DB_HOST}" -p "${DB_PORT}"  -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT schema_name FROM information_schema.schemata WHERE schema_name NOT IN ('pg_catalog', 'information_schema');")
+
+for SCHEMA in $SCHEMAS; do
+    # Create a subdirectory for each schema
+    SCHEMA_DIR="$DUMP_DIR/$SCHEMA"
+    mkdir -p "$SCHEMA_DIR"
+    
+    # List tables in the current schema
+    TABLES=$(psql -h "${DB_HOST}" -p "${DB_PORT}" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT tablename FROM pg_tables WHERE schemaname = '$SCHEMA';")
+
+    for TABLE in $TABLES; do
+        echo "Dumping schema for table $TABLE in schema $SCHEMA..."
+        pg_dump -h "${DB_HOST}" -p "${DB_PORT}" -U "$DB_USER" -d "$DB_NAME" --schema-only --table="$SCHEMA.$TABLE" > "$SCHEMA_DIR/${TABLE}_schema.sql"
+        if [ $? -eq 0 ]; then
+            echo "Schema dump for $SCHEMA.$TABLE completed: $SCHEMA_DIR/${TABLE}_schema.sql"
+        else
+            echo "Error dumping schema for $SCHEMA.$TABLE." >&2
+        fi
+    done
+done
+
+# Ask the user if they want to dump the data too
+read -p "Do you want to dump data for each table as well? (y/n): " DUMP_DATA
+
+if [[ "$DUMP_DATA" == "y" || "$DUMP_DATA" == "Y" ]]; then
+    echo "Starting data-only dump for each table in each schema..."
+    for SCHEMA in $SCHEMAS; do
+        SCHEMA_DIR="$DUMP_DIR/$SCHEMA"
+        mkdir -p "$SCHEMA_DIR"
+        
+        # List tables in the current schema
+        TABLES=$(psql -h "${DB_HOST}" -p "${DB_PORT}" -U "$DB_USER" -d "$DB_NAME" -t -c "SELECT tablename FROM pg_tables WHERE schemaname = '$SCHEMA';")
+
+        for TABLE in $TABLES; do
+            echo "Dumping data for table $TABLE in schema $SCHEMA..."
+            pg_dump -h "${DB_HOST}" -p "${DB_PORT}" -U "$DB_USER" -d "$DB_NAME" --data-only --table="$SCHEMA.$TABLE" > "$SCHEMA_DIR/${TABLE}_data.sql"
+            if [ $? -eq 0 ]; then
+                echo "Data dump for $SCHEMA.$TABLE completed: $SCHEMA_DIR/${TABLE}_data.sql"
+            else
+                echo "Error dumping data for $SCHEMA.$TABLE." >&2
+            fi
+        done
+    done
+else
+    echo "Data dump skipped."
+fi
+
+echo "Database dump process completed."

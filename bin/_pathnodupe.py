@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
 import os
-paths = set(os.getenv('PATH').split(':'))
-#paths = sorted(set(paths), reverse=True)
-print(":".join(paths))
+
+paths = os.getenv("PATH", "").split(":")
+print(":".join(list(set(paths))))

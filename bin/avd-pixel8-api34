@@ -1,0 +1,26 @@
+#!/usr/bin/env bash
+
+export XDG_SESSION_TYPE=wayland
+# export DISPLAY=:0
+export DISPLAY=:0.0
+export GNOME_SETUP_DISPLAY=:1
+export XDG_SESSION_DESKTOP=gnome
+
+export ANDROID_EMULATOR_LAUNCHER_DIR=$HOME/Development/sdks/android-sdk/emulator
+export LD_LIBRARY_PATH=$HOME/Development/sdks/android-sdk/emulator/lib64/qt/lib:$HOME/Development/sdks/android-sdk/emulator/lib64/libstdc++:$HOME/Development/sdks/android-sdk/emulator/lib64/gles_swiftshader:$HOME/Development/sdks/android-sdk/emulator/lib64
+export LD_PRELOAD=$HOME/Development/sdks/android-sdk/emulator/lib64/qt/lib/libfreetype.so.6
+
+export QT_LOGGING_RULES=default.warning=false
+export QT_QPA_PLATFORM_PLUGIN_PATH=$HOME/Development/sdks/android-sdk/emulator/lib64/qt/plugins
+# export QT_QPA_PLATFORM_PLUGIN_PATH=/usr/lib64/qt6/plugins
+export QT_OPENGL=software
+export QMLSCENE_DEVICE=softwarecontext
+export QT_AUTO_SCREEN_SCALE_FACTOR=none
+export QT_SCALE_FACTOR=none
+export QT_SCREEN_SCALE_FACTORS=none
+export QTWEBENGINE_CHROMIUM_FLAGS=--disable-gpu
+export QTWEBENGINE_DISABLE_SANDBOX=1
+# export QT_QPA_PLATFORM=wayland
+export QT_QPA_PLATFORM=xcb
+
+~/Development/sdks/android-sdk/emulator/qemu/linux-x86_64/qemu-system-x86_64 -netdelay none -netspeed full -avd Pixel_8_API_34 -grpc-use-token -idle-grpc-timeout 300 -writable-system -selinux permissive -qemu -enable-kvm -gpu guest -verbose

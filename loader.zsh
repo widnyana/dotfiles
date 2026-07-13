@@ -23,20 +23,26 @@ if [ ! -f ${_DOT_DIR}/auth_keys ]; then
   exit 1
 fi
 
+source ${_DOT_DIR}/global_env
 source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
 source ${_DOT_DIR}/functions.sh
 source ${_DOT_DIR}/paths                      ### declare $PATH here
+source ${_DOT_DIR}/core
 
 source ${_DOT_DIR}/android
 source ${_DOT_DIR}/blockchain
 source ${_DOT_DIR}/devs
 source ${_DOT_DIR}/golang
-source ${_DOT_DIR}/infrastructure
 source ${_DOT_DIR}/nodejs
 source ${_DOT_DIR}/python
 source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases
+source ${_DOT_DIR}/infrastructure
+
+if [ ! -f ${_DOT_DIR}/workaround ]; then 
+  source ${_DOT_DIR}/workaround
+fi
 
 #: specific per OS
 if [[ $(uname) == "Linux" ]]; then

@@ -23,6 +23,8 @@
 	top = !git rev-parse --show-toplevel
 	unstage = reset HEAD
 	undo-commit = reset --soft HEAD^
+	find-merge = "!sh -c 'commit=$0 && branch=${1:-HEAD} && (git rev-list $commit..$branch --ancestry-path | cat -n; git rev-list $commit..$branch --first-parent | cat -n) | sort -k2 -s | uniq -f1 -d | sort -n | tail -1 | cut -f2'"
+	show-merge = "!sh -c 'merge=$(git find-merge $0 $1) && [ -n \"$merge\" ] && git show $merge'"
 
 [init]
 	defaultBranch = main
@@ -48,6 +50,9 @@
 
 [core]
 	excludesfile = /Users/wid/.gitignore_global
+	packedGitLimit = 512m
+	packedGitWindowSize = 512m
+	bigFileThreshold = 50m
 
 [fetch]
 	parallel = 32
@@ -59,17 +64,18 @@
 	required = true
 
 [help]
-	autocorrect = 1
+	autocorrect = 0
 
 [gpg]
-	program = gpg
+	program = /usr/local/bin/gpg
 
 [init]
 	defaultBranch = main
-	templateDir = /home/widnyana/.git-template
 
 [user]
 	useConfigOnly = true
+	name = widnyana
+	signingkey = 
 
 [pull]
 	rebase = true
@@ -79,9 +85,10 @@
 
 [gitbutler]
     utmostDiscretion = 1
-[difftool "sourcetree"]
-	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
-[mergetool "sourcetree"]
-	cmd = /Applications/Sourcetree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-	trustExitCode = true
+[pack]
+	windowMemory = 100m
+	packSizeLimit = 100m
+[commit]
+	gpgsign = true
+[tag]
+	gpgSign = true

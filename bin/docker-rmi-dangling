@@ -1,4 +1,10 @@
 #!/usr/bin/env bash
 set -euo pipefail
+dangling_images=$(docker images --filter "dangling=true" -q)
 
-docker rmi -f $(docker image ls --filter "dangling=true" --format "{{.ID}}")
+if [[ -z "$dangling_images" ]]; then
+	echo "No dangling images to remove."
+else
+	echo "Removing dangling images..."
+	docker rmi $dangling_images || echo "Some images failed to remove."
+fi

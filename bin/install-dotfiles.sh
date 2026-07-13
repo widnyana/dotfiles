@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+#──────────────────────────────────────────────────────────────────────────────
+# Damarseta · Infrastructure with Intent. Aligned. Reliable.
+# Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
+#──────────────────────────────────────────────────────────────────────────────
+# Context: Verification test
+# Purpose: Testing gitignore support
+
 set -euo pipefail
 
 unameOut="$(uname -sr)"
@@ -22,7 +29,7 @@ fi
 CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 DOT_DIR="${HOME}/.dotfiles"
 
-pushd $DOT_DIR
+pushd "${DOT_DIR}"
 
 ### Git
 ln -sfn "${HOME}/.dotfiles/config/git" "${CONFIG_DIR}/git"
@@ -39,7 +46,15 @@ if [[ ! -d "${OMZ_PATH}" ]]; then
 
     #: attach custom loader
     echo "source ${DOT_DIR}/loader.zsh" > "${OMZ_PATH}/custom/loader.zsh"
+    # shellcheck source=/dev/null
     source ~/.zshrc
+fi
+
+## ZSH Completions
+ZSH_COMPLETIONS_DIR="${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
+if [[ ! -d $ZSH_COMPLETIONS_DIR ]]; then 
+#   git clone https://github.com/zsh-users/zsh-completions "${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions"
+git clone https://github.com/zsh-users/zsh-completions "${ZSH_COMPLETIONS_DIR}"
 fi
 
 ### fzf - A command-line fuzzy finder
@@ -53,6 +68,7 @@ fi
 ### Rust
 export CARGO_HOME="${HOME}/Development/sdks/.cargo"
 export RUSTUP_HOME="${HOME}/Development/sdks/rustup" 
+export PATH="${CARGO_HOME}/bin:${PATH}"
 
 if [[ ! -d "${CARGO_HOME}" ]]; then
     mkdir -p "${CARGO_HOME}"
@@ -69,33 +85,31 @@ fi
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
 ln -sfn "${HOME}/.dotfiles/config/nvim-v2"         "${CONFIG_DIR}/nvim"
 
-### Alacritty
+#  ▄▖▜       ▘▗ ▗   
+#  ▌▌▐ ▀▌▛▘▛▘▌▜▘▜▘▌▌
+#  ▛▌▐▖█▌▙▖▌ ▌▐▖▐▖▙▌
+#
 if [[ ! -d "${CONFIG_DIR}/alacritty" ]]; then 
     mkdir -p        "${CONFIG_DIR}/alacritty"
     mkdir -p        "${CONFIG_DIR}/alacritty/themes"
     ln -sfn         "${DOT_DIR}/config/alacritty/alacritty.toml"  "${CONFIG_DIR}/alacritty/alacritty.toml"
 fi
 
+#    ▌     ▗ ▗   
+#  ▛▌▛▌▛▌▛▘▜▘▜▘▌▌
+#  ▙▌▌▌▙▌▄▌▐▖▐▖▙▌
+#  ▄▌          ▄▌
+if [[ ! -d "${CONFIG_DIR}/ghostty" ]]; then 
+    ln -sfn         "${DOT_DIR}/config/ghostty"  "${CONFIG_DIR}/ghostty"
+fi
+
 ### mkcert
 if [[ ! -f "$HOME/.local/bin/mkcert" ]]; then
     echo -e "installing FiloSottile/mkcert..."
-
-    if [[ $machine == "Linux" ]]; then
-      sudo dnf install wget nss-tools -y -q
-      wget -q --show-progress --progress=bar -O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
-    fi
-    
-    if ! [[ -x $(command -v "wget") ]]; then
-      if [[ $machine == "Mac" ]]; then
-        brew install wget
-      fi
-
-      brew install nss
-      wget -q --show-progress --progress=bar -O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=darwin/arm64"
-    fi
-
-    chmod +x "/tmp/mkcert"
-    mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
+    # sudo dnf install nss-tools -y -q
+    # wget   -q --show-progress --progress=bar-O /tmp/mkcert "https://dl.filippo.io/mkcert/latest?for=linux/amd64"
+    # chmod +x "/tmp/mkcert"
+    # mv "/tmp/mkcert" "${HOME}/.local/bin/mkcert"
 fi
 
 ### burntsushi/ripgrep
@@ -110,9 +124,19 @@ if [[ ! -f "${HOME}/.local/bin/mise" ]]; then
     ln -sfn "${DOT_DIR}/config/mise/config.toml"  "${CONFIG_DIR}/mise/config.toml"
 
     curl https://mise.jdx.dev/install.sh | sh
-    ${HOME}/.local/bin/mise completion zsh  2> /dev/null > "${DOT_DIR}/vendor/oh-my-zsh/completions/_mise"
-    eval $(${HOME}/.local/bin/mise activate --shims)
+    "${HOME}/.local/bin/mise" completion zsh 2> /dev/null | tee \
+        "$ZSH_CACHE_DIR/completions/_mise" \
+        "$DOT_DIR/vendor/oh-my-zsh/completions/_mise" > /dev/null
 fi
+
+#    ▗   ▘  
+#  ▀▌▜▘▌▌▌▛▌
+#  █▌▐▖▙▌▌▌▌
+#
+if [[ ! -d "${CONFIG_DIR}/atuin" ]]; then 
+    ln -sfn "${DOT_DIR}/config/atuin"  "${CONFIG_DIR}/atuin"
+fi
+
 
 ### Tmux
 if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then 
@@ -122,12 +146,10 @@ if [[ ! -d "${CONFIG_DIR}/tmux" ]]; then
     ln -sn -f   "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local"
 fi
 
+### install all required tools via mise
+$(which mise) install -y
 
-if ! [[ -x $(command -v "go") ]]; then
-  echo -e "Golang Compiler is not exist, installing"
-  ~/.local/bin/mise install "go@latest"
-  ~/.local/bin/mise reshim
-fi
+# =====================================================================================================================
 
 
 ### kube-tmux: kubernetes-context integration for tmux

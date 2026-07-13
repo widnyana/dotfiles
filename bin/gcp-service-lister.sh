@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+#──────────────────────────────────────────────────────────────────────────────
+# Damarseta · Infrastructure with Intent. Aligned. Reliable.
+# Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
+#──────────────────────────────────────────────────────────────────────────────
+# Context: Verification test
+# Purpose: Testing gitignore support
+
 set -euo pipefail
 
 # List Enabled Services, and Service Accounts from every project on your Google Cloud Platform, 

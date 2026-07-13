@@ -1,0 +1,68 @@
+#!/usr/bin/env bash
+set -eo pipefail
+
+# Variables
+DB_HOST="$1"
+DB_PORT="$2"
+DB_NAME="$3"
+DB_USER="$4"
+DUMP_DIR="$5"
+
+
+# Function to check if the necessary parameters are provided
+function check_params() {
+    if [[ -z "$DB_HOST" || -z "$DB_PORT" || -z "$DB_NAME" || -z "$DB_USER" || -z "$DUMP_DIR" ]]; then
+        echo "Usage: $0 <db_host> <db_port> <database_name> <username> <output_directory>"
+        exit 1
+    fi
+}
+
+
+# Part 1: Restore schema files first
+echo "Starting schema restoration..."
+for SCHEMA_DIR in "$DUMP_DIR"/*/; do
+    SCHEMA_NAME=$(basename "$SCHEMA_DIR")
+    echo "Restoring schema for $SCHEMA_NAME..."
+
+    psql -h "${DB_HOST}" -p "${DB_PORT}" -U "${DB_USER}" -d "${DB_NAME}" -c "CREATE SCHEMA IF NOT EXISTS ${SCHEMA_NAME};"
+
+    # Iterate over each table schema file in the schema directory
+    for SCHEMA_FILE in "$SCHEMA_DIR"/*_schema.sql; do
+        echo "Restoring schema from $SCHEMA_FILE..."
+        psql -h "${DB_HOST}" -p "${DB_PORT}" -U "$DB_USER" -d "$DB_NAME" -f "$SCHEMA_FILE"
+        if [ $? -eq 0 ]; then
+            echo "Schema restoration completed for $SCHEMA_FILE."
+        else
+            echo "Error restoring schema for $SCHEMA_FILE." >&2
+            exit 1
+        fi
+    done
+done
+
+# Part 2: Ask the user if they want to restore the data as well
+read -p "Do you want to restore the data for each table as well? (y/n): " RESTORE_DATA
+
+if [[ "$RESTORE_DATA" == "y" || "$RESTORE_DATA" == "Y" ]]; then
+    echo "Starting data restoration..."
+
+    # Restore each table's data file within each schema directory
+    for SCHEMA_DIR in "$DUMP_DIR"/*/; do
+        SCHEMA_NAME=$(basename "$SCHEMA_DIR")
+        echo "Restoring data for $SCHEMA_NAME..."
+
+        for DATA_FILE in "$SCHEMA_DIR"/*_data.sql; do
+            echo "Restoring data from $DATA_FILE..."
+            psql -h "${DB_HOST}" -p "${DB_PORT}" -U "$DB_USER" -d "$DB_NAME" -f "$DATA_FILE"
+            if [ $? -eq 0 ]; then
+                echo "Data restoration completed for $DATA_FILE."
+            else
+                echo "Error restoring data for $DATA_FILE." >&2
+                exit 1
+            fi
+        done
+    done
+else
+    echo "Data restoration skipped."
+fi
+
+echo "Database restoration process completed."

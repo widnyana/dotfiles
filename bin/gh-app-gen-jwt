@@ -1,0 +1,205 @@
+#!/usr/bin/env python3
+
+import sys
+import json
+import time
+import os
+
+import jwt
+import requests
+
+def gen_jwt(client_id: str, pem_filepath: str) -> str:
+    """
+    Generates a JSON Web Token (JWT) for GitHub App authentication.
+
+    Args:
+        client_id: The client ID of your GitHub App.
+        pem_filepath: The file path to your GitHub App's private key (.pem file).
+
+    Returns:
+        The generated JWT as a string.
+    """
+    # Check if pem_filepath is empty
+    if not pem_filepath:
+        print("Error: Private key file path cannot be empty.", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        with open(pem_filepath, 'rb') as pem_file:
+            signing_key = pem_file.read()
+    except FileNotFoundError:
+        print(f"Error: Private key file not found at '{pem_filepath}'.", file=sys.stderr)
+        sys.exit(1)
+    except Exception as e:
+        print(f"Error reading private key file: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Check if client_id is empty
+    if not client_id:
+        print("Error: Client ID cannot be empty.", file=sys.stderr)
+        sys.exit(1)
+
+    payload = {
+        # Issued at time
+        'iat': int(time.time()),
+        # JWT expiration time (10 minutes maximum)
+        'exp': int(time.time()) + 600,
+        # GitHub App's client ID (also known as App ID)
+        'iss': client_id
+    }
+
+    # Create JWT
+    encoded_jwt = jwt.encode(payload, signing_key, algorithm='RS256')
+    return encoded_jwt
+
+def _make_github_api_request(method: str, url: str, token: str, payload: dict = None) -> dict | None:
+    """
+    Internal helper to make GitHub API requests.
+    """
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "Authorization": f"Bearer {token}",
+        "X-GitHub-Api-Version": "2022-11-28"
+    }
+
+    try:
+        if method.upper() == "GET":
+            response = requests.get(url, headers=headers)
+        elif method.upper() == "POST":
+            response = requests.post(url, headers=headers, json=payload) # Use json for POST body
+        else:
+            print(f"Unsupported HTTP method: {method}", file=sys.stderr)
+            return None
+
+        response.raise_for_status()  # Raises an HTTPError for bad responses (4xx or 5xx)
+
+        return response.json()
+
+    except requests.exceptions.HTTPError as err:
+        print(f"HTTP error occurred: {err}", file=sys.stderr)
+        print(f"Response content: {err.response.text}", file=sys.stderr)
+    except requests.exceptions.ConnectionError as err:
+        print(f"Connection error occurred: {err}", file=sys.stderr)
+    except requests.exceptions.Timeout as err:
+        print(f"Timeout error occurred: {err}", file=sys.stderr)
+    except requests.exceptions.RequestException as err:
+        print(f"An unexpected error occurred: {err}", file=sys.stderr)
+    return None
+
+def auth_as_gh_app(jwt_token: str):
+    """
+    Authenticates as a GitHub App and retrieves the app's details.
+    Uses the JWT token directly for authentication.
+    """
+    url = "https://api.github.com/app"
+    print(f"\nAuthenticating as GitHub App to: {url}")
+    app_data = _make_github_api_request("GET", url, jwt_token)
+
+    if app_data:
+        print("Successfully retrieved GitHub App data:")
+        print(json.dumps(app_data, indent=2))
+    else:
+        print("Failed to retrieve GitHub App data.")
+    print("-" * 30)
+
+def get_installation_id_for_org(org_name: str, jwt_token: str) -> int | None:
+    """
+    Retrieves the installation ID for a given organization using the JWT token.
+    """
+    url = f"https://api.github.com/orgs/{org_name}/installation"
+    print(f"\nAttempting to find installation ID for org '{org_name}' at: {url}")
+    installation_data = _make_github_api_request("GET", url, jwt_token)
+
+    if installation_data and 'id' in installation_data:
+        print(f"Found installation ID: {installation_data['id']}")
+        return installation_data['id']
+    else:
+        print(f"Could not find installation ID for organization '{org_name}'.")
+        print(f"Response: {json.dumps(installation_data, indent=2) if installation_data else 'None'}")
+        return None
+
+def get_installation_access_token(installation_id: int, jwt_token: str) -> dict | None:
+    """
+    Generates an installation access token for a specific GitHub App installation.
+    Requires a JWT token for authentication.
+    """
+    url = f"https://api.github.com/app/installations/{installation_id}/access_tokens"
+    print(f"\nGenerating installation access token for installation ID: {installation_id} at: {url}")
+    # The POST request body for this endpoint is empty.
+    token_data = _make_github_api_request("POST", url, jwt_token)
+
+    if token_data and 'token' in token_data:
+        print("Successfully retrieved installation access token!")
+        print(f"Token: {token_data.get('token')[:10]}... (truncated)")
+        print(f"Expires at: {token_data.get('expires_at')}")
+        return token_data
+    else:
+        print("Failed to retrieve installation access token.")
+        return None
+    print("-" * 30)
+
+def auth_as_app_installation(jwt_token: str):
+    """
+    Guides the user through authenticating as a GitHub App Installation.
+    This involves getting the installation ID and then an access token.
+    """
+    org_name = input("Enter Org Name for installation: ").strip()
+    if not org_name:
+        print("Error: Organization name cannot be empty.", file=sys.stderr)
+        return
+
+    installation_id = get_installation_id_for_org(org_name, jwt_token)
+
+    if installation_id:
+        access_token_info = get_installation_access_token(installation_id, jwt_token)
+        if access_token_info:
+            print("\nInstallation Access Token Details:")
+            print(json.dumps(access_token_info, indent=2))
+            print("\nYou can now use this 'token' to authenticate API calls as the installation.")
+        else:
+            print("Failed to get an installation access token.")
+    else:
+        print("Could not proceed with app installation authentication without an installation ID.")
+    print("-" * 30)
+
+
+def ask_user(jwt_token: str):
+    """
+    Prompts the user to choose an authentication method.
+    """
+    while True:
+        print("\nChoose an action:")
+        print("1. Authenticate as GitHub App (get app details)")
+        print("2. Authenticate as App Installation (get installation access token for an Org)")
+        print("0. Exit")
+
+        choice = input("Enter your choice (1, 2, or 0): ").strip()
+
+        if choice == '1':
+            auth_as_gh_app(jwt_token)
+        elif choice == '2':
+            auth_as_app_installation(jwt_token)
+        elif choice == '0':
+            print("Exiting.")
+            break
+        else:
+            print("Invalid choice. Please enter 1, 2, or 0.")
+
+def main():
+    # Get the Client ID
+    client_id_arg = sys.argv[1] if len(sys.argv) > 1 else ""
+    client_id = client_id_arg if client_id_arg else input("Enter your GitHub App ID (Client ID): ").strip()
+
+    # Get PEM file path
+    pem_filepath_arg = sys.argv[2] if len(sys.argv) > 2 else ""
+    pem_filepath = pem_filepath_arg if pem_filepath_arg else input("Enter path of private PEM file: ").strip()
+
+    # Generate the JWT
+    encoded_jwt = gen_jwt(client_id, pem_filepath)
+
+    # Ask the user what action to perform
+    ask_user(encoded_jwt)
+
+
+if __name__ == '__main__':
+    main()

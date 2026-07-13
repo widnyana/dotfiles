@@ -1,0 +1,259 @@
+#!/bin/bash
+
+# Check for required commands
+check_requirements() {
+    local missing_reqs=0
+    
+    if ! command -v gum &> /dev/null; then
+        echo "Error: 'gum' is not installed. Please install it from https://github.com/charmbracelet/gum"
+        missing_reqs=1
+    fi
+    
+    if ! command -v gcloud &> /dev/null; then
+        echo "Error: 'gcloud' CLI is not installed. Please install Google Cloud SDK."
+        missing_reqs=1
+    fi
+    
+    if [ $missing_reqs -eq 1 ]; then
+        exit 1
+    fi
+}
+
+# Function to get current public IP
+get_public_ip() {
+    curl -s ifconfig.me
+}
+
+# Function to show a spinning loader with message
+show_loader() {
+    local message=$1
+    gum spin --spinner dot --title "$message" -- sleep 2
+}
+
+# Function to list and select project
+list_projects() {
+    gum style \
+        --border normal \
+        --margin "1" \
+        --padding "1" \
+        --border-foreground 212 \
+        "Select a GCP Project"
+
+    show_loader "Fetching projects..."
+    projects=($(gcloud projects list --format="value(projectId)"))
+    
+    if [ ${#projects[@]} -eq 0 ]; then
+        gum style --foreground 1 "No projects found. Please check your GCP access."
+        exit 1
+    fi
+    
+    selected_project=$(gum choose --height 15 "${projects[@]}")
+    
+    if [ -z "$selected_project" ]; then
+        gum style --foreground 1 "No project selected. Exiting..."
+        exit 1
+    fi
+    
+    gum style \
+        --foreground 212 \
+        "Selected project: $selected_project"
+}
+
+# Function to list and select GKE clusters
+list_clusters() {
+    local project=$1
+    
+    gum style \
+        --border normal \
+        --margin "1" \
+        --padding "1" \
+        --border-foreground 212 \
+        "Select a GKE Cluster"
+
+    show_loader "Fetching GKE clusters..."
+    clusters=($(gcloud container clusters list --project="$project" --format="value(name)"))
+    
+    if [ ${#clusters[@]} -eq 0 ]; then
+        gum style --foreground 1 "No GKE clusters found in project $project"
+        exit 1
+    fi
+    
+    selected_cluster=$(gum choose --height 15 "${clusters[@]}")
+    
+    if [ -z "$selected_cluster" ]; then
+        gum style --foreground 1 "No cluster selected. Exiting..."
+        exit 1
+    fi
+    
+    gum style \
+        --foreground 212 \
+        "Selected cluster: $selected_cluster"
+}
+
+# Function to get cluster zone/region
+get_cluster_location() {
+    local project=$1
+    local cluster=$2
+    show_loader "Getting cluster location..."
+    location=$(gcloud container clusters list --project="$project" --filter="name=$cluster" --format="value(location)")
+    echo "$location"
+}
+
+# Function to check if IP is already authorized
+check_ip_authorized() {
+    local project=$1
+    local cluster=$2
+    local location=$3
+    local ip=$4
+    
+    show_loader "Checking authorized networks..."
+    authorized_networks=$(gcloud container clusters describe "$cluster" --project="$project" --location="$location" --format="value(masterAuthorizedNetworksConfig.cidrBlocks[].cidrBlock)")
+    
+    if echo "$authorized_networks" | grep -q "^$ip/32$"; then
+        return 0  # IP is authorized
+    else
+        return 1  # IP is not authorized
+    fi
+}
+
+# Function to add IP to authorized networks
+add_ip_to_authorized() {
+    local project=$1
+    local cluster=$2
+    local location=$3
+    local ip=$4
+    
+    # Get existing authorized networks
+    existing_networks=$(gcloud container clusters describe "$cluster" \
+        --project="$project" \
+        --location="$location" \
+        --format="value(masterAuthorizedNetworksConfig.cidrBlocks[].cidrBlock,masterAuthorizedNetworksConfig.cidrBlocks[].displayName)")
+    
+    # Prompt for display name with gum input
+    gum style \
+        --border normal \
+        --margin "1" \
+        --padding "1" \
+        --border-foreground 212 \
+        "Enter a display name for this IP (e.g., 'John's Workstation')"
+    
+    display_name=$(gum input --placeholder "Enter display name")
+    
+    if [ -z "$display_name" ]; then
+        display_name="Workstation-$(date +%Y%m%d)"
+    fi
+    
+    gum style \
+        --foreground 212 \
+        "Adding $ip/32 ($display_name) to authorized networks..."
+    
+    # Prepare the new network entry
+    new_network="$ip/32=$display_name"
+    
+    # Combine existing networks with the new one
+    if [ -n "$existing_networks" ]; then
+        # Convert existing networks to the format cidrBlock=displayName
+        formatted_networks=$(echo "$existing_networks" | while read -r cidr name; do
+            if [ -n "$cidr" ] && [ -n "$name" ]; then
+                echo -n "$cidr=$name,"
+            fi
+        done)
+        # Combine with new network
+        all_networks="${formatted_networks}${new_network}"
+    else
+        all_networks="$new_network"
+    fi
+        
+    show_loader "Updating cluster configuration..."
+    gcloud container clusters update "$cluster" \
+        --project="$project" \
+        --location="$location" \
+        --enable-master-authorized-networks \
+        --master-authorized-networks="$all_networks"
+}
+
+# Function to display current authorized networks
+display_authorized_networks() {
+    local project=$1
+    local cluster=$2
+    local location=$3
+    
+    gum style \
+        --border normal \
+        --margin "1" \
+        --padding "1" \
+        --border-foreground 212 \
+        "Current Authorized Networks"
+
+    show_loader "Fetching authorized networks..."
+    
+    # Get the authorized networks with descriptions
+    networks_data=$(gcloud container clusters describe "$cluster" \
+        --project="$project" \
+        --location="$location" \
+        --format="table(masterAuthorizedNetworksConfig.cidrBlocks[].displayName,masterAuthorizedNetworksConfig.cidrBlocks[].cidrBlock)" \
+        | tail -n +2)  # Remove the header line
+    
+    if [ -z "$networks_data" ]; then
+        gum style --foreground 3 "No authorized networks configured."
+    else
+        echo "$networks_data" | while read -r line; do
+            gum style --foreground 10 "➜ $line"
+        done
+    fi
+}
+
+# Main script
+clear
+gum style \
+    --border double \
+    --margin "1" \
+    --padding "1" \
+    --border-foreground 212 \
+    "GKE Authorized Network Manager"
+
+# Check requirements
+check_requirements
+
+# Check if user is logged in
+if ! gcloud auth list --filter=status:ACTIVE --format="value(account)" &> /dev/null; then
+    gum style --foreground 1 "Error: Not logged in to gcloud. Please run 'gcloud auth login' first."
+    exit 1
+fi
+
+# Get current public IP
+show_loader "Fetching your public IP..."
+current_ip=$(get_public_ip)
+gum style "Your current public IP: $current_ip"
+echo
+
+# List and select project
+list_projects
+echo
+
+# List and select cluster
+list_clusters "$selected_project"
+echo
+
+# Get cluster location
+cluster_location=$(get_cluster_location "$selected_project" "$selected_cluster")
+gum style "Cluster location: $cluster_location"
+echo
+
+# Check if IP is already authorized
+if check_ip_authorized "$selected_project" "$selected_cluster" "$cluster_location" "$current_ip"; then
+    gum style --foreground 10 "✓ Your IP ($current_ip) is already authorized for this cluster."
+else
+    gum style --foreground 1 "✗ Your IP ($current_ip) is not authorized for this cluster."
+    
+    if gum confirm "Would you like to add it to authorized networks?" --affirmative="Yes" --negative="No"; then
+        add_ip_to_authorized "$selected_project" "$selected_cluster" "$cluster_location" "$current_ip"
+        gum style --foreground 10 "✓ IP successfully added to authorized networks."
+    else
+        gum style --foreground 3 "Operation cancelled."
+    fi
+fi
+
+echo
+# Display final authorized networks status
+display_authorized_networks "$selected_project" "$selected_cluster" "$cluster_location"

@@ -1,19 +1,16 @@
-export ANDROID_SDK=$HOME/Development/sdks/android
-export ANDROID_AVD_HOME=$HOME/Development/.android
-ANDROID_PATH=$HOME/Development/sdks/android/platform-tools:$HOME/Development/sdks/android/tools:$HOME/Development/sdks/android/tools/bin:$HOME/Development/sdks/android/build-tools/29.0.2
-export ANDROID_SDK_HOME=$HOME/Development/.android
-#export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$HOME/Development/sdks/android/emulator/lib64/qt/lib:$HOME/Development/sdks/android/emulator/lib64
+# Android SDK
+if [ -d "${HOME}/Development/sdks/android-sdk" ]; then
+  export ANDROID_SDK=${HOME}/Development/sdks/android-sdk
+  export ANDROID_AVD_HOME=${HOME}/Development/sdks/.android
+  ANDROID_PATH="${HOME}/Development/sdks/android-sdk/cmdline-tools/latest/bin:${HOME}/Development/sdks/android-sdk/platform-tools:${HOME}/Development/sdks/android-sdk/build-tools:${HOME}/Development/sdks/android-sdk/build-tools/34.0.0"
+  export ANDROID_SDK_HOME=${HOME}/Development/sdks/.android
+  #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/Development/sdks/android/emulator/lib64/qt/lib:${HOME}/Development/sdks/android/emulator/lib64
 
-#                   _           _     _   __    ___      
-#    __ _ _ __   __| |_ __ ___ (_) __| | / _\  /   \/\ /\
-#   / _` | '_ \ / _` | '__/ _ \| |/ _` | \ \  / /\ / //_/
-#  | (_| | | | | (_| | | | (_) | | (_| | _\ \/ /_// __ \ 
-#   \__,_|_| |_|\__,_|_|  \___/|_|\__,_| \__/___,'\/  \/ 
-#                                                        
-if [[ -d "${HOME}/Development/sdks/android" ]]; then 
-    export ANDROID_HOME; ANDROID_HOME=${HOME}/Development/sdks/android
-    LOCALPATH=${LOCALPATH}:${ANDROID_HOME}/tools/bin:${ANDROID_HOME}/platform-tools
+  if [[ -d "${HOME}/Development/sdks/android" ]]; then 
+    export ANDROID_HOME; ANDROID_HOME=${HOME}/Development/sdks/android-sdk
+    LOCALPATH=${LOCALPATH}:${ANDROID_HOME}/platform-tools
+  fi
+
+  export PATH=$PATH:$LOCALPATH:$ANDROID_PATH
+
 fi
-
-export PATH=$PATH:$LOCALPATH:$ANDROID_PATH
-

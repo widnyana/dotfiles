@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [ $# -ne 1 ]; then
+  echo "Usage: $0 <string-to-encode>" >&2
+  exit 1
+fi
+
+python3 -c "import urllib.parse, sys; print(urllib.parse.quote(sys.argv[1]))" "$1"

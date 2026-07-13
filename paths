@@ -2,7 +2,7 @@ export XDG_CONFIG_HOME="${HOME}/.config"
 export PATH=$PATH:/usr/local/bin:/bin:/usr/bin:/usr/local/bin
 
 export LOCALPATH
-LOCALPATH=$HOME/Development/bin:${HOME}/.dotfiles/bin
+LOCALPATH=${HOME}/.dotfiles/bin:$HOME/Development/bin
 
 #       _ _                     
 #    __| (_)_ __ ___ _ ____   __
@@ -17,4 +17,4 @@ fi
 
 #: export new PATH
 LOCALPATH=$HOME/.local/bin:$HOME/bin:$LOCALPATH
-export PATH=$PATH:$LOCALPATH
+export PATH=$LOCALPATH:$PATH

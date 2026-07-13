@@ -8,7 +8,8 @@ export ZSH="${HOME}/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="oxide"
+# latest used theme: gozilla
+ZSH_THEME="" # set by `omz`; 
 
 # Set list of themes to pick from when loading at random
 # Setting this variable when ZSH_THEME=random will cause zsh to load
@@ -73,13 +74,12 @@ DISABLE_AUTO_TITLE="true"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
-    git 
+    git
     fzf
     themes
     mise
     direnv
-    flutter
-    nix-zsh-completions
+    docker
 )
 
 fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
@@ -118,4 +118,15 @@ autoload -U +X compinit && compinit -i
 
 [ -f "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh ] && source "${XDG_CONFIG_HOME:-$HOME/.config}"/fzf/fzf.zsh
 
+# Starship
+eval "$(starship init zsh)"
 ## loader.zsh is managed by $HOME/.dotfiles/bin/install-dotfiles.sh via $OMZ_PATH/custom directory
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C ${MISE_DATA_DIR}/installs/opentofu/latest/tofu tofu
+
+
+# opencode
+export PATH=$HOME/.opencode/bin:$PATH
+export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+

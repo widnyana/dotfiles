@@ -1,20 +1,26 @@
+# Font
+font-size = 10
 adjust-cell-height = 10%
 bold-is-bright = true
-background-blur = true
+
+# Background
 background-opacity = 0.8
-font-size = 10
-freetype-load-flags = false
-shell-integration = detect
+background-blur = macos-glass-regular
+
+# Window
 theme = Rapture
 title = "~"
-
-
-window-decoration = auto
+window-colorspace = display-p3
 window-new-tab-position = end
+window-padding-x = 8
+window-padding-y = 4
 window-padding-balance = true
-window-subtitle = false
 window-theme = ghostty
 window-height = 1024
 window-width = 1600
-window-save-state = default
+
+# Shell
+mouse-hide-while-typing = true
+
+# Keybinds
 keybind = shift+enter=text:\n

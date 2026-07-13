@@ -1,5 +1,4 @@
 [tools]
-"ubi" = "latest"
 act = "0.2.78"
 atuin = "18.10.0"
 bat = "latest"
@@ -23,7 +22,6 @@ node = "26.3.0"
 opentofu = "latest"
 pre-commit = "4.3.0"
 python = "3.14.6"
-redis-cli = "8.2-m01"
 ripgrep = "15.1.0"
 rust = "1.96.0"
 rye = "latest"
@@ -51,9 +49,6 @@ zoxide = "0.9.9"
 "npm:socket" = "1.1.119"
 "pipx:glances" = { version = "4.5.4", action = "", containers = "", graph = "", ip = "", sensors = "", wifi = "" }
 "starship" = "latest"
-"ubi:charmbracelet/crush" = "0.76.0"
-"ubi:grafana/alloy" = "latest"
-"ubi:houseabsolute/precious" = "latest"
 tmux = "3.6a"
 lazygit = "0.62.2"
 sqlite = "3.52.0"
@@ -63,7 +58,6 @@ gcloud = "572.0.0"
 
 
 [plugins]
-flutter = "https://github.com/asdf-community/asdf-flutter"
 
 [settings]
 always_keep_download = false             # deleted after install by default

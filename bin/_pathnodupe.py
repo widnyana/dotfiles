@@ -2,4 +2,4 @@
 import os
 
 paths = os.getenv("PATH", "").split(":")
-print(":".join(list(set(paths))))
+print(":".join(dict.fromkeys(paths)))

@@ -14,6 +14,7 @@ export GITHUB_PERSONAL_TOKEN=
 export GITLAB_PERSONAL_USERNAME=""
 export GITLAB_PERSONAL_TOKEN=""
 EOF
+  chmod 600 "${_DOT_DIR}/auth_keys"
 }
 
 
@@ -22,6 +23,8 @@ if [ ! -f ${_DOT_DIR}/auth_keys ]; then
   echo "please configure your token here: ${_DOT_DIR}/auth_keys"
   exit 1
 fi
+
+chmod 600 "${_DOT_DIR}/auth_keys"
 
 source ${_DOT_DIR}/global_env
 source ${_DOT_DIR}/common/colors
@@ -40,7 +43,7 @@ source ${_DOT_DIR}/rust
 source ${_DOT_DIR}/aliases
 source ${_DOT_DIR}/infrastructure
 
-if [ ! -f ${_DOT_DIR}/workaround ]; then 
+if [ -f ${_DOT_DIR}/workaround ]; then
   source ${_DOT_DIR}/workaround
 fi
 
@@ -66,7 +69,6 @@ if [[ -d "${__OFFICE_DIR}" ]]; then
 fi
 
 #: finalize $PATH
-echo -e "Finalizing \$PATH"
 FINAL_PATH=$(python3 ${_DOT_DIR}/bin/_pathnodupe.py)
 export PATH=${FINAL_PATH}
 
@@ -75,5 +77,3 @@ export FPATH="$FPATH:${_DOT_DIR}/completions/"
 
 #: clean up
 unset _BOXES _DOT_DIR FINAL_PATH
-
-echo "loader.zsh finished!"

@@ -8,15 +8,12 @@ if [[ -x "$(command -v kubectl)" ]]; then
   export KUBE_TMUX_BINARY="$(which kubectl)"
 fi
 
-#: kubectl autocomplete
-if type "kubectl" > /dev/null; then
-  source <(kubectl completion zsh)
-fi
+#: kubectl autocomplete - cached in ${DOT_DIR}/completions/_kubectl, see bin/refresh-completions.sh
 
 #: krew - https://github.com/kubernetes-sigs/krew
 PATH=${PATH}:${KREW_ROOT:-$HOME/.krew}/bin
 
-if command 'kubectl' 'ouctl' >> /dev/null 2>&1; then
+if type "kubectl-ouctl" > /dev/null 2>&1; then
   source <(kubectl ouctl completion zsh)
 fi
 
@@ -30,17 +27,14 @@ if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then
 fi
 [ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
 
-#: Minikube
+#: Minikube - completions cached in ${DOT_DIR}/completions/_minikube, see bin/refresh-completions.sh
 if type "minikube" >> /dev/null; then
     export MINIKUBE_HOME=$HOME/Development/Infrastructure/labs/minikube/_MINIKUBE_HOME
     export MINIKUBE_IN_STYLE=false
-    mkdir -p "${MINIKUBE_HOME}"
-    source <(minikube completion zsh)
+    [[ -d "${MINIKUBE_HOME}" ]] || mkdir -p "${MINIKUBE_HOME}"
 fi
 
-if type "trivy" >> /dev/null; then
-  source <(trivy completion zsh)
-fi
+#: trivy autocomplete - cached in ${DOT_DIR}/completions/_trivy, see bin/refresh-completions.sh
 
 
 #: docker
@@ -50,14 +44,10 @@ fi
 
 #: https://github.com/buildpacks/pack
 if type "pack" > /dev/null; then
-. $(pack completion --shell zsh)
+  source <(pack completion --shell zsh)
 fi
 
-#: Helm.sh
-if [[ -x "$(command -v helm)" ]]; then
-  source <(helm completion zsh)
-fi
-
+#: Helm.sh autocomplete - cached in ${DOT_DIR}/completions/_helm, see bin/refresh-completions.sh
 
 export PATH="${PATH}:$HOME/.istioctl/bin"
 
@@ -94,10 +84,7 @@ if type "vault" > /dev/null; then
   complete -o nospace -C $(which vault) vault
 fi
 
-#: argocd autocomplete
-if type "argocd" > /dev/null; then
-  source <(argocd completion zsh)
-fi
+#: argocd autocomplete - cached in ${DOT_DIR}/completions/_argocd, see bin/refresh-completions.sh
 
 #: Vagrant
 export VAGRANT_HOME="${HOME}/Development/Infrastructure/vagrant.d"
@@ -107,10 +94,10 @@ export VAGRANT_DEFAULT_PROVIDER=virtualbox
 #  ┃┓┓╋┃┏┓┣┓
 #  ┗┛┗┗┗┗┻┗┛
 #########################
+#: glab zsh completion cached in ${DOT_DIR}/completions/_glab, see bin/refresh-completions.sh
 if type "glab" > /dev/null; then
-  python3 -m pip install --user --upgrade argcomplete
-  activate-global-python-argcomplete
-  source <(glab completion -s zsh); compdef _glab glab
+  python3 -m pip install --user --upgrade argcomplete > /dev/null 2>&1
+  activate-global-python-argcomplete > /dev/null 2>&1
 fi
 
 if type "register-python-argcomplete" > /dev/null; then 
@@ -122,8 +109,8 @@ fi
 #  ┃┃┏┓┃┏┓┏┓┏┓ ┓┏┓
 #  ┗┛┗ ┗┗ ┛ ┗┛•┗┗┛
 ##########################
+#: velero zsh completion cached in ${DOT_DIR}/completions/_velero, see bin/refresh-completions.sh
 if type "velero" > /dev/null; then
-  source <(velero completion zsh)
   alias v=velero
   complete -F __start_velero v
 fi
@@ -133,9 +120,7 @@ fi
 #  ┣┛┗┛┗┛┗┗┣┛┗ ┗┻
 #          ┛    
 ##########################
-if type "pinniped" > /dev/null; then
-  source <(pinniped completion zsh)
-fi
+#: pinniped zsh completion cached in ${DOT_DIR}/completions/_pinniped, see bin/refresh-completions.sh
 
 
 #  ┏┓┓ ┏┏┓
@@ -163,8 +148,9 @@ if type "gcloud" > /dev/null; then
   export USE_GKE_GCLOUD_AUTH_PLUGIN=True
   export CLOUDSDK_PYTHON=$(which python3)
   export CLOUDSDK_PYTHON_SITEPACKAGES=1
-  export CLOUDSDK_HOME=/usr/lib64/google-cloud-sdk
-  source /usr/lib64/google-cloud-sdk/completion.$(basename ${SHELL}).inc
+  export CLOUDSDK_HOME=$(dirname $(dirname $(which gcloud)))
+  [[ -f "${CLOUDSDK_HOME}/completion.$(basename ${SHELL}).inc" ]] && \
+    source "${CLOUDSDK_HOME}/completion.$(basename ${SHELL}).inc"
 fi 
 
 if [[ -f $HOME/Development/sdks/mise/installs/opentofu/latest/tofu ]]; then 

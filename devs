@@ -71,9 +71,9 @@ fi
 
 # always use nvim, if available
 if [[ -x "$(command -v nvim)" ]]; then
-  alias vim='$(which nvim)'
-  alias vi='$(which nvim)'
-  alias nv='$(which nvim)'
+  alias vim=nvim
+  alias vi=nvim
+  alias nv=nvim
 fi
 
 

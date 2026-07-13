@@ -22,17 +22,15 @@ if [[ -x "$(command -v mise)" ]]; then
   export MISE_POETRY_AUTO_INSTALL=1
 
   #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
-  eval "$(mise activate zsh --shims)" # should be first
-  eval "$(mise activate zsh)"
+  eval "$(mise activate zsh --shims)"
 fi
 
 #    ▗   ▘
 #  ▀▌▜▘▌▌▌▛▌
 #  █▌▐▖▙▌▌▌▌
 #
+#: atuin zsh completion cached in ${DOT_DIR}/completions/_atuin, see bin/refresh-completions.sh
 if type "atuin" >>/dev/null; then
-  # shellcheck source=/dev/null
-  source <(atuin gen-completions --shell zsh)
   # shellcheck source=/dev/null
   source <(atuin init zsh)
 fi

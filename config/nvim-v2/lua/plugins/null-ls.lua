@@ -8,7 +8,7 @@ local M = {
         local code_actions = null_ls.builtins.code_actions
         local completion = null_ls.builtins.completion
         return {
-            debug = false,
+            debug = true,
             sources = {
                 formatting.shfmt,
                 formatting.prettier,

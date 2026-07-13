@@ -1,5 +1,4 @@
 -- nvim.lazy
-local user_config = require("config.settings")
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not vim.loop.fs_stat(lazypath) then
     vim.fn.system({
@@ -13,18 +12,14 @@ if not vim.loop.fs_stat(lazypath) then
 end
 vim.opt.runtimepath:prepend(lazypath)
 
-local merge = require('utils').merge
-
 require("lazy").setup("plugins", {
     install = {
-        colorscheme = merge({
+        colorscheme = {
             "catppuccin",
             "tokyonight",
             "habamax"
-        }, {
-            user_config.colorscheme,
-        }),
-        missing = false
+        },
+        missing = true
     },
     defaults = { lazy = false },
     ui = {

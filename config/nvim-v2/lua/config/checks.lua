@@ -9,6 +9,7 @@ local required_programs = {
     tectonic = "Latex build command will not work",
     rg = "a highly recommended grep alternative (ripgrep is the package name)",
     fd = "a highly recommended find alternative",
+    mise = "The front-end to your dev env",
 }
 
 local function checkRequirement(command, msg)

@@ -10,7 +10,7 @@
 --max-columns-preview
 
 # Search case sensitively
---case-sentitive
+--case-sensitive
 
 # search using mmap when possible
 --mmap

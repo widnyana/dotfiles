@@ -2,9 +2,9 @@
 usage = "latest"
 bun = "latest"
 node = "latest"
-go = "1.22"
-zigmod = "r89"
-zig = "0.11.0"
+go = "1.26"
+zigmod = "r99"
+zig = "0.16.0"
 uv = "latest"
 
 [plugins]
@@ -19,3 +19,4 @@ paranoid = false                # see https://mise.jdx.dev/paranoid.html
 env_file = '.env'
 activate_aggressive = true
 asdf_compat = true # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`
+

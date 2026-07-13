@@ -96,5 +96,5 @@ fi
 # RipGrep config
 # see: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
 if [[ -x "$(command -v rg)" ]]; then
-  export RIPGREP_CONFIG_PATH="${HOME}/.dotfiles/config/rigprep/ripgreprc";
+  export RIPGREP_CONFIG_PATH="${HOME}/.dotfiles/config/ripgrep/ripgreprc";
 fi

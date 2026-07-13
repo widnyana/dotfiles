@@ -46,20 +46,10 @@ if type "minikube" >> /dev/null; then
     source <(minikube completion zsh)
 fi
 
-#: Podman
-if [[ -x "$(command -v podman)" ]]; then
-  alias docker=podman
-  alias docker-compose=podman-compose
-  export DOCKER_HOST=unix://$(podman info --format '{{.Host.RemoteSocket.Path}}')
-fi
-
-
 #: docker
 if type "docker" > /dev/null; then
   export DOCKER_HOST="unix:///run/docker.sock"
   export BUILDKIT_PROGRESS=plain
-  alias podman=docker
-  alias podman-compose=docker-compoe
 fi
 
 #: https://github.com/buildpacks/pack

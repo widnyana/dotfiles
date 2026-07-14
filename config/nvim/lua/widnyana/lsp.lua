@@ -19,10 +19,14 @@ M.mason_ensure_installed = {
   -- linter
   "ansible-lint",
   "basedpyright",
+  "cspell",
+  "eslint_d",
   "golangci-lint",
   "luacheck",
+  "markdownlint",
   "selene",
   "shellcheck",
+  "tflint",
   "vale",
   "yamllint",
 

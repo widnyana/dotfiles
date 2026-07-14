@@ -12,6 +12,10 @@ return {
           "rose-pine",
           "rose-pine-moon",
           "rose-pine-main",
+          "catppuccin-macchiato",
+          "tundra",
+          "everforest",
+          "oxocarbon",
         },
       })
     end,
@@ -88,5 +92,97 @@ return {
         },
       }
     end,
+  },
+  {
+    "catppuccin/nvim",
+    name = "catppuccin",
+    lazy = true,
+    priority = 1000,
+    opts = function()
+      return {
+        flavour = "macchiato",
+        dim_inactive = {
+          enabled = true,
+          shade = "dark",
+          percentage = 0.15,
+        },
+        transparent_background = false,
+        term_colors = true,
+        styles = {
+          comments = { "italic" },
+          conditionals = { "italic" },
+        },
+        integrations = {
+          treesitter = true,
+          native_lsp = { enabled = true },
+          cmp = true,
+          gitsigns = true,
+          telescope = true,
+          neotree = { enabled = true },
+          which_key = true,
+          indent_blankline = { enabled = true },
+          notify = true,
+          symbols_outline = true,
+          mini = true,
+        },
+      }
+    end,
+  },
+  {
+    "sam4llis/nvim-tundra",
+    lazy = true,
+    priority = 1000,
+    opts = function()
+      return {
+        transparent_background = false,
+        editor = {
+          search = {},
+          substitute = {},
+        },
+        syntax = {
+          booleans = { bold = true, italic = true },
+          comments = { bold = true, italic = true },
+          conditionals = {},
+          constants = { bold = true },
+          functions = {},
+          keywords = {},
+          loops = {},
+          numbers = { bold = true },
+          operators = { bold = true },
+          punctuation = {},
+          strings = {},
+          types = { italic = true },
+        },
+        diagnostics = {
+          errors = {},
+          warnings = {},
+          information = {},
+          hints = {},
+        },
+        plugins = {
+          lsp = true,
+          treesitter = true,
+          cmp = true,
+          context = true,
+          gitsigns = true,
+          telescope = true,
+        },
+        overwrite = {
+          colors = {},
+          highlights = {},
+        },
+      }
+    end,
+  },
+  {
+    "neanias/everforest-nvim",
+    lazy = true,
+    priority = 1000,
+    opts = {},
+  },
+  {
+    "nyoom-engineering/oxocarbon.nvim",
+    lazy = true,
+    priority = 1000,
   },
 }

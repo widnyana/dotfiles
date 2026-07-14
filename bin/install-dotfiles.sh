@@ -81,7 +81,7 @@ if [[ ! -d "${HOME}/.vim/autoload" ]]; then
 fi
 
 ln -sfn "${HOME}/.dotfiles/vim/vimrc"       "${HOME}/.vimrc"
-ln -sfn "${HOME}/.dotfiles/config/nvim-v2"         "${CONFIG_DIR}/nvim"
+ln -sfn "${HOME}/.dotfiles/config/nvim"         "${CONFIG_DIR}/nvim"
 
 #  ▄▖▜       ▘▗ ▗   
 #  ▌▌▐ ▀▌▛▘▛▘▌▜▘▜▘▌▌

@@ -20,23 +20,15 @@ return {
             local lsp_utils = require("plugins.lsp.lsp-utils")
             lsp_utils.setup()
 
+            vim.lsp.config("*", {
+                on_attach = lsp_utils.on_attach,
+                capabilities = lsp_utils.capabilities,
+            })
+
             local settings = require("config.settings")
-            local mason_lspconfig = require("mason-lspconfig")
-            mason_lspconfig.setup({
-                ensure_installed = settings.lsp_servers
+            require("mason-lspconfig").setup({
+                ensure_installed = settings.lsp_servers,
             })
-
-            local lspconfig = require("lspconfig")
-            mason_lspconfig.setup_handlers({
-                function(server_name)
-                    lspconfig[server_name].setup({
-                        on_attach = lsp_utils.on_attach,
-                        capabilities = lsp_utils.capabilities,
-                    })
-                end,
-            })
-
-
         end
     },
     {

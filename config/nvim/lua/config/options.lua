@@ -4,8 +4,9 @@
 
 vim.g.mapleader = " "
 
-vim.opt.encoding = "utf-8"
-vim.opt.fileencoding = "utf-8"
+-- Note: do not set vim.opt.encoding/fileencoding here. Neovim is always
+-- utf-8, and setting fileencoding at startup hits E21 (modifiable off) on
+-- Neovim 0.12+ during LazyVim's early option load.
 
 -- Indent
 vim.opt.autoindent = true

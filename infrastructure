@@ -95,12 +95,14 @@ export VAGRANT_DEFAULT_PROVIDER=virtualbox
 #  ┗┛┗┗┗┗┻┗┛
 #########################
 #: glab zsh completion cached in ${DOT_DIR}/completions/_glab, see bin/refresh-completions.sh
-if type "glab" > /dev/null; then
+
+#: python-gitlab CLI (`gitlab`) argcomplete registration - unrelated to glab above
+if type "gitlab" > /dev/null 2>&1; then
   python3 -m pip install --user --upgrade argcomplete > /dev/null 2>&1
   activate-global-python-argcomplete > /dev/null 2>&1
 fi
 
-if type "register-python-argcomplete" > /dev/null; then 
+if type "register-python-argcomplete" > /dev/null 2>&1; then
   eval "$(register-python-argcomplete gitlab)"
 fi
 
@@ -110,8 +112,9 @@ fi
 #  ┗┛┗ ┗┗ ┛ ┗┛•┗┗┛
 ##########################
 #: velero zsh completion cached in ${DOT_DIR}/completions/_velero, see bin/refresh-completions.sh
-if type "velero" > /dev/null; then
+if type "velero" > /dev/null 2>&1; then
   alias v=velero
+  source <(velero completion bash)
   complete -F __start_velero v
 fi
 
@@ -139,8 +142,8 @@ fi
 #  ┣┫┃┓┣┓┏┓┣┓┏┓  ┃ ┃┏┓┓┏┏┫
 #  ┛┗┗┗┗┛┗┻┗┛┗┻  ┗┛┗┗┛┗┻┗┻
 ##########################
-if type "aliyun" > /dev/null; then
-  complete -o nospace -F $(which aliyun) aliyun
+if type "aliyun" > /dev/null 2>&1; then
+  complete -o nospace -C "$(which aliyun)" aliyun
 fi
 
 #: Google Cloud SDK
@@ -157,7 +160,7 @@ if [[ -f $HOME/Development/sdks/mise/installs/opentofu/latest/tofu ]]; then
   complete -o nospace -C $HOME/Development/sdks/mise/installs/opentofu/latest/tofu tofu
 fi
 
-if [[ -f $HOME/Development/sdks/mise/installs/terragrunt/latest/bin/terragrunt ]]; then 
-  complete -o nospace -C $HOME/Development/sdks/mise/installs/terragrunt/latest/bin/terragrunt terragrunt
+if type "terragrunt" > /dev/null 2>&1; then
+  complete -o nospace -C "$(which terragrunt)" terragrunt
   alias tg=terragrunt
 fi

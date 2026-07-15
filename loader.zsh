@@ -7,7 +7,7 @@ export CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 export DOT_DIR="${HOME}/.dotfiles"
 
 create_auth_keys() {
-  cat <<EOF > "${_DOT_DIR}/auth_keys" 
+  cat <<EOF > "${_DOT_DIR}/auth_keys"
 export GITHUB_PERSONAL_TOKEN=
 
 ### gitlab

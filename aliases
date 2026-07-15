@@ -6,6 +6,10 @@ alias did="vim +'normal Go' +'r!date' ~/did.txt"
 
 alias rot13="tr 'A-Za-z' 'N-ZA-Mn-za-m'"
 
+### one-off TERM downgrade for hosts where installing the ghostty terminfo
+### entry isn't possible/wanted (read-only home dir, throwaway box)
+alias ssh-compat='TERM=xterm-256color ssh'
+
 #alias http="http --verify=\"$(mkcert --CAROOT)/rootCA.pem\""
 
 ### Eza - better ls replacement

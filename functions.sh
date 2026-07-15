@@ -11,6 +11,16 @@ gh_latest_release() {
 }
 
 
+ghostty_terminfo_push() {
+  #: usage: ghostty_terminfo_push user@host
+  if [ -z "${1}" ]; then
+    echo "usage: ghostty_terminfo_push <host>" >&2
+    return 1
+  fi
+  infocmp -x xterm-ghostty | ssh "${1}" -- 'tic -x -'
+}
+
+
 removecontainers() {
     docker stop $(docker ps -aq)
     docker rm $(docker ps -aq)

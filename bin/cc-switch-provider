@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+CLAUDE_DIR="$HOME/.claude"
+TARGET="$CLAUDE_DIR/settings.json"
+
+list_providers() {
+	for f in "$CLAUDE_DIR"/settings.*.json; do
+		[[ -f "$f" ]] || continue
+		name="$(basename "$f")"
+		case "$name" in
+			settings.json | settings.local.json) continue ;;
+		esac
+		name="${name#settings.}"
+		name="${name%.json}"
+		echo "  - $name"
+	done
+}
+
+# Active provider = whichever provider file's .env matches settings.json's .env.
+# Derived, not stored — so there is no state file to drift out of sync.
+current_provider() {
+	if [[ ! -f "$TARGET" ]]; then
+		echo "(settings.json missing)"
+		return
+	fi
+	local cur penv name
+	cur="$(jq -cS '.env // {}' "$TARGET" 2>/dev/null || echo '{}')"
+	for f in "$CLAUDE_DIR"/settings.*.json; do
+		[[ -f "$f" ]] || continue
+		name="$(basename "$f")"
+		case "$name" in settings.json | settings.local.json) continue ;; esac
+		penv="$(jq -cS '.env // {}' "$f" 2>/dev/null || echo '{}')"
+		if [[ "$penv" == "$cur" ]]; then
+			name="${name#settings.}"
+			name="${name%.json}"
+			echo "$name"
+			return
+		fi
+	done
+	echo "(custom — .env matches no provider file)"
+}
+
+show_status_and_usage() {
+	echo "current provider: $(current_provider)"
+	echo
+	echo "Usage: cc-switch-provider <provider>"
+	echo
+	echo "settings.json is the source of truth (read and written by Claude Code"
+	echo "via /config, /permissions, etc.). Switching replaces ONLY the .env block;"
+	echo "all other settings are preserved across switches."
+	echo
+	echo "Available providers:"
+	list_providers
+}
+
+if [[ $# -eq 0 ]]; then
+	show_status_and_usage
+	exit 0
+fi
+
+provider="$1"
+source_file="$CLAUDE_DIR/settings.${provider}.json"
+
+if [[ ! -f "$source_file" ]]; then
+	echo "error: no settings file for provider '$provider' ($source_file not found)" >&2
+	echo "available providers:" >&2
+	list_providers >&2
+	exit 1
+fi
+
+if ! command -v jq >/dev/null 2>&1; then
+	echo "error: jq is required but not found in PATH" >&2
+	exit 1
+fi
+
+# Surgical swap: replace only .env in settings.json with the provider file's .env.
+# Every other key (theme, permissions, sandbox, plugins, ...) is left exactly as
+# Claude Code last wrote it.
+provider_env="$(jq -c '.env // {}' "$source_file")"
+tmp="$(mktemp "${TARGET}.XXXXXX")"
+trap 'rm -f "$tmp"' EXIT
+jq --argjson e "$provider_env" '.env = $e' "$TARGET" > "$tmp"
+mv "$tmp" "$TARGET"
+echo "switched to '$provider' — .env updated in settings.json, other settings preserved"

@@ -27,3 +27,5 @@ test.py
 !**/docs/brainstorm/**
 .claude
 
+
+**/.claude/.cc-writes/

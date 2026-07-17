@@ -2,6 +2,9 @@
 # set default editor
 export EDITOR=nvim
 
+# Claude Code: flicker-free fullscreen rendering (docs: code.claude.com/docs/en/fullscreen)
+export CLAUDE_CODE_NO_FLICKER=1
+
 
 ## Compiler to use
 export CC=clang

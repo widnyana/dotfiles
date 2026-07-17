@@ -138,9 +138,25 @@ print_summary() {
 link_path() {
   local target="$1" name="$2"
 
-  if [[ -L "$name" && "$(readlink "$name")" == "$target" ]]; then
-    log_ok "$name"
-    return 0
+  if [[ -L "$name" ]]; then
+    #: compare ignoring a trailing slash — a legacy link spelled `.../tmux/`
+    #: is healthy against target `.../tmux`, not a spurious replace.
+    local cur; cur="$(readlink "$name")"
+    if [[ "${cur%/}" == "${target%/}" ]]; then log_ok "$name"; return 0; fi
+  fi
+
+  #: Guard: never write into the repo itself. If LINK_NAME resolves (through an
+  #: ancestor symlink) to a path inside DOT_DIR, backing it up or linking it
+  #: would clobber a tracked file or create a self-referential symlink. Refuse.
+  local name_dir name_phys dot_phys
+  name_dir="$(dirname "$name")"
+  if [[ -d "$name_dir" ]]; then
+    name_phys="$(cd "$name_dir" 2>/dev/null && pwd -P)/$(basename "$name")"
+    dot_phys="$(cd "$DOT_DIR" 2>/dev/null && pwd -P)"
+    if [[ -n "$dot_phys" && "$name_phys" == "$dot_phys"/* ]]; then
+      log_err "$name resolves inside the repo ($name_phys) via an ancestor symlink; refusing to link"
+      return 1
+    fi
   fi
 
   if [[ -L "$name" ]]; then
@@ -219,6 +235,13 @@ init_submodule() {                           #: init_submodule PATH
   if [[ -d "$sub" && -n "$(ls -A "$sub" 2>/dev/null)" ]]; then
     log_ok "submodule $sub populated"
     return 0
+  fi
+  #: A pathspec/registration error is deterministic — retrying is pointless
+  #: noise. Only reach the (network) update when the path is actually a
+  #: registered submodule: a gitlink (mode 160000) in the index.
+  if [[ "$(git ls-files --stage -- "$sub" 2>/dev/null | awk '{print $1}')" != "160000" ]]; then
+    log_err "submodule $sub not registered (no gitlink in index); skipping. Fix with: git submodule add <url> $sub"
+    return 1
   fi
   if [[ $DRY_RUN -eq 1 ]]; then dry "git submodule update --init $sub"; return 0; fi
   retry "submodule:$sub" git submodule update --init "$sub"
@@ -315,44 +338,24 @@ install_vimplug() {
 }
 
 #: ── Config-link steps ──────────────────────────────────────────────────────
-ensure_alacritty() {
-  #: depends on the themes submodule (prior step); if it is not populated, skip
-  #: rather than double-report the submodule failure.
-  local themes="${DOT_DIR}/config/alacritty/themes"
-  if [[ ! -d "$themes" || -z "$(ls -A "$themes" 2>/dev/null)" ]]; then
-    if [[ $DRY_RUN -eq 1 ]]; then
-      dry "link alacritty config (after submodule init)"
-      return 0
-    fi
-    log_warn "alacritty themes submodule not populated; skipping alacritty config link"
-    return 0
-  fi
-  fs_mkdir "${CONFIG_DIR}/alacritty"
-  link_path "${DOT_DIR}/config/alacritty/alacritty.toml" "${CONFIG_DIR}/alacritty/alacritty.toml"
-}
-
-ensure_zellij() {
-  link_path "${DOT_DIR}/config/zellij" "${CONFIG_DIR}/zellij"
-}
+#: alacritty links as a whole directory (link_config), matching its existing
+#: ~/.config/alacritty -> repo symlink. The themes submodule lives inside that
+#: directory, so it comes along once init_submodule (earlier step) populates it.
+#: Per-file linking here would resolve back into the repo and be refused by the
+#: self-repo guard in link_path.
 
 link_ripgreprc() {
   [[ -f "${DOT_DIR}/config/ripgrep/ripgreprc" ]] || return 0
   link_path "${DOT_DIR}/config/ripgrep/ripgreprc" "${HOME}/.ripgreprc"
 }
 
-ensure_mise_link() {
-  fs_mkdir "${CONFIG_DIR}/mise"
-  link_path "${DOT_DIR}/config/mise/config.toml" "${CONFIG_DIR}/mise/config.toml"
-}
-
-ensure_tmux() {
-  fs_mkdir "${CONFIG_DIR}/tmux"
-  fs_mkdir "${CONFIG_DIR}/tmux/plugins"
-  local rc=0
-  link_path "${DOT_DIR}/config/tmux/tmux.conf"        "${CONFIG_DIR}/tmux/tmux.conf"       || rc=$?
-  link_path "${DOT_DIR}/config/tmux/tmux.conf.local"  "${CONFIG_DIR}/tmux/tmux.conf.local" || rc=$?
-  return "$rc"
-}
+#: mise and tmux link as whole directories (link_config), matching the existing
+#: ~/.config/{mise,tmux} -> repo directory symlinks. Per-file linking through
+#: those directory symlinks resolved back into the repo and created
+#: self-referential links; the self-repo guard in link_path now blocks that too.
+#: TPM installs into ~/.config/tmux/plugins (= config/tmux/plugins in-repo via
+#: the dir symlink); that dir is kept out of tracking by its own nested
+#: config/tmux/plugins/.gitignore ('*'), so whole-dir linking does not pollute git.
 
 ensure_mkcert() {
   if command -v mkcert >/dev/null 2>&1; then log_ok "mkcert present"; return 0; fi
@@ -404,15 +407,17 @@ ensure_mise() {
   _mise_completions
 }
 
-# Enumerate declared tool ids via mise's own interface (never parse config.toml).
-# Prints one tool id per line to stdout. Returns 1 if mise cannot enumerate.
-_mise_declared_tools() {
+# Enumerate declared-but-not-installed tool ids via mise's own interface (never
+# parse config.toml). Prints one id per line; already-installed tools are omitted
+# so re-runs skip them. Returns 1 if mise cannot enumerate.
+_mise_missing_tools() {
   local mise="$1"
   local out
-  #: `mise ls` column 1 is the tool id. Its text format is not a stable contract
-  #: across mise versions; if it drifts, per-tool installs fail loudly (each
-  #: recorded individually) rather than silently under-installing.
-  out="$(NO_COLOR=1 "$mise" ls 2>/dev/null)" || return 1
+  #: `mise ls --missing` lists tools configured but not yet installed. Column 1
+  #: is the tool id; its text format is not a stable contract across mise
+  #: versions, so a drift makes per-tool installs fail loudly (each recorded)
+  #: rather than silently under-installing.
+  out="$(NO_COLOR=1 "$mise" ls --missing 2>/dev/null)" || return 1
   printf '%s\n' "$out" | awk '
     NF == 0          { next }                          # blank lines
     $1 ~ /^(Tool|NAME|Plugin|PluginName|Backend)$/ { next }   # header rows
@@ -432,12 +437,12 @@ install_mise_tools() {
   fi
 
   local specs rc
-  specs="$(_mise_declared_tools "$mise")"; rc=$?
+  specs="$(_mise_missing_tools "$mise")"; rc=$?
   if [[ $rc -ne 0 ]]; then
-    log_err "could not enumerate mise tools via 'mise ls'; skipping per-tool install"
+    log_err "could not enumerate mise tools via 'mise ls --missing'; skipping per-tool install"
     return 1
   fi
-  if [[ -z "$specs" ]]; then log_ok "mise: no tools declared"; return 0; fi
+  if [[ -z "$specs" ]]; then log_ok "mise: all declared tools already installed"; return 0; fi
 
   if [[ $DRY_RUN -eq 1 ]]; then
     dry "mise install (per tool): $(printf '%s' "$specs" | tr '\n' ' ')"
@@ -458,21 +463,15 @@ install_mise_tools() {
 }
 
 #: ── Non-critical integration ───────────────────────────────────────────────
-install_kubetmux() {
-  if command -v kube-tmux >/dev/null 2>&1; then log_ok "kube-tmux present"; return 0; fi
-  if ! command -v go >/dev/null 2>&1; then
-    log_warn "go not available; skipping kube-tmux"
-    return 0                                 #: skip with reason, not a failure
-  fi
-  if [[ $DRY_RUN -eq 1 ]]; then dry "go install github.com/go-tmux/kube-tmux@latest"; return 0; fi
-  retry "kube-tmux" go install "github.com/go-tmux/kube-tmux@latest" || return 1
-}
+#: will be added later
 
 #: ── Orchestration ──────────────────────────────────────────────────────────
 main() {
   parse_args "$@"
   OS="$(detect_os)"
-  log_info "dotfiles installer — platform: $OS${DRY_RUN:+ (dry-run)}"
+  local banner=""
+  [[ $DRY_RUN -eq 1 ]] && banner=" (dry-run)"    #: :+ would fire on DRY_RUN=0 too
+  log_info "dotfiles installer — platform: $OS$banner"
 
   case "$OS" in
     mac)   ;;
@@ -501,14 +500,27 @@ main() {
   step optional "git config"        link_config git
   step optional "vimrc"             link_repo_file vim/vimrc "$HOME/.vimrc"
   step optional "neovim config"     link_config nvim
-  step optional "alacritty config"  ensure_alacritty
+  step optional "alacritty config"  link_config alacritty
   step optional "ghostty config"    link_config ghostty
-  step optional "zellij config"     ensure_zellij
+  step optional "zellij config"     link_config zellij
   step optional "ripgrep config"    link_ripgreprc
-  step optional "mise config link"  ensure_mise_link
+  step optional "mise config"       link_config mise
   step optional "atuin config"      link_config atuin
-  step optional "tmux config"       ensure_tmux
+  step optional "tmux config"       link_config tmux
   step optional "k9s config"        link_config k9s
+  step optional "fish config"       link_config fish
+  step optional "glow config"       link_config glow
+  step optional "starship config"   link_repo_file config/starship.toml "$CONFIG_DIR/starship.toml"
+  step optional "opentofu config"   link_config opentofu
+  step optional "uv config"         link_config uv
+  step optional "pnpm config"       link_config pnpm
+  step optional "poetry config"     link_config pypoetry
+  step optional "yamlfmt config"    link_config yamlfmt
+  step optional "kitty config"      link_config kitty
+  step optional "hyprland config"   link_config hypr
+  step optional "fluxbox config"    link_config fluxbox
+  step optional "nixpkgs config"    link_config nixpkgs
+  step optional "electron flags"    link_repo_file config/electron-flags.conf "$CONFIG_DIR/electron-flags.conf"
 
   #: native packages (mkcert / nss)
   step optional "mkcert" ensure_mkcert
@@ -518,7 +530,7 @@ main() {
   step optional "mise tools"     install_mise_tools
 
   #: non-critical integration
-  step optional "kube-tmux" install_kubetmux
+  #: TODO
 
   print_summary
 }

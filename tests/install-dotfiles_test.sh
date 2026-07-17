@@ -50,6 +50,15 @@ EOF
 
   cat > "$STUBS/git" <<'EOF'
 #!/usr/bin/env bash
+if [[ "$1" == "ls-files" ]]; then
+  # emulate a registered gitlink (mode 160000) for the themes submodule so
+  # init_submodule proceeds to the (stubbed) update instead of failing fast.
+  case "$*" in
+    *config/alacritty/themes*)
+      echo "160000 0000000000000000000000000000000000000000 0	config/alacritty/themes" ;;
+  esac
+  exit 0
+fi
 if [[ "$1" == "submodule" ]]; then
   # git submodule update --init <path>  ->  populate $4 (relative to cwd)
   mkdir -p "$4" && touch "$4/.populated" && exit 0
@@ -126,6 +135,14 @@ if [[ "$1" == "completion" ]]; then
 fi
 if [[ "$1" == "ls" ]]; then
   [[ -e "$SANDBOX/ctl/mise_ls_fail" ]] && exit 1
+  if [[ "$2" == "--missing" ]]; then
+    # tools configured but not installed. Default: all declared are "missing"
+    # (preserves existing scenarios). mise_missing_output overrides to model
+    # a machine where some tools are already installed (and thus skipped).
+    cat "$SANDBOX/ctl/mise_missing_output" 2>/dev/null || \
+      printf 'helm   3.16\ngo     1.23\nrust   1.97\n'
+    exit 0
+  fi
   cat "$SANDBOX/ctl/mise_ls_output" 2>/dev/null || \
     printf 'Tool   Version  Source\nhelm   3.16     cfg\ngo     1.23     cfg\nrust   1.97     cfg\n'
   exit 0
@@ -159,12 +176,14 @@ new_sandbox() {
   mkdir -p "$SANDBOX/home" "$SANDBOX/ctl"
   FIXTURE="$SANDBOX/repo"
   # minimal repo fixture: the paths the installer links/reads
-  mkdir -p "$FIXTURE"/{config/{git,nvim,ghostty,zellij,atuin,k9s},config/alacritty/themes,config/ripgrep,config/mise,config/tmux,vim,vendor/oh-my-zsh/completions}
+  mkdir -p "$FIXTURE"/{config/{git,nvim,ghostty,zellij,atuin,k9s,fish,glow,opentofu,uv,pnpm,pypoetry,yamlfmt,kitty,hypr,fluxbox,nixpkgs},config/alacritty/themes,config/ripgrep,config/mise,config/tmux,vim,vendor/oh-my-zsh/completions}
   : > "$FIXTURE/config/alacritty/alacritty.toml"
   : > "$FIXTURE/config/ripgrep/ripgreprc"
   : > "$FIXTURE/config/mise/config.toml"
   : > "$FIXTURE/config/tmux/tmux.conf"
   : > "$FIXTURE/config/tmux/tmux.conf.local"
+  : > "$FIXTURE/config/starship.toml"
+  : > "$FIXTURE/config/electron-flags.conf"
   : > "$FIXTURE/vim/vimrc"
 }
 
@@ -229,6 +248,7 @@ new_sandbox
 TEST_UNAME="Darwin 25.0.0" out="$(run_installer --dry-run 2>&1)"; rc=$?
 assert_rc "dry-run exits 0" "$rc" 0
 assert_match "dry-run announces planned link" "$out" "\[dry-run\] would:"
+assert_match "dry-run banner shows dry-run tag" "$out" "platform: mac \(dry-run\)"
 assert_absent "dry-run creates no ghostty link" "$(cfg ghostty)"
 assert_absent "dry-run creates no zellij link" "$(cfg zellij)"
 
@@ -239,15 +259,31 @@ new_sandbox
 TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
 assert_rc "happy path exits 0" "$rc" 0
 assert_match "reports no failures" "$out" "No failures"
+assert_no_match "real-run banner omits dry-run tag" "$out" "platform: mac \(dry-run\)"
 assert_symlink_to "$(cfg git)"     "$FIXTURE/config/git"     "git linked"
 assert_symlink_to "$(cfg ghostty)" "$FIXTURE/config/ghostty" "ghostty linked"
 assert_symlink_to "$(cfg zellij)"  "$FIXTURE/config/zellij"  "zellij linked"
 assert_symlink_to "$(cfg nvim)"    "$FIXTURE/config/nvim"    "nvim linked"
 assert_symlink_to "$(cfg atuin)"   "$FIXTURE/config/atuin"   "atuin linked"
 assert_symlink_to "$(cfg k9s)"     "$FIXTURE/config/k9s"     "k9s linked"
-assert_symlink_to "$(cfg mise/config.toml)" "$FIXTURE/config/mise/config.toml" "mise config linked"
+assert_symlink_to "$(cfg mise)"      "$FIXTURE/config/mise"      "mise linked (whole dir)"
+assert_symlink_to "$(cfg tmux)"      "$FIXTURE/config/tmux"      "tmux linked (whole dir)"
+assert_symlink_to "$(cfg alacritty)" "$FIXTURE/config/alacritty" "alacritty linked (whole dir)"
 assert_symlink_to "$SANDBOX/home/.vimrc" "$FIXTURE/vim/vimrc" "vimrc linked"
 assert_symlink_to "$SANDBOX/home/.ripgreprc" "$FIXTURE/config/ripgrep/ripgreprc" "ripgreprc linked"
+assert_symlink_to "$(cfg fish)"     "$FIXTURE/config/fish"     "fish linked"
+assert_symlink_to "$(cfg glow)"     "$FIXTURE/config/glow"     "glow linked"
+assert_symlink_to "$(cfg opentofu)" "$FIXTURE/config/opentofu" "opentofu linked"
+assert_symlink_to "$(cfg uv)"       "$FIXTURE/config/uv"       "uv linked"
+assert_symlink_to "$(cfg pnpm)"     "$FIXTURE/config/pnpm"     "pnpm linked"
+assert_symlink_to "$(cfg pypoetry)" "$FIXTURE/config/pypoetry" "poetry linked"
+assert_symlink_to "$(cfg yamlfmt)"  "$FIXTURE/config/yamlfmt"  "yamlfmt linked"
+assert_symlink_to "$(cfg kitty)"    "$FIXTURE/config/kitty"    "kitty linked"
+assert_symlink_to "$(cfg hypr)"     "$FIXTURE/config/hypr"     "hyprland linked"
+assert_symlink_to "$(cfg fluxbox)"  "$FIXTURE/config/fluxbox"  "fluxbox linked"
+assert_symlink_to "$(cfg nixpkgs)"  "$FIXTURE/config/nixpkgs"  "nixpkgs linked"
+assert_symlink_to "$(cfg starship.toml)"        "$FIXTURE/config/starship.toml"        "starship linked"
+assert_symlink_to "$(cfg electron-flags.conf)"  "$FIXTURE/config/electron-flags.conf"  "electron flags linked"
 assert_exists "alacritty themes populated" "$FIXTURE/config/alacritty/themes/.populated"
 
 
@@ -306,6 +342,36 @@ assert_match "backup not overwritten" "$(cat "$T/dir2.bak/old")" "keepme"
 rm -rf "$T"
 
 
+echo "== self-repo guard: refuse a link that resolves inside DOT_DIR =="
+
+# Reproduces the mise/tmux self-referential-symlink bug: a whole-directory
+# symlink into the repo makes a per-file LINK_NAME resolve back into DOT_DIR.
+# link_path must refuse rather than back up / self-link a tracked file.
+T="$(mktemp -d)"; mkdir -p "$T/repo/config/tool"; echo tracked > "$T/repo/config/tool/file"
+ln -s "$T/repo/config/tool" "$T/cfg_tool"          # ~/.config/tool -> repo/config/tool
+_saved_dot="$DOT_DIR"; DOT_DIR="$T/repo"           # point the guard at the fake repo
+rc=0; out="$(link_path "$T/repo/config/tool/file" "$T/cfg_tool/file" 2>&1)" || rc=$?
+DOT_DIR="$_saved_dot"
+assert_rc "link into repo refused" "$rc" 1
+assert_match "guard explains the refusal" "$out" "resolves inside the repo"
+assert_no_match "no self-referential symlink created" "$(readlink "$T/repo/config/tool/file" 2>/dev/null || echo none)" "config/tool/file"
+assert_absent "no backup written inside the repo" "$T/repo/config/tool/file.bak"
+assert_match "tracked file content intact" "$(cat "$T/repo/config/tool/file")" "tracked"
+rm -rf "$T"
+
+
+echo "== init_submodule: fail fast (no retry) when not registered =="
+
+# An unregistered path is a deterministic pathspec error, not a transient
+# network fault — it must be skipped immediately, never retried or updated.
+# shellcheck disable=SC2034
+DRY_RUN=0
+rc=0; out="$(init_submodule config/nonexistent-submodule-xyz 2>&1)" || rc=$?
+assert_rc "unregistered submodule fails fast" "$rc" 1
+assert_match "explains not registered" "$out" "not registered"
+assert_no_match "did not attempt a retry" "$out" "retrying"
+
+
 echo "== AE1: oh-my-zsh (critical) failure stops the run =="
 
 new_sandbox
@@ -328,19 +394,6 @@ assert_match "fzf listed in summary" "$out" "re-run"
 assert_exists "independent work continued (ghostty)" "$(cfg ghostty)"
 
 
-echo "== kube-tmux skipped (no go) with reason, not a failure =="
-
-new_sandbox
-NOGO="$(mktemp -d)"; CLEANUP_DIRS+=("$NOGO")
-cp "$STUBS"/* "$NOGO"/ 2>/dev/null; rm -f "$NOGO/go"
-RP_PATH="$NOGO"
-TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
-unset RP_PATH
-assert_rc "no-go run still exits 0" "$rc" 0
-assert_match "kube-tmux skipped with reason" "$out" "go not available"
-assert_no_match "kube-tmux not a hard failure" "$out" "kube-tmux: failed"
-
-
 echo "== mise: per-tool failure recorded granularly, others continue =="
 
 new_sandbox
@@ -349,6 +402,24 @@ TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
 assert_rc "per-tool mise failure exits 0" "$rc" 0
 assert_match "names the failed tool" "$out" "mise tool: go"
 assert_match "other tool still ok" "$out" "mise: helm"
+
+
+echo "== mise: already-installed tools are skipped, only missing installed =="
+
+new_sandbox
+printf 'go   1.23\n' > "$SANDBOX/ctl/mise_missing_output"   # only 'go' is missing
+TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
+assert_rc "skip-installed run exits 0" "$rc" 0
+assert_match "installs the missing tool" "$out" "mise: go"
+assert_no_match "skips already-installed helm" "$out" "mise: helm"
+assert_no_match "skips already-installed rust" "$out" "mise: rust"
+
+new_sandbox
+: > "$SANDBOX/ctl/mise_missing_output"                      # nothing missing
+TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
+assert_rc "all-installed run exits 0" "$rc" 0
+assert_match "reports all already installed" "$out" "all declared tools already installed"
+assert_no_match "no per-tool install when none missing" "$out" "mise: go"
 
 
 echo "== mise: discovery failure is explicit, no silent batch fallback =="

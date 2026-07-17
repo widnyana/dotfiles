@@ -1,220 +1,256 @@
-# Zellij — Full Effective Keybindings
+# Zellij — Keybindings
 
-> **Scope:** the *effective* keymap for this machine — zellij **0.40.1** stock defaults merged with the customizations in `config.kdl` (`keybinds {}` is defined **without** `clear-defaults=true`, so stock defaults stay active and your binds overlay them; the `tmux` mode alone uses `clear-defaults=true`).
-> **Sources:** `zellij setup --dump-config` (stock 0.40.1) + `config.kdl:6-206`. Snapshot 2026-07.
-> **Legend:** `(custom)` = this bind differs from / is added beyond the stock default.
-
-## How modes work
-
-- **Normal** is the default mode — keystrokes pass through to the shell.
-- **Locked** (`Ctrl g` toggles) passes everything through, including the mode-entry keys below.
-- Each non-normal mode is entered with a **mode-entry key** (listed in [Global & mode-entry](#global--mode-entry-bindings)) and exited with `Esc`/`Enter` (back to Normal) or its own `Ctrl <key>`.
-- Modes: Normal · Locked · Resize · Pane · Move · Tab · Scroll · Search · EnterSearch · RenameTab · RenamePane · Session · Tmux.
+> **Scope:** the *effective* keymap for this machine — zellij **0.40.1** stock defaults overlaid with the customizations in `config.kdl` (`keybinds {}` keeps stock defaults; only the `tmux` mode is a full redefinition). Full coverage: every binding is listed below, nothing omitted.
+> **Sources:** `zellij setup --dump-config` (stock 0.40.1) + `config.kdl:7-216`. Snapshot 2026-07.
+> **Legend:** `†` marks a binding that differs from (or is added beyond) stock zellij — see [Custom layer](#custom-layer--what-differs-from-stock-zellij).
 
 ---
 
-## Normal
-Shell passthrough — no zellij binds. (Default mode on startup.)
+## Start here — the keys you'll actually use
 
-## Locked
-| Key     | Action                  |
-| ------- | ----------------------- |
-| `Ctrl g`| Exit Locked → Normal    |
+You start in **Normal** mode: every key goes straight to your shell. The chords below just work — you do not need to think about modes yet.
 
-## Resize
-| Key         | Action                  |
-| ----------- | ----------------------- |
-| `Ctrl n`    | Exit → Normal           |
-| `h` / `Left`| Resize Increase Left    |
-| `j` / `Down`| Resize Increase Down    |
-| `k` / `Up`  | Resize Increase Up      |
-| `l` / `Right`| Resize Increase Right  |
-| `H`         | Resize Decrease Left    |
-| `J`         | Resize Decrease Down    |
-| `K`         | Resize Decrease Up      |
-| `L`         | Resize Decrease Right   |
-| `=` / `+`   | Resize Increase         |
-| `-`         | Resize Decrease         |
+| I want to… | press |
+| --- | --- |
+| open a new pane | `Alt + n` |
+| move between panes | `Alt + h j k l`  (← ↓ ↑ →) |
+| open a new tab | `Ctrl+t` then `n` |
+| switch tab | `Alt + l` (next)  /  `Alt + h` (prev) |
+| fullscreen a pane | `Ctrl+p` then `f` |
+| search old output | `Ctrl+s` then `s`, type your query, `Enter` |
+| jump to any tab by name | `Ctrl+t` then `f` |
+| show the in-app cheatsheet | `Ctrl + y` |
+| lock (pass *all* keys to the shell) | `Ctrl + g` |
+| quit zellij | `Ctrl + q` |
 
-## Pane
-| Key           | Action                              |
-| ------------- | ----------------------------------- |
-| `Ctrl p`      | Exit → Normal                       |
-| `h` / `Left`  | MoveFocus Left                      |
-| `l` / `Right` | MoveFocus Right                     |
-| `j` / `Down`  | MoveFocus Down                      |
-| `k` / `Up`    | MoveFocus Up                        |
-| `p`           | SwitchFocus                         |
-| `n`           | NewPane → Normal                    |
-| `d`           | NewPane Down → Normal               |
-| `c`           | NewPane Right → Normal *(custom — stock: RenamePane)* |
-| `r`           | RenamePane (PaneNameInput) *(custom — stock: NewPane Right)* |
-| `x`           | CloseFocus → Normal                 |
-| `f`           | ToggleFocusFullscreen → Normal      |
-| `z`           | TogglePaneFrames → Normal           |
-| `w`           | ToggleFloatingPanes → Normal        |
-| `e`           | TogglePaneEmbedOrFloating → Normal  |
-
-## Move
-| Key           | Action            |
-| ------------- | ----------------- |
-| `Ctrl h`      | Exit → Normal     |
-| `n` / `Tab`   | MovePane          |
-| `p`           | MovePaneBackwards |
-| `h` / `Left`  | MovePane Left     |
-| `j` / `Down`  | MovePane Down     |
-| `k` / `Up`    | MovePane Up       |
-| `l` / `Right` | MovePane Right    |
-
-## Tab
-| Key                    | Action                              |
-| ---------------------- | ----------------------------------- |
-| `Ctrl t`               | Exit → Normal                       |
-| `r`                    | RenameTab (TabNameInput)            |
-| `h` / `Left` / `Up` / `k` | GoToPreviousTab                  |
-| `l` / `Right` / `Down` / `j` | GoToNextTab                   |
-| `n`                    | NewTab → Normal                     |
-| `x`                    | CloseTab → Normal                   |
-| `s`                    | ToggleActiveSyncTab → Normal        |
-| `b`                    | BreakPane → Normal                  |
-| `]`                    | BreakPaneRight → Normal             |
-| `[`                    | BreakPaneLeft → Normal              |
-| `1`–`9`                | GoToTab N → Normal                  |
-| `Tab`                  | ToggleTab                           |
-| `f`                    | Launch **room** (fuzzy tab switcher, floating) → Normal *(custom)* |
-
-## Scroll
-| Key                              | Action                |
-| -------------------------------- | --------------------- |
-| `Ctrl s`                         | Exit → Normal         |
-| `e`                              | EditScrollback → Normal |
-| `s`                              | EnterSearch (SearchInput) |
-| `Ctrl c`                         | ScrollToBottom → Normal |
-| `j` / `Down`                     | ScrollDown            |
-| `k` / `Up`                       | ScrollUp              |
-| `Ctrl f` / `PageDown` / `Right` / `l` | PageScrollDown   |
-| `Ctrl b` / `PageUp` / `Left` / `h`   | PageScrollUp     |
-| `d`                              | HalfPageScrollDown    |
-| `u`                              | HalfPageScrollUp      |
-| `Alt c`                          | Copy *(custom — stock: commented out)* |
-
-## Search
-| Key                              | Action                |
-| -------------------------------- | --------------------- |
-| `Ctrl s`                         | Exit → Normal         |
-| `Ctrl c`                         | ScrollToBottom → Normal |
-| `j` / `Down`                     | ScrollDown            |
-| `k` / `Up`                       | ScrollUp              |
-| `Ctrl f` / `PageDown` / `Right` / `l` | PageScrollDown   |
-| `Ctrl b` / `PageUp` / `Left` / `h`   | PageScrollUp     |
-| `d`                              | HalfPageScrollDown    |
-| `u`                              | HalfPageScrollUp      |
-| `n`                              | Search down           |
-| `p`                              | Search up             |
-| `c`                              | Toggle CaseSensitivity |
-| `w`                              | Toggle Wrap           |
-| `o`                              | Toggle WholeWord      |
-
-## EnterSearch
-| Key             | Action          |
-| --------------- | --------------- |
-| `Ctrl c` / `Esc`| → Scroll        |
-| `Enter`         | → Search        |
-
-## RenameTab
-| Key      | Action                  |
-| -------- | ----------------------- |
-| `Ctrl c` | → Normal                |
-| `Esc`    | UndoRenameTab → Tab     |
-
-## RenamePane
-| Key      | Action                  |
-| -------- | ----------------------- |
-| `Ctrl c` | → Normal                |
-| `Esc`    | UndoRenamePane → Pane   |
-
-## Session
-| Key       | Action                                  |
-| --------- | --------------------------------------- |
-| `Ctrl o`  | Exit → Normal                           |
-| `Ctrl s`  | → Scroll                                |
-| `d`       | Detach                                  |
-| `w`       | Launch **session-manager** (floating) → Normal |
-| `p`       | Launch **plugin-manager** (floating) → Normal *(custom)* |
-
-## Tmux
-> Entered with **`Ctrl a`** (stock uses `Ctrl b`). This mode is defined with `clear-defaults=true`, so it is a full redefinition — but every bind below matches stock tmux **except** the prefix (`Ctrl a`) and the added `]`.
-
-| Key       | Action                          |
-| --------- | ------------------------------- |
-| `Ctrl a`  | Write `Ctrl a` → Normal *(custom — stock: `Ctrl b`)* |
-| `[`       | → Scroll                        |
-| `]`       | EditScrollback → Normal *(custom — added)* |
-| `"`       | NewPane Down → Normal           |
-| `%`       | NewPane Right → Normal          |
-| `z`       | ToggleFocusFullscreen → Normal  |
-| `c`       | NewTab → Normal                 |
-| `,`       | → RenameTab                     |
-| `p`       | GoToPreviousTab → Normal        |
-| `n`       | GoToNextTab → Normal            |
-| `Left`    | MoveFocus Left → Normal         |
-| `Right`   | MoveFocus Right → Normal        |
-| `Down`    | MoveFocus Down → Normal         |
-| `Up`      | MoveFocus Up → Normal           |
-| `h`       | MoveFocus Left → Normal         |
-| `l`       | MoveFocus Right → Normal        |
-| `j`       | MoveFocus Down → Normal         |
-| `k`       | MoveFocus Up → Normal           |
-| `o`       | FocusNextPane                   |
-| `d`       | Detach                          |
-| `Space`   | NextSwapLayout                  |
-| `x`       | CloseFocus → Normal             |
+> **How to read a chord:** a two-key combo like `Ctrl+t n` means — hold `Ctrl`, press `t`, **release**, then press `n`. The first key puts you in a mode; the second does the thing.
 
 ---
 
-## Global & mode-entry bindings
+## The status bar changed — how modes work
 
-### Global (`shared_except "locked"` — active in every mode except Locked)
-| Key             | Action                          |
-| --------------- | ------------------------------- |
-| `Ctrl g`        | → Locked                        |
-| `Ctrl q`        | Quit                            |
-| `Ctrl y`        | Launch **zellij_forgot** (floating) *(custom)* |
-| `Alt n`         | NewPane                         |
-| `Alt i`         | MoveTab Left                    |
-| `Alt o`         | MoveTab Right                   |
-| `Alt h` / `Alt Left`   | MoveFocusOrTab Left     |
-| `Alt l` / `Alt Right`  | MoveFocusOrTab Right    |
-| `Alt j` / `Alt Down`   | MoveFocus Down          |
-| `Alt k` / `Alt Up`     | MoveFocus Up            |
-| `Alt =` / `Alt +`      | Resize Increase         |
-| `Alt -`                | Resize Decrease         |
-| `Alt [`                | PreviousSwapLayout      |
-| `Alt ]`                | NextSwapLayout          |
+When you press a `Ctrl + <key>` like `Ctrl+t` or `Ctrl+p`, you enter a **mode** — the status bar changes color and shows which one (`TAB`, `PANE`, `RESIZE`…). Now your keys talk to zellij, not your shell. Each mode is just a group of related one-key actions.
 
-### Mode-entry keys
-| Key      | Enters mode | Note                         |
-| -------- | ----------- | ---------------------------- |
-| `Ctrl p` | Pane        | (except Pane/Locked)         |
-| `Ctrl n` | Resize      | (except Resize/Locked)       |
-| `Ctrl s` | Scroll      | (except Scroll/Locked)       |
-| `Ctrl o` | Session     | (except Session/Locked)      |
-| `Ctrl t` | Tab         | (except Tab/Locked)          |
-| `Ctrl h` | Move        | (except Move/Locked)         |
-| `Ctrl a` | Tmux        | *(custom — stock: `Ctrl b`)* |
-| `Enter` / `Esc` | Normal | (except Normal/Locked)  |
+**Getting back to Normal:** press the *same* `Ctrl + <key>` again, or press `Esc` / `Enter`. That toggle is the one rule to remember — the ten chords above hide it for daily use.
+
+| prefix | mode | what it's for |
+| --- | --- | --- |
+| `Ctrl p` | Pane | split, focus, close, fullscreen, float panes |
+| `Ctrl t` | Tab | new / close / switch / rename tabs, fuzzy jump |
+| `Ctrl s` | Scroll | scroll back, search, copy |
+| `Ctrl o` | Session | detach, session & plugin managers |
+| `Ctrl n` | Resize | grow / shrink the focused pane |
+| `Ctrl h` | Move | reorder the focused pane |
+| `Ctrl a` | Tmux | tmux-style chords (`"` `%` `c` `,` …) † |
+
+> Plus two globals: `Ctrl g` toggles **Locked** (passthrough everything, even the prefixes), and `Ctrl q` quits.
+
+The full list of keys inside each mode is in the [reference below](#full-reference--every-binding-by-mode).
 
 ---
 
-## Customizations vs stock defaults
+## Custom layer — what differs from stock zellij
 
-Everything not listed here is the unmodified zellij 0.40.1 default.
+Six changes on top of the zellij 0.40.1 defaults (marked `†` in the reference):
 
-1. **Tmux mode** (`clear-defaults=true`, full redefinition): prefix is **`Ctrl a`** (stock: `Ctrl b`); added **`]`** = EditScrollback. All other tmux binds match stock.
-2. **Pane `c` / `r` swap:** `c` = NewPane Right, `r` = RenamePane (stock: `c` = RenamePane, `r` = NewPane Right).
-3. **Tab `f`:** launches **room** (fuzzy tab switcher).
-4. **Scroll `Alt c`:** Copy (stock leaves it commented out).
-5. **Session `p`:** launches **plugin-manager**.
-6. **Global `Ctrl y`:** launches **zellij_forgot**.
+- **Tmux prefix is `Ctrl a`** (stock: `Ctrl b`), and **`]` = edit scrollback** is added. Every other tmux chord matches stock.
+- **Pane `c` / `r` are swapped:** `c` = new pane right, `r` = rename pane (stock: `c` = rename, `r` = new right).
+- **Tab `f`** launches **room**, a fuzzy tab switcher.
+- **Scroll `Alt c`** copies the selection (stock leaves it unset).
+- **Session `p`** launches the **plugin manager**.
+- **Global `Ctrl y`** launches **zellij_forgot**, an in-app cheatsheet.
 
-> Regenerate this file from live sources: `zellij setup --dump-config` (defaults) merged with `config.kdl` (customizations).
+---
+
+## Full reference — every binding by mode
+
+Every mode below follows the same shape: the **prefix** is the headline (it toggles you in and out), and the keys act **only while you're in that mode**.
+
+### Normal
+Shell passthrough — every key goes to your shell. This is the mode you start in; there are no zellij binds here.
+
+### Locked — prefix `Ctrl g`
+In Locked, *every* key (including the prefixes above) passes straight to the shell — nothing intercepts them.
+
+| key | does |
+| --- | --- |
+| `Ctrl g` | toggle Locked ↔ Normal |
+
+### Resize — prefix `Ctrl n`
+`Ctrl n` toggles Resize: press to enter, press again (or `Esc`) to leave.
+
+| key | does |
+| --- | --- |
+| `h` / `←` | grow left |
+| `j` / `↓` | grow down |
+| `k` / `↑` | grow up |
+| `l` / `→` | grow right |
+| `H` / `J` / `K` / `L` | shrink (same four directions) |
+| `=` / `+` | grow (both axes) |
+| `-` | shrink (both axes) |
+
+### Pane — prefix `Ctrl p`
+`Ctrl p` toggles Pane. Most actions return you to Normal afterwards.
+
+| key | does |
+| --- | --- |
+| `h` / `←` | focus left |
+| `j` / `↓` | focus down |
+| `k` / `↑` | focus up |
+| `l` / `→` | focus right |
+| `p` | switch to last-focused pane |
+| `n` | new pane (default direction) |
+| `d` | new pane down |
+| `c` | new pane right † |
+| `r` | rename pane † |
+| `x` | close focused pane |
+| `f` | toggle fullscreen |
+| `z` | toggle pane frames |
+| `w` | toggle floating panes |
+| `e` | embed ↔ float the focused pane |
+
+### Move — prefix `Ctrl h`
+`Ctrl h` toggles Move. Relocates the focused pane within the layout.
+
+| key | does |
+| --- | --- |
+| `n` / `Tab` | move pane to the next position |
+| `p` | move pane backwards |
+| `h` / `←` | move pane left |
+| `j` / `↓` | move pane down |
+| `k` / `↑` | move pane up |
+| `l` / `→` | move pane right |
+
+### Tab — prefix `Ctrl t`
+`Ctrl t` toggles Tab.
+
+| key | does |
+| --- | --- |
+| `r` | rename tab |
+| `h` / `←` / `k` / `↑` | previous tab |
+| `l` / `→` / `j` / `↓` | next tab |
+| `n` | new tab |
+| `x` | close tab |
+| `s` | toggle sync (send input to all panes) |
+| `b` | break pane into its own tab |
+| `[` | break pane left |
+| `]` | break pane right |
+| `1`–`9` | go to tab 1–9 |
+| `Tab` | toggle to the last tab |
+| `f` | fuzzy tab switcher (room) † |
+
+### Scroll — prefix `Ctrl s`
+`Ctrl s` toggles Scroll.
+
+| key | does |
+| --- | --- |
+| `e` | edit scrollback in `$EDITOR` |
+| `s` | start a search |
+| `Ctrl c` | jump to bottom → Normal |
+| `j` / `↓` | scroll one line down |
+| `k` / `↑` | scroll one line up |
+| `Ctrl f` / `PgDn` / `→` / `l` | page down |
+| `Ctrl b` / `PgUp` / `←` / `h` | page up |
+| `d` | half page down |
+| `u` | half page up |
+| `Alt c` | copy the selection † |
+
+### Search — entered from Scroll with `s`
+You land here after typing a query in the search box.
+
+| key | does |
+| --- | --- |
+| `Ctrl s` | leave Search → Normal |
+| `Ctrl c` | jump to bottom → Normal |
+| `j` / `↓` | scroll one line down |
+| `k` / `↑` | scroll one line up |
+| `Ctrl f` / `PgDn` / `→` / `l` | page down |
+| `Ctrl b` / `PgUp` / `←` / `h` | page up |
+| `d` | half page down |
+| `u` | half page up |
+| `n` | next match |
+| `p` | previous match |
+| `c` | toggle case sensitivity |
+| `w` | toggle wrap |
+| `o` | toggle whole-word |
+
+### EnterSearch — the search input box
+The prompt that appears when you press `s` in Scroll.
+
+| key | does |
+| --- | --- |
+| `Enter` | run the search → Search |
+| `Ctrl c` / `Esc` | cancel → Scroll |
+
+### RenameTab
+Reached from Tab mode `r`. Type the new name, then:
+
+| key | does |
+| --- | --- |
+| `Ctrl c` | back to Normal |
+| `Esc` | undo the rename → Tab |
+
+### RenamePane
+Reached from Pane mode `r`. Type the new name, then:
+
+| key | does |
+| --- | --- |
+| `Ctrl c` | back to Normal |
+| `Esc` | undo the rename → Pane |
+
+### Session — prefix `Ctrl o`
+`Ctrl o` toggles Session.
+
+| key | does |
+| --- | --- |
+| `Ctrl s` | go to Scroll |
+| `d` | detach the session |
+| `w` | session manager (floating) |
+| `p` | plugin manager (floating) † |
+
+### Tmux — prefix `Ctrl a` †
+A tmux-style layer: press `Ctrl a`, release, then a tmux chord. Matches stock tmux mode except the prefix (`Ctrl a`, stock `Ctrl b`) and the added `]`.
+
+| key | does |
+| --- | --- |
+| `Ctrl a` | send a literal `Ctrl a` → Normal † |
+| `[` | enter Scroll (copy-mode) |
+| `]` | edit scrollback † |
+| `"` | new pane down |
+| `%` | new pane right |
+| `z` | toggle fullscreen |
+| `c` | new tab |
+| `,` | rename tab |
+| `p` | previous tab |
+| `n` | next tab |
+| `o` | focus next pane |
+| `arrows` or `h j k l` | move focus |
+| `d` | detach |
+| `Space` | next swap layout |
+| `x` | close focused pane |
+
+### Global keys — work in every mode except Locked
+These are available everywhere (including Normal); they don't require entering a mode first.
+
+| key | does |
+| --- | --- |
+| `Ctrl g` | enter Locked |
+| `Ctrl q` | quit zellij |
+| `Ctrl y` | launch zellij_forgot cheatsheet † |
+| `Alt n` | new pane |
+| `Alt i` | move current tab left |
+| `Alt o` | move current tab right |
+| `Alt h` / `Alt ←` | focus left (jumps to prev tab at the edge) |
+| `Alt l` / `Alt →` | focus right (jumps to next tab at the edge) |
+| `Alt j` / `Alt ↓` | focus down |
+| `Alt k` / `Alt ↑` | focus up |
+| `Alt =` / `Alt +` | resize larger |
+| `Alt -` | resize smaller |
+| `Alt [` | previous swap layout |
+| `Alt ]` | next swap layout |
+
+> From any non-Normal, non-Locked mode, `Enter` or `Esc` also returns you to Normal.
+
+---
+
+*Regenerate this file from live sources: `zellij setup --dump-config` (stock defaults) merged with `config.kdl:7-216` (customizations).*

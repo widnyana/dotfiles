@@ -8,3 +8,4 @@ boxes/*.box
 .tmux/resurrect/*
 
 bin/test-ignored.sh
+.claude/worktrees/

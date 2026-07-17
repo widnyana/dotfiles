@@ -3,6 +3,7 @@
 // Window == pane
 
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
+
 keybinds {
     normal {
         // uncomment this and adjust key if using copy_on_select=false
@@ -298,17 +299,17 @@ plugins {
         notification_format_unread "#[bg=surface0,fg=$yellow]#[bg=$yellow,fg=$crust] #[bg=$surface1,fg=$yellow] {message}#[bg=$surface0,fg=$yellow]"
         notification_format_no_notifications ""
         notification_show_interval "10"
-    
+
         command_host_command "uname -n"
         command_host_format "{stdout}"
         command_host_interval "0"
         command_host_rendermode "static"
-    
+
         command_user_command "whoami"
         command_user_format "{stdout}"
         command_user_interval "10"
         command_user_rendermode "static"
-    
+
         command_kube_ctx_command     "kubectl config current-context 2>/dev/null"
         command_kube_ctx_format      "{stdout}:"
         command_kube_ctx_interval    "5"
@@ -414,7 +415,7 @@ ui {
 // Default: default
 //
 // theme "cyber-noir"
-theme "nightfox"
+theme "catppuccin-frappe"
 
 // The name of the default layout to load on startup
 // Default: "default"

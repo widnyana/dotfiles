@@ -33,7 +33,14 @@ local function level_name(level)
   end
   return tostring(level)
 end
+local max_log_bytes = 5 * 1024 * 1024 -- 5 MiB safety cap: a misbehaving plugin that
+-- spams vim.notify (e.g. retrying a failed setup) must not be allowed to grow
+-- this file unbounded and hammer disk I/O.
 local function log_to_file(level_name, msg)
+  local stat = (vim.uv or vim.loop).fs_stat(log_path)
+  if stat and stat.size > max_log_bytes then
+    return
+  end
   local f = io.open(log_path, "a")
   if f then
     f:write(string.format("[%s] %s: %s\n", os.date("%Y-%m-%d %H:%M:%S"), level_name, tostring(msg)))

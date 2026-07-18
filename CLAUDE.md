@@ -49,6 +49,14 @@ Single flat `config` file, no includes/conditionals. Currently: `Rapture` theme,
 - Plugins are loaded two ways: vendored `.wasm` binaries under `plugins/` (referenced via `file:~/.config/zellij/plugins/...`) for `room` and `zjstatus`/`zellij_forgot`, *and* remote URLs in the `load_plugins` block (`zjframes`, `zellij-forgot` pulled from GitHub releases at startup). Check which mechanism a given plugin already uses before adding a new one, and don't assume both are always in sync.
 - `layouts/*.kdl` has several named layouts; `calisia` is the one actually active per `config.kdl`'s `default_layout`.
 
+## Neovim (`config/nvim/`)
+
+LazyVim-based config (`~/.config/nvim` symlink target). `config/nvim/docs/plugins.md` and
+`config/nvim/docs/keybindings.md` are maintained reference docs — check these before re-deriving
+plugin purpose or keymap behavior from the Lua source directly; they cover only what this repo adds
+or changes on top of stock LazyVim, not LazyVim's own defaults. A retired, no-longer-active config
+lives at `config/_archive/nvim-v2/` for historical reference only — do not treat it as current.
+
 ## Conventions
 
 - Commit messages follow Conventional Commits with a scope, e.g. `feat(zellij): ...`, `fix(shell): ...`, `docs(zellij): ...`.

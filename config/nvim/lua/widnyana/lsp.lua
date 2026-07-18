@@ -13,6 +13,7 @@ M.mason_ensure_installed = {
   "sqls",
   "texlab",
   "templ",
+  "tinymist",
   "typescript-language-server",
   "yaml-language-server",
 

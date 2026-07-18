@@ -136,6 +136,9 @@ return {
           default_config = require("widnyana.plugins.lang.solidity").opts,
         },
 
+        -- typst
+        tinymist = {},
+
         -- typescript
         tsserver = {
           root_dir = function(...)

@@ -183,7 +183,12 @@ return {
     "neanias/everforest-nvim",
     lazy = true,
     priority = 1000,
-    opts = {},
+    -- Optional; default configuration will be used if setup isn't called.
+    config = function()
+      require("everforest").setup({
+        -- Your config here
+      })
+    end,
   },
   {
     "nyoom-engineering/oxocarbon.nvim",

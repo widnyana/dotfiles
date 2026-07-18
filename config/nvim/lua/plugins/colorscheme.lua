@@ -6,6 +6,7 @@ return {
       require("themery").setup({
         livePreview = true, -- Apply theme while picking. Default to true.
         themes = {
+          "solarized-osaka",
           "kanagawa-lotus",
           "kanagawa-dragon",
           "rose-pine-dawn",

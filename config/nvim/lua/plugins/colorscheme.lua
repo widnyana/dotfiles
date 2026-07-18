@@ -7,6 +7,7 @@ return {
         livePreview = true, -- Apply theme while picking. Default to true.
         themes = {
           "solarized-osaka",
+          "solarized-osaka-day",
           "kanagawa-lotus",
           "kanagawa-dragon",
           "rose-pine-dawn",

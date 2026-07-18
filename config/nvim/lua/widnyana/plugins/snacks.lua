@@ -20,6 +20,15 @@ local logo = [[
 
 local M = {
   "snacks.nvim",
+  keys = {
+    {
+      "<leader>fz",
+      function()
+        Snacks.picker.zoxide()
+      end,
+      desc = "Zoxide (cd to Directory)",
+    },
+  },
   opts = {
     dashboard = {
       preset = {

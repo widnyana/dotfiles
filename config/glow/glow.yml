@@ -1,10 +1,14 @@
 # style name or JSON path (default "auto")
-style: "auto"
+style: "dracula"
 # mouse support (TUI-mode only)
 mouse: false
 # use pager to display markdown
-pager: true
+pager: false
 # word-wrap at width
-width: 120
+width: 90
 # show all files, including hidden and ignored.
 all: true
+# show line numbers (TUI-mode only)
+showLineNumbers: true
+# preserve newlines in the output
+preserveNewLines: true

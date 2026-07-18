@@ -52,6 +52,7 @@ sqlite = "3.53.3"
 codex = "latest"
 task = "3.52.0"
 gcloud = "576.0.0"
+glow = "2.1.2"
 
 
 [plugins]

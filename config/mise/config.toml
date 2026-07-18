@@ -34,17 +34,14 @@ zellij = "0.44.3"
 zig = "latest"
 zoxide = "0.10.0"
 
-"aqua:awscli" = "2.36.1"
+"aqua:awscli" = "2.36.2"
 "aqua:derailed/k9s" = "latest"
 "aqua:getsops/sops" = "3.13.2"
 "aqua:gohugoio/hugo/hugo-extended" = "0.164.0"
-"aqua:terrastruct/d2" = "0.7.1"
 "cargo:eva" = "0.3"
 "cargo:eza" = "0.23.4"
-"npm:aws-cdk" = "3.0.0"
 "npm:biome" = "0.3.3"
 "npm:socket" = "1.1.143"
-"pipx:glances" = { version = "4.5.5", action = "", containers = "", graph = "", ip = "", sensors = "", wifi = "" }
 "starship" = "latest"
 tmux = "latest"
 lazygit = "0.63.1"
@@ -59,10 +56,10 @@ glow = "2.1.2"
 
 [settings]
 always_keep_download = false             # deleted after install by default
-always_keep_install = false               # deleted on failure by default
-jobs = 4
+always_keep_install = false              # deleted on failure by default
+jobs = 8
 not_found_auto_install = true
-paranoid = false                         # see https://mise.jdx.dev/paranoid.html
+paranoid = true                          # see https://mise.jdx.dev/paranoid.html
 env_file = '.env'
 activate_aggressive = false
 asdf_compat = true                       # set to true to ensure .tool-versions will be compatible with asdf, see `MISE_ASDF_COMPAT`

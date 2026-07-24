@@ -1,0 +1,12 @@
+// deveve.kdl — plain layout; loads zellij-layoutswitch in a pane so it runs and can receive pipes.
+// Launch with:  zellij --layout deveve
+layout {
+    tab name="deveve" {
+        pane split_direction="vertical" {
+            pane
+            pane size="20%" name="LAYOUT-SWITCHER" {
+                plugin location="https://github.com/sgtrusty/zellij-layoutswitch/releases/download/v0.2.1/zellij-layoutswitch.wasm"
+            }
+        }
+    }
+}

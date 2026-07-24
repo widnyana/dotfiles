@@ -338,6 +338,9 @@ load_plugins {
     }
 
     "https://github.com/karimould/zellij-forgot/releases/download/0.4.2/zellij_forgot.wasm" {}
+
+    "https://github.com/sgtrusty/zellij-layoutswitch/releases/download/v0.2.1/zellij-layoutswitch.wasm" {}
+    "https://github.com/cunialino/zellij-sessionizer/releases/download/v0.1.1/sessionizer.wasm" {}
 }
 
 // Choose what to do when zellij receives SIGTERM, SIGINT, SIGQUIT or SIGHUP

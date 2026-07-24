@@ -25,12 +25,12 @@ current_provider() {
 		return
 	fi
 	local cur penv name
-	cur="$(jq -cS '.env // {}' "$TARGET" 2>/dev/null || echo '{}')"
+	cur="$(jq -cS '.env // {} | map(tostring)' "$TARGET" 2>/dev/null || echo '{}')"
 	for f in "$CLAUDE_DIR"/settings.*.json; do
 		[[ -f "$f" ]] || continue
 		name="$(basename "$f")"
 		case "$name" in settings.json | settings.local.json) continue ;; esac
-		penv="$(jq -cS '.env // {}' "$f" 2>/dev/null || echo '{}')"
+		penv="$(jq -cS '.env // {} | map(tostring)' "$f" 2>/dev/null || echo '{}')"
 		if [[ "$penv" == "$cur" ]]; then
 			name="${name#settings.}"
 			name="${name%.json}"

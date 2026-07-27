@@ -5,14 +5,14 @@ local keymap = vim.keymap
 local opts = { noremap = true, silent = true }
 
 -- Increment/Decrement numbers
-keymap.set("n", "+", "<C-a>")
-keymap.set("n", "-", "<C-x>")
+keymap.set("n", "+", "<C-a>", opts)
+keymap.set("n", "-", "<C-x>", opts)
 
 -- Delete one word backward
-keymap.set("n", "dw", "vb_d")
+keymap.set("n", "dw", "vb_d", opts)
 
 -- Select All
-keymap.set("n", "<C-a>", "gg<S-v>G")
+keymap.set("n", "<C-a>", "gg<S-v>G", opts)
 
 -- Disable continuations
 keymap.set("n", "<Leader>o", "o<Esc>^Da", opts)
@@ -23,8 +23,6 @@ keymap.set("n", "<C-m>", "<C-i>", opts)
 
 -- New tab
 keymap.set("n", "te", ":tabedit", opts)
-keymap.set("n", "<tab>", ":tabnext<Return>", opts)
-keymap.set("n", "<S-tab>", ":tabprev<Return>", opts)
 
 -- Split Window
 keymap.set("n", "ss", ":split<Return>", opts)

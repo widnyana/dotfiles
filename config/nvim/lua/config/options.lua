@@ -18,7 +18,7 @@ vim.opt.tabstop = 2
 
 -- clipboard
 -- integration works automatically. Requires Neovim >= 0.10.0
-vim.opt.clipboard = vim.env.SSH_TTY and "" or "unnamedplus" -- Sync with system clipboard
+vim.opt.clipboard = vim.env.SSH_TTY and "unnamed" or "unnamedplus" -- Sync with system clipboard
 
 --
 vim.opt.inccommand = "split"
@@ -27,7 +27,7 @@ vim.opt.ignorecase = true
 
 -- UI
 vim.opt.title = false
-vim.opt.cmdheight = 1 -- when using LazyVim, built-in cmd panel is not needed
+vim.opt.cmdheight = 0
 vim.opt.scrolloff = 10
 vim.opt.showcmd = true
 vim.opt.splitkeep = "cursor"
@@ -56,10 +56,6 @@ vim.opt.backupskip = {
 
 -- add asterisk in block comment
 vim.opt.formatoptions:append({ "r" })
-
-if vim.fn.has("nvim-0.8") == 1 then
-  vim.opt.cmdheight = 0
-end
 
 -- custom filetypes mapping
 vim.filetype.add({

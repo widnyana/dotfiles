@@ -47,8 +47,6 @@ This is the complete, non-abbreviated list. Anything not here is stock LazyVim.
 | `<Leader>O` | n | insert blank line above, same |
 | `<C-m>` | n | jump forward in jumplist (`<C-i>`) — ⚠️ see quirk below, this also affects `<CR>` |
 | `te` | n | `:tabedit` (starts the command, doesn't submit) |
-| `<Tab>` | n | `:tabnext` — **overridden**, see quirk below |
-| `<S-Tab>` | n | `:tabprev` — **overridden**, see quirk below |
 | `ss` | n | `:split` |
 | `sv` | n | `:vsplit` |
 | `sh` / `sj` / `sk` / `sl` | n | move focus to window left/down/up/right (`<C-w>h/j/k/l`) |
@@ -90,9 +88,6 @@ Documented as-is, not fixed — flagging so they're not a surprise:
 
 - **`gd` does nothing.** `lua/plugins/lsp.lua` binds `gd` on `nvim-lspconfig` to an empty function,
   overriding LazyVim's default "Goto Definition" picker. If `gd` isn't jumping anywhere, this is why.
-- **`<Tab>`/`<S-Tab>` are bound twice.** Once in `keymaps.lua` (`:tabnext`/`:tabprev`, real vim tabs)
-  and once by `bufferline.nvim` (cycles buffer-tabs). Verified against the running config: **bufferline
-  wins** — `keymaps.lua`'s binding is currently dead.
 - **`<C-j>` no longer moves focus to the window below.** LazyVim's default `<C-h/j/k/l>` window
   navigation is broken specifically for `j` — `keymaps.lua` repurposes it for "next diagnostic".
   `<C-h>`, `<C-k>`, `<C-l>` still navigate windows as normal; use `sj` (this repo's own binding) to

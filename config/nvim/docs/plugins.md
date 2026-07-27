@@ -185,6 +185,8 @@ picker is used specifically where it has a source fzf-lua doesn't (zoxide).
 | `lua/widnyana/common.lua` | shared LSP client flags (`debounce_text_changes`) |
 | `lua/widnyana/utils/init.lua` | `dedup()` — dedupe a list, used by config wiring |
 | `lua/widnyana/config/init.lua` | `excluded_filetypes` — consumed by indent-blankline |
+| `lua/widnyana/config/validation.lua` | startup checks (git executable, minimum Neovim version); run from `init.lua` |
+| `lua/widnyana/config/logging.lua` | wraps `vim.notify`, persists every notification to `stdpath("state")/messages.log`; `setup()` runs from `init.lua` before `lazy.nvim` loads so it also catches bootstrap-time notifications |
 | `lua/widnyana/lsp.lua` | `M.toggleInlayHints()` — **defined but not bound to any keymap**, dead code today |
 
 ---

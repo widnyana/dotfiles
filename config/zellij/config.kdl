@@ -5,6 +5,12 @@
 // If you'd like to override the default keybindings completely, be sure to change "keybinds" to "keybinds clear-defaults=true"
 
 keybinds {
+    // macOS sends \ef for Option+Right (shell forward-word) and \eb for Option+Left
+    // (backward-word). Zellij's default binds Alt+f -> ToggleFloatingPanes, which steals
+    // Option+Right from the shell. Unbind so \ef falls through to the terminal.
+    // Floating panes remain reachable via Pane mode: Ctrl p, then w.
+    unbind "Alt f"
+
     normal {
         // uncomment this and adjust key if using copy_on_select=false
     }

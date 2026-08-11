@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+# battery-pct — print battery charge as one token ("87%"), or "--" if none.
+# OS-portable: macOS pmset, Linux /sys/class/power_supply. No deps.
+# ponytail: percentage-only; add charging-state if a consumer needs it.
+case "$(uname)" in
+    Darwin)
+        out=$(pmset -g batt 2>/dev/null | grep -Eo '[0-9]+%' | head -1)
+        ;;
+    Linux)
+        # ponytail: head -1 is correct for modern hardware — single-battery laptops
+        # match one BAT*, desktops match none (-> "--"). Dual-pack systems (Framework 16
+        # bay) see the lowest-named battery, not the aggregate; upgrade to energy-weighted
+        # sum across BAT*/energy_now + BAT*/energy_full if that hardware joins the fleet.
+        out=$(cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -1)
+        [ -n "$out" ] && out="${out}%"
+        ;;
+    *)
+        out=""
+        ;;
+esac
+echo "${out:---}"

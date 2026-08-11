@@ -1,12 +1,80 @@
-// deveve.kdl — plain layout; loads zellij-layoutswitch in a pane so it runs and can receive pipes.
-// Launch with:  zellij --layout deveve
+// deveve.kdl — dedicated layout for software-engineering coding sessions (Rust, Go, Python).
+// For infra work (Kubernetes, YAML, SSH, Terragrunt), use calisia instead.
+//
+// Status-bar palette is Rosé Pine Moon (dark). Layouts can't embed a zellij theme, so this
+// deliberately uses a dark palette that sits well on the default dark global theme
+// (catppuccin-frappe). Segments are flat colour blocks (no rounded powerline glyphs) to keep
+// deveve visually distinct from calisia and avoid nerd-font glyph gaps.
+//
+// Launch with:  zellij --new-session-with-layout deveve
 layout {
-    tab name="deveve" {
-        pane split_direction="vertical" {
-            pane
-            pane size="20%" name="LAYOUT-SWITCHER" {
-                plugin location="https://github.com/sgtrusty/zellij-layoutswitch/releases/download/v0.2.1/zellij-layoutswitch.wasm"
+    default_tab_template {
+        pane size=1 borderless=true {
+            plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
+                // -- Rosé Pine Moon (dark) --
+                color_base    "#232136"
+                color_surface "#2a2740"
+                color_overlay "#393552"
+                color_muted   "#6e6a86"
+                color_text    "#e0def4"
+                color_iris    "#c4a7e7"
+                color_pine    "#3e8fb0"
+                color_foam    "#9ccfd8"
+                color_gold    "#f6c177"
+                color_love    "#eb6f92"
+                color_rose    "#ebbcba"
+
+                hide_frame_for_single_pane "false"
+
+                mode_normal       "#[bg=$pine,fg=$base,bold] NORMAL "
+                mode_tmux         "#[bg=$iris,fg=$base,bold] TMUX "
+                mode_pane         "#[bg=$foam,fg=$base,bold] PANE "
+                mode_tab          "#[bg=$foam,fg=$base,bold] TAB "
+                mode_scroll       "#[bg=$rose,fg=$base,bold] SCROLL "
+                mode_resize       "#[bg=$gold,fg=$base,bold] RESIZE "
+                mode_move         "#[bg=$gold,fg=$base,bold] MOVE "
+                mode_rename_tab   "#[bg=$gold,fg=$base,bold] RENAME-TAB "
+                mode_rename_pane  "#[bg=$gold,fg=$base,bold] RENAME-PANE "
+                mode_locked       "#[bg=$love,fg=$base,bold] LOCKED "
+                mode_session      "#[bg=$muted,fg=$text,bold] SESSION "
+                mode_search       "#[bg=$rose,fg=$base,bold] SEARCH "
+                mode_enter_search "#[bg=$rose,fg=$base,bold] ENT-SEARCH "
+                mode_prompt       "#[bg=$muted,fg=$text,bold] PROMPT "
+
+                tab_normal            "#[bg=$surface,fg=$muted] {index} {name} "
+                tab_normal_fullscreen "#[bg=$surface,fg=$muted] {index} {name} [] "
+                tab_normal_sync       "#[bg=$surface,fg=$muted] {index} {name} <> "
+                tab_active            "#[bg=$iris,fg=$base,bold] {index} {name} "
+                tab_active_fullscreen "#[bg=$iris,fg=$base,bold] {index} {name} [] "
+                tab_active_sync       "#[bg=$iris,fg=$base,bold] {index} {name} <> "
+                tab_separator         "#[bg=$overlay] "
+
+                command_git_branch_command    "git rev-parse --abbrev-ref HEAD"
+                command_git_branch_format     " {stdout}"
+                command_git_branch_interval   "10"
+                command_git_branch_rendermode "static"
+
+                command_battery_command    "battery-pct"
+                command_battery_format     "#[bg=$gold,fg=$base,bold] ⚡{stdout} "
+                command_battery_interval   "60"
+                command_battery_rendermode "static"
+
+                datetime          "{format}"
+                datetime_format   "%d %b %Y  %H:%M"
+                datetime_timezone "Asia/Jakarta"
+
+                format_left  "#[bg=$pine,fg=$base,bold]  {session} #[bg=$overlay,fg=$text]{mode}#[bg=$overlay,fg=$text] {tabs}"
+                format_right "#[bg=$overlay,fg=$pine,bold]{command_git_branch} {command_battery}#[bg=$pine,fg=$base,bold] {datetime} "
+                format_space "#[bg=$overlay]"
+                format_hide_on_overlength "true"
+                format_precedence "lrc"
             }
         }
+
+        children
+    }
+
+    tab name="deveve" {
+        pane
     }
 }

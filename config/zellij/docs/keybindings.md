@@ -1,7 +1,7 @@
 # Zellij — Keybindings
 
-> **Scope:** the *effective* keymap for this machine — zellij **0.40.1** stock defaults overlaid with the customizations in `config.kdl` (`keybinds {}` keeps stock defaults; only the `tmux` mode is a full redefinition). Full coverage: every binding is listed below, nothing omitted.
-> **Sources:** `zellij setup --dump-config` (stock 0.40.1) + `config.kdl:7-216`. Snapshot 2026-07.
+> **Scope:** the *effective* keymap for this machine — zellij **0.44.3** stock defaults overlaid with the customizations in `config.kdl` (`keybinds {}` keeps stock defaults; only the `tmux` mode is a full redefinition). Full coverage: every binding is listed below, nothing omitted.
+> **Sources:** `zellij setup --dump-config` (stock 0.44.3) + `config.kdl:7-216`. Snapshot 2026-07-28.
 > **Legend:** `†` marks a binding that differs from (or is added beyond) stock zellij — see [Custom layer](#custom-layer--what-differs-from-stock-zellij).
 
 ---
@@ -51,7 +51,7 @@ The full list of keys inside each mode is in the [reference below](#full-referen
 
 ## Custom layer — what differs from stock zellij
 
-Six changes on top of the zellij 0.40.1 defaults (marked `†` in the reference):
+Seven changes on top of the zellij 0.44.3 defaults (marked `†` in the reference):
 
 - **Tmux prefix is `Ctrl a`** (stock: `Ctrl b`), and **`]` = edit scrollback** is added. Every other tmux chord matches stock.
 - **Pane `c` / `r` are swapped:** `c` = new pane right, `r` = rename pane (stock: `c` = rename, `r` = new right).
@@ -59,6 +59,7 @@ Six changes on top of the zellij 0.40.1 defaults (marked `†` in the reference)
 - **Scroll `Alt c`** copies the selection (stock leaves it unset).
 - **Session `p`** launches the **plugin manager**.
 - **Global `Ctrl y`** launches **zellij_forgot**, an in-app cheatsheet.
+- **Global `Alt f` unbound** † — macOS sends `\ef` for Option+Right (shell forward-word). The stock `Alt f → ToggleFloatingPanes` default stole that chord; unbinding it restores forward-word to the shell. Floating panes are still reachable via Pane mode `w`.
 
 ---
 
@@ -248,6 +249,8 @@ These are available everywhere (including Normal); they don't require entering a
 | `Alt -` | resize smaller |
 | `Alt [` | previous swap layout |
 | `Alt ]` | next swap layout |
+
+> **macOS note:** Option+←/→ are how the shell does backward-/forward-word — the terminal sends `\eb`/`\ef`, *not* the arrow CSI. So the `Alt ←`/`Alt →` binds above never fire on macOS (they work on Linux). `Alt f` is explicitly **unbound** so `\ef` (Option+→) reaches the shell instead of toggling floating panes. `Alt b` (Option+←) was never bound, so backward-word already passed through.
 
 > From any non-Normal, non-Locked mode, `Enter` or `Esc` also returns you to Normal.
 

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+
+CODEX=$(which codex)
+
+"$CODEX" --search \
+    --no-alt-screen \
+    "$@"

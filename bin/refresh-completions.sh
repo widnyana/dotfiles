@@ -20,11 +20,13 @@ generate() {
   if type "${name}" > /dev/null 2>&1; then
     if "$@" > "${COMPLETIONS_DIR}/_${name}.tmp" 2>/dev/null; then
       mv "${COMPLETIONS_DIR}/_${name}.tmp" "${COMPLETIONS_DIR}/_${name}"
-      echo "refreshed completions: ${name}"
+      echo "[✓] refreshed completions: ${name}"
     else
       rm -f "${COMPLETIONS_DIR}/_${name}.tmp"
-      echo "skipped (failed): ${name}" >&2
+      echo "[!] skipped (failed): ${name}" >&2
     fi
+  else
+    echo "[!] skipped (not installed): ${name}" >&2
   fi
 }
 
@@ -37,5 +39,6 @@ generate velero    velero completion zsh
 generate pinniped  pinniped completion zsh
 generate glab      glab completion -s zsh
 generate atuin     atuin gen-completions --shell zsh
+generate zellij    zellij setup --generate-completion zsh
 
 echo "done. open a new shell to pick up the refreshed completions."

@@ -20,6 +20,7 @@ if [[ -x "$(command -v mise)" ]]; then
   export MISE_NOT_FOUND_AUTO_INSTALL=true
   export MISE_NODE_COREPACK=1
   export MISE_POETRY_AUTO_INSTALL=1
+  export MISE_NPM_PACKAGE_MANAGER=aube
 
   #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
   eval "$(mise activate zsh --shims)"
@@ -35,3 +36,11 @@ if type "atuin" >>/dev/null; then
   source <(atuin init zsh)
 fi
 
+#: zellij zsh completion + zr/zrf/ze pane aliases, cached in ${DOT_DIR}/completions/_zellij, see bin/refresh-completions.sh
+#: stderr silenced: the generated script self-invokes _zellij outside a completion
+#: context on source, which prints a harmless "can only be called from completion
+#: function" warning; functions/completion still register correctly.
+if type "zellij" >>/dev/null; then
+  # shellcheck source=/dev/null
+  source "${DOT_DIR}/completions/_zellij" 2>/dev/null
+fi

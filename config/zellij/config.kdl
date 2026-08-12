@@ -326,8 +326,13 @@ plugins {
         command_kube_ns_interval    "10"
         command_kube_ns_rendermode  "dynamic"
 
+        command_battery_command    "battery-pct"
+        command_battery_format     "⚡{stdout}"
+        command_battery_interval   "60"
+        command_battery_rendermode "static"
+
         format_left "#[bg=$surface0,fg=$sapphire]#[bg=$sapphire,fg=$crust,bold] {session} #[bg=$surface0] {mode} #[bg=$surface0,fg=$crust]{tabs}"
-        format_right "#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󱦥 #[bg=$surface1,fg=$maroon,bold] {command_kube_ctx}{command_kube_ns} #[bg=$surface0,fg=$flamingo]#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󰃭 #[bg=$surface1,fg=$maroon,bold] {datetime}#[bg=$surface0,fg=$surface1]"
+        format_right "#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󱦥 #[bg=$surface1,fg=$maroon,bold] {command_kube_ctx}{command_kube_ns} #[bg=$surface0,fg=$yellow]#[bg=$yellow,fg=$crust]⚡#[bg=$surface1,fg=$yellow,bold] {command_battery} #[bg=$surface0,fg=$flamingo]#[bg=$surface0,fg=$maroon]#[bg=$maroon,fg=$crust]󰃭 #[bg=$surface1,fg=$maroon,bold] {datetime}#[bg=$surface0,fg=$surface1]"
         format_space "#[bg=$surface0]"
         format_hide_on_overlength "true"
         format_precedence "lrc"

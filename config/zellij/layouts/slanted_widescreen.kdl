@@ -13,7 +13,7 @@ layout {
         pane size=1 borderless=true {
             plugin location="file:~/.config/zellij/plugins/zjstatus.wasm" {
                 format_left  "#[fg=black,bg=blue,bold]{session}  #[fg=blue,bg=#181825]{tabs}"
-                format_right "{command_kube_ctx}{command_kube_ns} {datetime}"
+                format_right "{command_kube_ctx}{command_kube_ns} {command_battery}{datetime}"
                 format_space "#[bg=#181825]"
 
                 hide_frame_for_single_pane "false"
@@ -46,6 +46,11 @@ layout {
                 command_kube_ns_format      "#[fg:green]{stdout}"
                 command_kube_ns_interval    "10"
                 command_kube_ns_rendermode  "dynamic"
+
+                command_battery_command    "battery-pct"
+                command_battery_format     "⚡{stdout} "
+                command_battery_interval   "60"
+                command_battery_rendermode "static"
             }
         }
         children

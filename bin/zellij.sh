@@ -3,8 +3,8 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Context: zellij
+# Purpose: Attach to the single existing zellij session, pick via fzf when several exist, or start a new one
 
 
 # `zellij list-sessions` output:

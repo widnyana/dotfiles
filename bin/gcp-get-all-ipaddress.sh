@@ -3,8 +3,8 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Context: gcp
+# Purpose: List reserved static IP addresses (regional and global) across GCP projects with the compute API enabled
 
 
 PROJECTS=$(gcloud projects list --format="value(project_id)" | sort | uniq)

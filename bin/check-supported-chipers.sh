@@ -3,8 +3,8 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Context: tls
+# Purpose: Probe a TLS endpoint for supported cipher suites via openssl s_client
 
 
 # OpenSSL requires the port number.

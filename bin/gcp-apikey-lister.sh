@@ -3,8 +3,8 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Context: gcp
+# Purpose: List API keys from GCP projects and present them as CSV
 
 # List API keys from Google Cloud Platform, and present it as CSV output 
 # on the screen

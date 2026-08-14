@@ -3,12 +3,11 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Context: gcp
+# Purpose: Show IAM policy bindings for a service account in a GCP project
 
-# List API keys from Google Cloud Platform, and present it as CSV output 
-# on the screen
-# 
+# Show IAM policy bindings for a given service account in a GCP project
+#
 # (c) 2023 - wid/at/widnyana.web.id
 
 set -euo pipefail

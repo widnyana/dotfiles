@@ -3,8 +3,8 @@
 # Damarseta · Infrastructure with Intent. Aligned. Reliable.
 # Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
 #──────────────────────────────────────────────────────────────────────────────
-# Context: Verification test
-# Purpose: Testing gitignore support
+# Context: tooling
+# Purpose: Install/upgrade the latest Trivy release from aquasecurity/trivy
 
 set -euo pipefail
 source ~/.dotfiles/common/colors

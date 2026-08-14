@@ -349,6 +349,18 @@ link_ripgreprc() {
   link_path "${DOT_DIR}/config/ripgrep/ripgreprc" "${HOME}/.ripgreprc"
 }
 
+#: Git config + ignore link as a whole directory (link_config git) into
+#: ~/.config/git; git reads config and ignore there natively via XDG on macOS
+#: and Linux. The pre-XDG layout linked ~/.gitignore -> config/git/gitignore;
+#: that target is gone after the move to config/git, leaving a dangling symlink.
+#: Remove it — only when it is a broken symlink, never a real file or valid link.
+cleanup_legacy_gitignore() {
+  local link="$HOME/.gitignore"
+  [[ -L "$link" && ! -e "$link" ]] || return 0
+  dry "remove dangling legacy symlink $link"
+  fs_rm "$link"
+}
+
 #: mise and tmux link as whole directories (link_config), matching the existing
 #: ~/.config/{mise,tmux} -> repo directory symlinks. Per-file linking through
 #: those directory symlinks resolved back into the repo and created
@@ -498,6 +510,7 @@ main() {
 
   #: managed config links
   step optional "git config"        link_config git
+  step optional "legacy gitignore"  cleanup_legacy_gitignore
   step optional "vimrc"             link_repo_file vim/vimrc "$HOME/.vimrc"
   step optional "neovim config"     link_config nvim
   step optional "alacritty config"  link_config alacritty

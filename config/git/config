@@ -49,7 +49,6 @@
 	required = true
 
 [core]
-	excludesfile = /Users/wid/.gitignore_global
 	packedGitLimit = 512m
 	packedGitWindowSize = 512m
 	bigFileThreshold = 50m
@@ -75,7 +74,7 @@
 [user]
 	useConfigOnly = true
 	name = widnyana
-	signingkey = 
+	signingkey =
 
 [pull]
 	rebase = true

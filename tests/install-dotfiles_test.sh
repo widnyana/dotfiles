@@ -294,6 +294,23 @@ assert_rc "second run exits 0" "$rc" 0
 assert_match "second run reports no failures" "$out2" "No failures"
 
 
+echo "== legacy ~/.gitignore cleanup =="
+
+# broken symlink from the pre-XDG layout (target gone after move to config/git)
+new_sandbox
+ln -s "$SANDBOX/home/.config/git/gone" "$SANDBOX/home/.gitignore"
+TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
+assert_rc "gitignore-cleanup run exits 0" "$rc" 0
+assert_absent "dangling ~/.gitignore removed" "$SANDBOX/home/.gitignore"
+
+# a real ~/.gitignore file must be left untouched
+new_sandbox
+printf 'keepme\n' > "$SANDBOX/home/.gitignore"
+TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
+assert_rc "gitignore-preserve run exits 0" "$rc" 0
+assert_exists "real ~/.gitignore preserved" "$SANDBOX/home/.gitignore"
+
+
 echo "== AE3: dangling / wrong-target symlinks are repaired =="
 
 # source-level: precise control over link_path

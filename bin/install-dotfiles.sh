@@ -258,11 +258,26 @@ _brew_install() {
   curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh | /bin/bash
 }
 
+# Put brew on PATH for the rest of this run. A fresh install lands in
+# /opt/homebrew (Apple Silicon) or /usr/local (Intel), neither of which is on
+# the default PATH, so later brew-dependent steps would otherwise not find it.
+_brew_shellenv() {
+  local brew
+  for brew in /opt/homebrew/bin/brew /usr/local/bin/brew; do
+    [[ -x "$brew" ]] || continue
+    eval "$("$brew" shellenv)"
+    return 0
+  done
+  return 1
+}
+
 ensure_brew() {
   if command -v brew >/dev/null 2>&1; then log_ok "homebrew present"; return 0; fi
+  if _brew_shellenv; then log_ok "homebrew present (added to PATH)"; return 0; fi
   if [[ $DRY_RUN -eq 1 ]]; then dry "install Homebrew"; return 0; fi
   log_info "installing Homebrew..."
-  retry "homebrew" _brew_install
+  retry "homebrew" _brew_install || return 1
+  _brew_shellenv || log_warn "brew installed but not on PATH; open a new shell to use it"
 }
 
 _omz_install() {

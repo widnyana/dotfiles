@@ -51,6 +51,7 @@ This is the complete, non-abbreviated list. Anything not here is stock LazyVim.
 | `sv` | n | `:vsplit` |
 | `sh` / `sj` / `sk` / `sl` | n | move focus to window left/down/up/right (`<C-w>h/j/k/l`) |
 | `<C-j>` | n | jump to next diagnostic — **replaces** LazyVim's default "go to window below" |
+| `<Leader>zg` | v | prompt project/global, add visually selected word to that `cspell.json` (project: nearest, creates with `import` of the global one if missing; global: `~/.cspell.json`), then re-lints |
 
 ### Plugin-attached keys (new or repo-specific)
 

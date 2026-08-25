@@ -548,6 +548,7 @@ main() {
   step optional "hyprland config"   link_config hypr
   step optional "fluxbox config"    link_config fluxbox
   step optional "nixpkgs config"    link_config nixpkgs
+  step optional "cspell config"     link_repo_file config/cspell/cspell.json "$HOME/.cspell.json"
   step optional "electron flags"    link_repo_file config/electron-flags.conf "$CONFIG_DIR/electron-flags.conf"
 
   #: native packages (mkcert / nss)

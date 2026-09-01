@@ -1,0 +1,40 @@
+#compdef ansible-playbook
+
+_ansible-playbook_target_hosts() {
+  local repo_root ansible_dir
+  local -a lines hosts groups
+  repo_root="$(git -C "$PWD" rev-parse --show-toplevel 2>/dev/null)" || return 1
+  ansible_dir="$repo_root/ansible"
+  [[ -d $ansible_dir ]] || return 1
+
+  lines=(${(f)"$(cd "$ansible_dir" && ansible-inventory --list 2>/dev/null | python3 -c '
+import json, sys
+d = json.load(sys.stdin)
+for h in sorted(d.get("_meta", {}).get("hostvars", {})):
+    print(f"host:{h}")
+for g in sorted(k for k in d if k not in ("_meta", "all")):
+    print(f"group:{g}")
+')"})
+  hosts=(${(M)lines:#host:*})
+  hosts=(${hosts#host:})
+  groups=(${(M)lines:#group:*})
+  groups=(${groups#group:})
+
+  (( $#groups )) && compadd -J groups -X '-- inventory groups --' -a groups
+  (( $#hosts )) && compadd -J hosts -X '-- inventory hosts --' -a hosts
+}
+
+_ansible-playbook() {
+  if [[ ${words[CURRENT-1]} == (-l|--limit) ]]; then
+    compset -P '*,'
+    _ansible-playbook_target_hosts
+  elif compset -P '*_target_hosts=*,' || compset -P '*_target_hosts='; then
+    _ansible-playbook_target_hosts
+  elif compset -P '--limit=*,' || compset -P '--limit='; then
+    _ansible-playbook_target_hosts
+  else
+    _files -g '*.yml'
+  fi
+}
+
+_ansible-playbook "$@"

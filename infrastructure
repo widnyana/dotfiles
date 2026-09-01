@@ -165,3 +165,10 @@ if type "terragrunt" > /dev/null 2>&1; then
   complete -o nospace -C "$(which terragrunt)" terragrunt
   alias tg=terragrunt
 fi
+
+#: ansible-playbook -e *_target_hosts= host completion, see
+#: ${DOT_DIR}/completions/_ansible-playbook — overrides zsh's own bundled
+#: generic _ansible completer
+if type "compdef" > /dev/null 2>&1; then
+  compdef _ansible-playbook ansible-playbook
+fi

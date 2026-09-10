@@ -29,6 +29,10 @@ chmod 600 "${_DOT_DIR}/auth_keys"
 source ${_DOT_DIR}/global_env
 source ${_DOT_DIR}/common/colors
 source ${_DOT_DIR}/auth_keys
+
+#: machine-local feature flags (WID_ENABLE_*). See FEATURE_FLAGS.md.
+[ -f "${_DOT_DIR}/office/flags" ] && source "${_DOT_DIR}/office/flags"
+
 source ${_DOT_DIR}/functions.sh
 source ${_DOT_DIR}/paths                      ### declare $PATH here
 source ${_DOT_DIR}/core

@@ -17,9 +17,10 @@ if [[ -x "$(command -v nvim)" ]]; then
 fi
 
 # ─── C/C++ toolchain ───
-# clang is the system toolchain on macOS. On Linux (Fedora = gcc) don't
-# override it — see WID_ENABLE_CLANG_TOOLCHAIN in FEATURE_FLAGS.md.
-if [[ "$(uname)" == "Darwin" ]] && command -v clang >/dev/null 2>&1; then
+# clang is the system toolchain on macOS. On Linux (Fedora = gcc) don't override
+# it unless WID_ENABLE_CLANG_TOOLCHAIN=1 (see FEATURE_FLAGS.md).
+if { [[ "$(uname)" == "Darwin" ]] || [[ -n "$WID_ENABLE_CLANG_TOOLCHAIN" ]]; } \
+   && command -v clang >/dev/null 2>&1; then
   export CC=clang
   export CXX=clang++
 fi

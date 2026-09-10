@@ -6,12 +6,12 @@ export EDITOR=nvim
 export CLAUDE_CODE_NO_FLICKER=1
 
 
-## Compiler to use
-export CC=clang
-export CXX=clang++
-
-#export CC=gcc
-#export CXX=g++
+## Compiler: clang is the system toolchain on macOS. On Linux (Fedora defaults
+## to gcc) don't override it — see WID_ENABLE_CLANG_TOOLCHAIN in FEATURE_FLAGS.md.
+if [[ "$(uname)" == "Darwin" ]] && command -v clang >/dev/null 2>&1; then
+  export CC=clang
+  export CXX=clang++
+fi
 
 
 #   ┓•              

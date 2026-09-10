@@ -1,19 +1,9 @@
-export XDG_CONFIG_HOME="${HOME}/.config"
-export PATH=$PATH:/usr/local/bin:/bin:/usr/bin:/usr/local/bin
+# XDG_CONFIG_HOME + friends live in global_env (sourced first). direnv init
+# lives in core. This file only builds $PATH.
+export PATH=$PATH:/usr/local/bin:/bin:/usr/bin
 
 export LOCALPATH
 LOCALPATH=${HOME}/.dotfiles/bin:$HOME/Development/bin
-
-#       _ _                     
-#    __| (_)_ __ ___ _ ____   __
-#   / _` | | '__/ _ \ '_ \ \ / /
-#  | (_| | | | |  __/ | | \ V / 
-#   \__,_|_|_|  \___|_| |_|\_/  
-#                               
-if [[ -x $(command -v direnv) ]]; then 
-    eval "$(direnv hook ${SHELL})"
-fi
-
 
 #: export new PATH
 LOCALPATH=$HOME/.local/bin:$HOME/bin:$LOCALPATH

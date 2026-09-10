@@ -18,14 +18,10 @@ if type "kubectl-ouctl" > /dev/null 2>&1; then
 fi
 
 #: fubectl - https://github.com/kubermatic/fubectl
-if ! [[ -f $HOME/.dotfiles/sources/fubectl.source ]]; then 
-  wget https://raw.githubusercontent.com/kubermatic/fubectl/master/fubectl.source -O $HOME/.dotfiles/sources/fubectl.source
-
-  #: fix conflicted alias
-  sed -i "s#ked() {#kedit() {#g" $HOME/.dotfiles/sources/fubectl.source
-  sed -i "s#kdel() {#kdelete() {#g" $HOME/.dotfiles/sources/fubectl.source
-fi
-[ -f $HOME/.dotfiles/sources/fubectl.source ] && source $HOME/.dotfiles/sources/fubectl.source
+#: sources/fubectl.source is vendored in the repo (upstream + the ked->kedit and
+#: kdel->kdelete renames). Update it by hand; no fetch/sed at shell start (GNU
+#: sed -i is not portable to macOS).
+[ -f "$HOME/.dotfiles/sources/fubectl.source" ] && source "$HOME/.dotfiles/sources/fubectl.source"
 
 #: Minikube - completions cached in ${DOT_DIR}/completions/_minikube, see bin/refresh-completions.sh
 if type "minikube" >> /dev/null; then

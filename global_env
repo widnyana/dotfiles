@@ -7,3 +7,10 @@ fi
 export ZSH_TMUX_AUTOSTART_ONCE=false
 export ZSH_TMUX_UNICODE=true
 
+## XDG base dirs — exported once, before any other fragment, so macOS and Fedora
+## agree. Honour a value the environment already set (Fedora pam_env/systemd);
+## otherwise fall back to the spec defaults.
+export XDG_CONFIG_HOME="${XDG_CONFIG_HOME:-$HOME/.config}"
+export XDG_CACHE_HOME="${XDG_CACHE_HOME:-$HOME/.cache}"
+export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
+

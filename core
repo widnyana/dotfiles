@@ -1,5 +1,14 @@
 #!/usr/bin/env bash
 
+#: GPG — TTY for terminal pinentry / commit signing. OS-agnostic; needed on
+#: macOS (GPG Suite) and Fedora alike.
+export GPG_TTY=$(tty)
+
+#: direnv — per-directory env. One init, here; not in paths or devs.
+if [[ -x "$(command -v direnv)" ]]; then
+  eval "$(direnv hook zsh)"
+fi
+
 #    ▗       ▌ ▘
 #  ▛▘▜▘▀▌▛▘▛▘▛▌▌▛▌
 #  ▄▌▐▖█▌▌ ▄▌▌▌▌▙▌

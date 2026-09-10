@@ -9,6 +9,3 @@ export PATH=$GEM_HOME/bin:$PATH
 export PATH=/opt/homebrew/bin:/opt/homebrew/sbin:/opt/homebrew/opt/ruby/bin:${HOME}/.gem/ruby/3.3.0/bin:$HOME/Library/Android/sdk/platform-tools:$PATH
 
 export PATH="$HOME/Applications/CMake.app/Contents/bin/:$HOME/.orbstack/bin:/usr/local/sessionmanagerplugin/bin:${PATH}"
-
-# GPG Suite
-export GPG_TTY=$(tty)

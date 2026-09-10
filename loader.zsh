@@ -68,9 +68,10 @@ if [[ -d "${__OFFICE_DIR}" ]]; then
   fi
 fi
 
-#: finalize $PATH
-FINAL_PATH=$(python3 ${_DOT_DIR}/bin/_pathnodupe.py)
-export PATH=${FINAL_PATH}
+#: finalize $PATH — only reassign if the dedupe helper actually produced output
+#: (a minimal box without python3 must not end up with an empty PATH)
+FINAL_PATH=$(python3 ${_DOT_DIR}/bin/_pathnodupe.py 2>/dev/null)
+[[ -n "$FINAL_PATH" ]] && export PATH=${FINAL_PATH}
 
 ## Completions
 export FPATH="$FPATH:${_DOT_DIR}/completions/"

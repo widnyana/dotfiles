@@ -591,8 +591,11 @@ main() {
   step optional "poetry config"     link_config pypoetry
   step optional "yamlfmt config"    link_config yamlfmt
   step optional "kitty config"      link_config kitty
-  step optional "hyprland config"   link_config hypr
-  step optional "fluxbox config"    link_config fluxbox
+  if [[ "$OS" == "linux" ]]; then
+    #: Linux-desktop only — these would be dead symlinks on macOS
+    step optional "hyprland config"   link_config hypr
+    step optional "fluxbox config"    link_config fluxbox
+  fi
   step optional "nixpkgs config"    link_config nixpkgs
   step optional "cspell config"     link_repo_file config/cspell/cspell.json "$HOME/.cspell.json"
   step optional "electron flags"    link_repo_file config/electron-flags.conf "$CONFIG_DIR/electron-flags.conf"

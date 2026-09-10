@@ -1,4 +1,5 @@
 auth_keys
+config/git/config.local
 bin/docker-compose
 vps
 vpn/*

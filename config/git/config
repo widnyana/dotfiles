@@ -44,8 +44,9 @@
 	deleted = red
 
 [filter "lfs"]
-	clean = git-lfs clean %f
-	smudge = git-lfs smudge %f
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
 	required = true
 
 [core]
@@ -56,25 +57,13 @@
 [fetch]
 	parallel = 32
 
-[filter "lfs"]
-	clean = git-lfs clean -- %f
-	smudge = git-lfs smudge -- %f
-	process = git-lfs filter-process
-	required = true
-
 [help]
 	autocorrect = 0
 
-[gpg]
-	program = /usr/local/bin/gpg
-
-[init]
-	defaultBranch = main
-
 [user]
+	# email + signingkey are per-machine — see [include] below.
 	useConfigOnly = true
 	name = widnyana
-	signingkey =
 
 [pull]
 	rebase = true
@@ -83,11 +72,23 @@
 	submodule = log
 
 [gitbutler]
-    utmostDiscretion = 1
+	utmostDiscretion = 1
+
 [pack]
 	windowMemory = 100m
 	packSizeLimit = 100m
+
 [commit]
 	gpgsign = true
+
 [tag]
 	gpgSign = true
+
+# Portability boundary. Everything above is identical on macOS and Fedora and
+# assumes only that `git`, `git-lfs`, and (for signing) `gpg` are on $PATH — no
+# absolute paths, no OS conditionals. Anything machine-specific — user.email,
+# user.signingkey, a non-PATH gpg binary, credential helpers — goes in
+# config.local, which is git-ignored. Git skips this include silently when the
+# file is absent. Seed it from config.local.example (the installer does this).
+[include]
+	path = ~/.config/git/config.local

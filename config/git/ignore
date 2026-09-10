@@ -25,5 +25,6 @@ test.py
 !**/docs/brainstorm/**
 .claude
 
-
+.codegraph/
+scratchpad/
 **/.claude/.cc-writes/

@@ -376,6 +376,22 @@ cleanup_legacy_gitignore() {
   fs_rm "$link"
 }
 
+#: config/git/config ends with `[include] path = ~/.config/git/config.local`
+#: for machine-specific identity/keys/paths (git-ignored, skipped silently when
+#: absent). Seed it once from the tracked example so a fresh machine has a
+#: commented starting point; never clobber an existing one. Target resolves
+#: into the repo via the config/git dir symlink — that copy is kept out of
+#: tracking by the repo .gitignore entry `config/git/config.local`.
+ensure_git_local() {
+  local example="${DOT_DIR}/config/git/config.local.example"
+  local local_cfg="${CONFIG_DIR}/git/config.local"
+  [[ -f "$example" ]] || return 0
+  if [[ -e "$local_cfg" ]]; then log_ok "git config.local present"; return 0; fi
+  dry "seed $local_cfg from config.local.example"
+  fs_cp "$example" "$local_cfg"
+  [[ $DRY_RUN -eq 1 ]] || log_warn "git config.local seeded — set user.email and user.signingkey in $local_cfg"
+}
+
 #: mise and tmux link as whole directories (link_config), matching the existing
 #: ~/.config/{mise,tmux} -> repo directory symlinks. Per-file linking through
 #: those directory symlinks resolved back into the repo and created
@@ -525,6 +541,7 @@ main() {
 
   #: managed config links
   step optional "git config"        link_config git
+  step optional "git config.local"  ensure_git_local
   step optional "legacy gitignore"  cleanup_legacy_gitignore
   step optional "vimrc"             link_repo_file vim/vimrc "$HOME/.vimrc"
   step optional "neovim config"     link_config nvim

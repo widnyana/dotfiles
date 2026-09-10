@@ -1,0 +1,25 @@
+# Per-machine git config. Copy to config/git/config.local (same file as
+# ~/.config/git/config.local via the symlink) and fill in. Git-ignored.
+#
+#   cp config/git/config.local.example config/git/config.local
+#
+# Only put here what differs per machine: identity, keys, absolute paths,
+# credential helpers. Shared settings belong in config/git/config.
+
+[user]
+	email = you@example.com
+	# gpg key id used for commit.gpgsign / tag.gpgSign (already on in config)
+	signingkey = 0000000000000000
+
+# Uncomment only if the `gpg` on $PATH is not the one you want git to use.
+# macOS Homebrew (Apple Silicon): /opt/homebrew/bin/gpg
+# macOS Homebrew (Intel):         /usr/local/bin/gpg
+# Fedora:                         /usr/bin/gpg
+# [gpg]
+#	program = /opt/homebrew/bin/gpg
+
+# GitHub / gist auth through the gh CLI (gh must be on $PATH).
+# [credential "https://github.com"]
+#	helper = !gh auth git-credential
+# [credential "https://gist.github.com"]
+#	helper = !gh auth git-credential

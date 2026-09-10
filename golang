@@ -1,10 +1,11 @@
+# Go
+
+# NOTE: GOCACHE below is missing `export` (pre-existing). Left as-is to keep
+# behaviour identical during the reorg — fix separately if intended.
 GOCACHE=$HOME/Development/.cache/go-build
 export GOPRIVATE="$GOPRIVATE,pkg.damarseta.id/*"
+export GOPROXY=https://goproxy.io,direct
 
 alias goget='go get -x'
 alias gop='export GOPATH=$GOPATH:$(pwd)'
 alias gor='go run'
-
-
-export GOPROXY=https://goproxy.io,direct
-

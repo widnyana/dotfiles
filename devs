@@ -1,98 +1,71 @@
 #!/usr/bin/env bash
-# set default editor
+# Developer tooling env. One block per tool/concern — env, PATH, completions and
+# aliases for a thing stay together — and each block is gated by the tool's
+# presence where that makes sense.
+
+# ─── editor ───
 export EDITOR=nvim
-
-# Claude Code: flicker-free fullscreen rendering (docs: code.claude.com/docs/en/fullscreen)
-export CLAUDE_CODE_NO_FLICKER=1
-
-
-## Compiler: clang is the system toolchain on macOS. On Linux (Fedora defaults
-## to gcc) don't override it — see WID_ENABLE_CLANG_TOOLCHAIN in FEATURE_FLAGS.md.
-if [[ "$(uname)" == "Darwin" ]] && command -v clang >/dev/null 2>&1; then
-  export CC=clang
-  export CXX=clang++
-fi
-
-
-#   ┓•              
-#  ┏┫┓┏┓┏┓┏┓┓┏ ┏┓┏┓╋
-#  ┗┻┗┛ ┗ ┛┗┗┛•┛┗┗ ┗
-#                   
-if [[ -x "$(command -v direnv)" ]]; then
-  eval "$(direnv hook zsh)"
-fi
-
-
-#  ┏┓  ┓             ┓  ┏┓┓•  •  
-#  ┣ ┏┓┃┏┓┏┓┏┓  ┏┓┏┓┏┫  ┣ ┃┓┓┏┓┏┓
-#  ┗┛┛ ┗┗┻┛┗┗┫  ┗┻┛┗┗┻  ┗┛┗┗┛┗┗┛ 
-#            ┛                   
-if [ -f "${HOME}/.kerlrc" ]; then
-  # shellcheck source=/dev/null
-  source "${HOME}/.kerlrc"
-else 
-  export KERL_BASE_DIR=$HOME/Development/bin/.kerl
-  export KERL_DEFAULT_INSTALL_DIR=$KERL_BASE_DIR/installs
-  export KERL_BUILD_BACKEND=git
-  export KERL_CONFIGURE_OPTIONS="--enable-smp-support --enable-threads --enable-kernel-poll --enable-m64-build"
-  export KERL_BUILD_DOCS=yes
-  export OTP_GITHUB_URL="https://github.com/erlang/otp"
-
-  mkdir -p "${KERL_BASE_DIR}"
-fi 
-
-# shellcheck source=/dev/null
-test -s "$HOME/Development/.kiex/scripts/kiex" && source "$HOME/Development/.kiex/scripts/kiex"
-
-
-#       __ _      
-#    /\ \ (_)_  __
-#   /  \/ / \ \/ /
-#  / /\  /| |>  < 
-#  \_\ \/ |_/_/\_\
-#                 
-if [ -d /nix ] && [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
-  # shellcheck source=/dev/null
-  source "$HOME/.nix-profile/etc/profile.d/nix.sh"
-fi
-
-
-#: Flutter
-if [ -d "${HOME}/Development/sdks/flutter" ]; then 
-  export PATH=$PATH:$HOME/Development/sdks/flutter/bin
-fi
-
-#: Telepresence
-# disable usage reporting
-# see: https://github.com/telepresenceio/telepresence.io/blob/45aeeeb6287e874c46bf00bad97f179abc83525e/docs/v1/reference/usage_reporting.md
-export SCOUT_DISABLE=1
-
-# use ajeetdsouza/zoxide if available
-if [[ -x "$(command -v zoxide)" ]]; then
-    eval "$(zoxide init zsh --hook pwd)"
-fi
-
-# always use nvim, if available
 if [[ -x "$(command -v nvim)" ]]; then
   alias vim=nvim
   alias vi=nvim
   alias nv=nvim
 fi
 
-
-# RipGrep config
-# see: https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
-if [[ -x "$(command -v rg)" ]]; then
-  export RIPGREP_CONFIG_PATH="${HOME}/.dotfiles/config/ripgrep/ripgreprc";
+# ─── C/C++ toolchain ───
+# clang is the system toolchain on macOS. On Linux (Fedora = gcc) don't
+# override it — see WID_ENABLE_CLANG_TOOLCHAIN in FEATURE_FLAGS.md.
+if [[ "$(uname)" == "Darwin" ]] && command -v clang >/dev/null 2>&1; then
+  export CC=clang
+  export CXX=clang++
 fi
 
-# oh-my-posh prompt: shell completions
+# ─── Erlang / Elixir (kerl, kiex) ───
+if [ -f "${HOME}/.kerlrc" ]; then
+  # shellcheck source=/dev/null
+  source "${HOME}/.kerlrc"
+else
+  export KERL_BASE_DIR=$HOME/Development/bin/.kerl
+  export KERL_DEFAULT_INSTALL_DIR=$KERL_BASE_DIR/installs
+  export KERL_BUILD_BACKEND=git
+  export KERL_CONFIGURE_OPTIONS="--enable-smp-support --enable-threads --enable-kernel-poll --enable-m64-build"
+  export KERL_BUILD_DOCS=yes
+  export OTP_GITHUB_URL="https://github.com/erlang/otp"
+  mkdir -p "${KERL_BASE_DIR}"
+fi
+# shellcheck source=/dev/null
+test -s "$HOME/Development/.kiex/scripts/kiex" && source "$HOME/Development/.kiex/scripts/kiex"
+
+# ─── nix ───
+if [ -d /nix ] && [ -f "$HOME/.nix-profile/etc/profile.d/nix.sh" ]; then
+  # shellcheck source=/dev/null
+  source "$HOME/.nix-profile/etc/profile.d/nix.sh"
+fi
+
+# ─── Flutter ───
+if [ -d "${HOME}/Development/sdks/flutter" ]; then
+  export PATH=$PATH:$HOME/Development/sdks/flutter/bin
+fi
+
+# ─── zoxide ───
+if [[ -x "$(command -v zoxide)" ]]; then
+  eval "$(zoxide init zsh --hook pwd)"
+fi
+
+# ─── ripgrep ───
+# https://github.com/BurntSushi/ripgrep/blob/master/GUIDE.md#configuration-file
+if [[ -x "$(command -v rg)" ]]; then
+  export RIPGREP_CONFIG_PATH="${HOME}/.dotfiles/config/ripgrep/ripgreprc"
+fi
+
+# ─── oh-my-posh ───
 if [[ -x "$(command -v omp)" ]]; then
   eval "$(omp completions zsh)"
 fi
 
-# pi agent harness: zsh completion lives in completions/_pi (loaded from FPATH on demand)
+# ─── pi agent harness ───
+# zsh completion lives in completions/_pi, autoloaded from $FPATH.
 
-# disable any IBM telemetry
-# https://github.com/ibm-telemetry/telemetry-js/tree/main#opting-out-of-ibm-telemetry-data-collection
-export IBM_TELEMETRY_DISABLED='true'
+# ─── telemetry / usage-reporting opt-outs ───
+export CLAUDE_CODE_NO_FLICKER=1       # flicker-free fullscreen (code.claude.com/docs/en/fullscreen)
+export SCOUT_DISABLE=1                # Telepresence usage reporting
+export IBM_TELEMETRY_DISABLED='true'  # github.com/ibm-telemetry/telemetry-js

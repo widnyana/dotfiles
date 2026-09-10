@@ -38,6 +38,7 @@ generate argocd    argocd completion zsh
 generate velero    velero completion zsh
 generate pinniped  pinniped completion zsh
 generate glab      glab completion -s zsh
+generate istioctl  istioctl completion zsh
 generate atuin     atuin gen-completions --shell zsh
 generate zellij    zellij setup --generate-completion zsh
 

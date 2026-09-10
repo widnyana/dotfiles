@@ -48,6 +48,13 @@ CONFIG_DIR="${XDG_CONFIG_HOME:-$HOME/.config}"
 OMZ_PATH="${HOME}/.oh-my-zsh"
 MISE_BIN="${HOME}/.local/bin/mise"
 
+#: mise installs tools + shims under $MISE_DATA_DIR. The interactive shell sets
+#: this in vendor/oh-my-zsh/dot-zshrc; `mise install` here MUST use the same dir
+#: or a fresh shell looks in an empty tree and reports every managed tool as
+#: "not found". Keep in sync with that file's MISE_DATA_DIR. :- respects an
+#: outer override (e.g. running the installer from an already-configured shell).
+export MISE_DATA_DIR="${MISE_DATA_DIR:-${HOME}/Development/sdks/mise}"
+
 #: ── Mutation primitives (no-ops under --dry-run) ───────────────────────────
 fs_mkdir() {                                 #: fs_mkdir PATH
   local path="$1"

@@ -8,6 +8,19 @@
 # Path to your oh-my-zsh installation.
 export ZSH="${HOME}/.oh-my-zsh"
 
+# mise env — MUST be set before `source $ZSH/oh-my-zsh.sh`: the oh-my-zsh `mise`
+# plugin runs `mise activate` during that call, and the ${DOT_DIR} load chain
+# (where the rest of the portable config lives) is sourced too late to affect it.
+# Without MISE_DATA_DIR here, `mise activate` uses the default data dir and any
+# `core` init gated on a mise-managed tool (starship prompt, fzf, atuin) silently
+# no-ops on the first login shell. Keep MISE_DATA_DIR in sync with bin/install-dotfiles.sh.
+export MISE_DATA_DIR="${HOME}/Development/sdks/mise"
+export MISE_ALWAYS_KEEP_DOWNLOAD=0
+export MISE_NOT_FOUND_AUTO_INSTALL=true
+export MISE_NODE_COREPACK=1
+export MISE_POETRY_AUTO_INSTALL=1
+export MISE_NPM_PACKAGE_MANAGER=aube
+
 # Theme is set by `omz`; the prompt is Starship (see ${DOT_DIR}/core).
 ZSH_THEME=""
 

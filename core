@@ -34,19 +34,8 @@ fi
 #     ▘
 #  ▛▛▌▌▛▘█▌
 #  ▌▌▌▌▄▌▙▖
-# https://github.com/jdx/mise
-if [[ -x "$(command -v mise)" ]]; then
-  # https://mise.jdx.dev/configuration.html#environment-variables
-  export MISE_DATA_DIR="${HOME}/Development/sdks/mise"
-  export MISE_ALWAYS_KEEP_DOWNLOAD=0
-  export MISE_NOT_FOUND_AUTO_INSTALL=true
-  export MISE_NODE_COREPACK=1
-  export MISE_POETRY_AUTO_INSTALL=1
-  export MISE_NPM_PACKAGE_MANAGER=aube
-
-  #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
-  eval "$(mise activate zsh --shims)"
-fi
+# mise env (MISE_*) lives in vendor/oh-my-zsh/dot-zshrc — it must be set before
+# oh-my-zsh loads its `mise` plugin. Activation is that plugin's job. Nothing here.
 
 #: fzf — key bindings + completion. `fzf --zsh` (fzf >= 0.48) replaces the old
 #: ~/.fzf.zsh / $XDG_CONFIG_HOME/fzf/fzf.zsh source lines. Works with the

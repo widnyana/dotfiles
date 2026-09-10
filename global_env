@@ -17,3 +17,8 @@ export XDG_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}"
 ## Locale — pinned here so it holds even when ~/.zshrc is stock (fresh box).
 export LANG="${LANG:-en_US.UTF-8}"
 
+## mise env (MISE_DATA_DIR + behaviour flags) is set in vendor/oh-my-zsh/dot-zshrc,
+## before `source $ZSH/oh-my-zsh.sh` — it has to beat the oh-my-zsh `mise` plugin's
+## `mise activate`. It cannot live here: this file is sourced from the load chain,
+## which runs after oh-my-zsh plugins.
+

@@ -51,8 +51,9 @@ export TF_REGISTRY_CLIENT_TIMEOUT=15
 export TF_PROVIDER_DOWNLOAD_RETRY=2
 export TF_PLUGIN_CACHE_DIR=${HOME}/Development/sdks/opentofu/plugin-cache
 
-if [[ -f $HOME/Development/sdks/mise/installs/opentofu/latest/tofu ]]; then
-  complete -o nospace -C $HOME/Development/sdks/mise/installs/opentofu/latest/tofu tofu
+#: resolve tofu wherever it is (mise data dir, brew, …) — no hardcoded path
+if command -v tofu >/dev/null 2>&1; then
+  complete -o nospace -C "$(command -v tofu)" tofu
 fi
 
 if type "terragrunt" > /dev/null 2>&1; then

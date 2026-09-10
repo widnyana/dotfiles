@@ -4,8 +4,11 @@
 # Put here anything that should NOT be shared across machines: installer-added
 # PATH lines, per-host tool hooks, secrets sourcing.
 
-# --- bun ---
+# --- bun (native install; mise-managed bun has no _bun file) ---
 # [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# --- dual-graph (native install under ~/.dual-graph) ---
+# [ -d "$HOME/.dual-graph" ] && export PATH="$PATH:$HOME/.dual-graph"
 
 # --- oh-my-posh git shim (only inside omp tool shells) ---
 # [[ -n "$OMPCODE" ]] && export PATH="$HOME/.omp/bin:$PATH"

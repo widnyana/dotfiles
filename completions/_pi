@@ -1,0 +1,33 @@
+#compdef pi
+# pi coding agent (https://pi.dev) — subcommands per `pi --help`
+
+_pi() {
+  local -a commands
+  commands=(
+    'install:Install extension source and add to settings'
+    'remove:Remove extension source from settings'
+    'uninstall:Alias for remove'
+    'update:Update pi, extensions, or model catalogs'
+    'list:List installed extensions from settings'
+    'config:Open TUI to enable/disable package resources'
+    'auth:Print credentials or check provider readiness'
+  )
+  _arguments -C \
+    '(-l --local)'{-l,--local}'[Project-local settings (.pi/settings.json)]' \
+    '(-h --help)'{-h,--help}'[Show help]' \
+    '1:command:->cmd' \
+    '*::arg:->args'
+  case $state in
+    cmd) _describe -t commands 'pi command' commands ;;
+    args)
+      case $words[1] in
+        install|remove|uninstall|update)
+          _values 'source' \
+            'npm:' 'git:' 'github.com/user/repo' \
+            'self:update pi itself' 'pi:update pi binary' ;;
+        auth) _values 'action' 'login' 'logout' 'status' ;;
+      esac ;;
+  esac
+}
+
+_pi "$@"

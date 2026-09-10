@@ -6,8 +6,10 @@
 #                                      |___/       
 if [[ -d "${HOME}/Development/sdks/.cargo" ]]; then
     export CARGO_HOME="${HOME}/Development/sdks/.cargo"
-    export RUSTUP_HOME="${HOME}/Development/sdks/rustup" 
-    
+    export RUSTUP_HOME="${HOME}/Development/sdks/rustup"
+
     source "${HOME}/Development/sdks/.cargo/env"
     export PATH="${PATH}":"${HOME}/Development/sdks/.cargo/bin"
 fi
+
+export SCCACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/sccache"

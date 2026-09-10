@@ -46,6 +46,9 @@ truncation_length = 8
 [gcloud]
 disabled = true
 
+[aws]
+disabled = true
+
 [git_branch]
 format = "[$branch]($style)"
 style = "bright-black"
@@ -108,7 +111,7 @@ detect_extensions = ["rs"]
 
 
 [terraform]
-disabled = true
+disabled = false
 
 [time]
 disabled = true

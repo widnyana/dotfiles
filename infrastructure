@@ -78,8 +78,10 @@ export VAGRANT_DEFAULT_PROVIDER=virtualbox
 #: glab completion — cached (_glab)
 #: python-gitlab's `gitlab` CLI argcomplete (unrelated to glab). argcomplete
 #: itself is a manual / mise-managed install — not pip-installed at shell start.
-if type "register-python-argcomplete" > /dev/null 2>&1; then
-  eval "$(register-python-argcomplete gitlab)"
+#: 2>/dev/null: the script carries a hardcoded python shebang; if that python
+#: was pruned the call dies with "bad interpreter" — swallow it, eval "" no-ops.
+if command -v gitlab > /dev/null 2>&1 && command -v register-python-argcomplete > /dev/null 2>&1; then
+  eval "$(register-python-argcomplete gitlab 2>/dev/null)"
 fi
 
 # ─── Velero ───

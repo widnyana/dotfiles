@@ -185,6 +185,8 @@ new_sandbox() {
   : > "$FIXTURE/config/starship.toml"
   : > "$FIXTURE/config/electron-flags.conf"
   : > "$FIXTURE/vim/vimrc"
+  : > "$FIXTURE/vendor/oh-my-zsh/dot-zshrc"
+  : > "$FIXTURE/vendor/oh-my-zsh/dot-zshrc.local.example"
 }
 
 # run_installer [args...] — invokes the installer in the current sandbox env.
@@ -270,6 +272,8 @@ assert_symlink_to "$(cfg mise)"      "$FIXTURE/config/mise"      "mise linked (w
 assert_symlink_to "$(cfg tmux)"      "$FIXTURE/config/tmux"      "tmux linked (whole dir)"
 assert_symlink_to "$(cfg alacritty)" "$FIXTURE/config/alacritty" "alacritty linked (whole dir)"
 assert_symlink_to "$SANDBOX/home/.vimrc" "$FIXTURE/vim/vimrc" "vimrc linked"
+assert_symlink_to "$SANDBOX/home/.zshrc" "$FIXTURE/vendor/oh-my-zsh/dot-zshrc" "zshrc linked"
+assert_exists "zshrc.local seeded" "$SANDBOX/home/.zshrc.local"
 assert_symlink_to "$SANDBOX/home/.ripgreprc" "$FIXTURE/config/ripgrep/ripgreprc" "ripgreprc linked"
 assert_symlink_to "$(cfg fish)"     "$FIXTURE/config/fish"     "fish linked"
 assert_symlink_to "$(cfg glow)"     "$FIXTURE/config/glow"     "glow linked"

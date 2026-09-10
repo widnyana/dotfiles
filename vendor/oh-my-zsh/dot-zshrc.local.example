@@ -1,0 +1,14 @@
+# ~/.zshrc.local — machine-specific shell setup. Git-ignored.
+#
+# bin/install-dotfiles.sh copies this to ~/.zshrc.local once (never clobbers).
+# Put here anything that should NOT be shared across machines: installer-added
+# PATH lines, per-host tool hooks, secrets sourcing.
+
+# --- bun ---
+# [ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
+
+# --- oh-my-posh git shim (only inside omp tool shells) ---
+# [[ -n "$OMPCODE" ]] && export PATH="$HOME/.omp/bin:$PATH"
+
+# --- example: an installer that appended to ~/.zshrc ---
+# export PATH="$HOME/.local/bin:$PATH"

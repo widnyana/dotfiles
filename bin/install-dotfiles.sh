@@ -392,6 +392,19 @@ ensure_git_local() {
   [[ $DRY_RUN -eq 1 ]] || log_warn "git config.local seeded — set user.email and user.signingkey in $local_cfg"
 }
 
+#: ~/.zshrc is linked to vendor/oh-my-zsh/dot-zshrc (oh-my-zsh setup only; the
+#: portable config is the ${DOT_DIR} load chain). dot-zshrc sources ~/.zshrc.local
+#: at its end for machine-specific lines — seed it once from the example, never
+#: clobber. Same pattern as ensure_git_local.
+ensure_zshrc_local() {
+  local example="${DOT_DIR}/vendor/oh-my-zsh/dot-zshrc.local.example"
+  local local_rc="${HOME}/.zshrc.local"
+  [[ -f "$example" ]] || return 0
+  if [[ -e "$local_rc" ]]; then log_ok "zshrc.local present"; return 0; fi
+  dry "seed $local_rc from dot-zshrc.local.example"
+  fs_cp "$example" "$local_rc"
+}
+
 #: mise and tmux link as whole directories (link_config), matching the existing
 #: ~/.config/{mise,tmux} -> repo directory symlinks. Per-file linking through
 #: those directory symlinks resolved back into the repo and created
@@ -533,6 +546,8 @@ main() {
   #: shell bootstrap — oh-my-zsh is the one critical prerequisite
   step critical "oh-my-zsh"       ensure_ohmyzsh
   step optional "zsh-completions" ensure_zsh_completions
+  step optional "zshrc"           link_repo_file vendor/oh-my-zsh/dot-zshrc "$HOME/.zshrc"
+  step optional "zshrc.local"     ensure_zshrc_local
 
   #: tool bootstraps
   step optional "fzf"      install_fzf

@@ -22,7 +22,11 @@ fi
 #  ▛▘▜▘▀▌▛▘▛▘▛▌▌▛▌
 #  ▄▌▐▖█▌▌ ▄▌▌▌▌▙▌
 #               ▌
+#: prompt init + completions — here (not ~/.zshrc) so a stock ~/.zshrc still
+#: gets the prompt on a fresh box.
 if type "starship" >>/dev/null; then
+  # shellcheck source=/dev/null
+  eval "$(starship init zsh)"
   # shellcheck source=/dev/null
   source <(starship completions zsh)
 fi
@@ -42,6 +46,14 @@ if [[ -x "$(command -v mise)" ]]; then
 
   #: shims - https://mise.jdx.dev/dev-tools/shims.html#zshrc-bashrc-files
   eval "$(mise activate zsh --shims)"
+fi
+
+#: fzf — key bindings + completion. `fzf --zsh` (fzf >= 0.48) replaces the old
+#: ~/.fzf.zsh / $XDG_CONFIG_HOME/fzf/fzf.zsh source lines. Works with the
+#: mise-provided fzf.
+if type "fzf" >>/dev/null; then
+  # shellcheck source=/dev/null
+  source <(fzf --zsh)
 fi
 
 #    ▗   ▘

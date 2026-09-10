@@ -1,0 +1,5 @@
+# Linux (Fedora) only. Sourced from loader.zsh on Linux. The macOS peer is
+# ./mac; anything that belongs on both OSes goes in core / global_env instead.
+
+# ~/.local/bin is already on PATH via `paths`. Add Fedora-specific bits here as
+# they come up (flatpak exports, distro tool dirs, ...).

@@ -9,6 +9,15 @@ if [[ -x "$(command -v direnv)" ]]; then
   eval "$(direnv hook zsh)"
 fi
 
+#: Ruby user gems — same layout on macOS and Fedora when ruby is present.
+#: version dir resolved by glob so it survives ruby minor bumps.
+if command -v ruby >/dev/null 2>&1; then
+  export GEM_HOME="$HOME/.gem"
+  export PATH="$GEM_HOME/bin:$PATH"
+  for _gembin in "$HOME"/.gem/ruby/*/bin(N); do export PATH="$_gembin:$PATH"; done
+  unset _gembin
+fi
+
 #    ▗       ▌ ▘
 #  ▛▘▜▘▀▌▛▘▛▘▛▌▌▛▌
 #  ▄▌▐▖█▌▌ ▄▌▌▌▌▙▌

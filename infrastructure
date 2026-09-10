@@ -128,7 +128,8 @@ fi
 #  ┛┗┗┻┛┗┛
 ###################
 
-# aws command autocomplete
+# aws-cli + session-manager-plugin (same install path on macOS and Fedora)
+[[ -d /usr/local/sessionmanagerplugin/bin ]] && export PATH="/usr/local/sessionmanagerplugin/bin:$PATH"
 if type "aws" > /dev/null; then
   if type "aws_completer" > /dev/null; then
     complete -C "$(which aws_completer)" aws

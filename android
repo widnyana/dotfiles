@@ -1,16 +1,22 @@
-# Android SDK
-if [ -d "${HOME}/Development/sdks/android-sdk" ]; then
-  export ANDROID_SDK=${HOME}/Development/sdks/android-sdk
-  export ANDROID_AVD_HOME=${HOME}/Development/sdks/.android
-  ANDROID_PATH="${HOME}/Development/sdks/android-sdk/cmdline-tools/latest/bin:${HOME}/Development/sdks/android-sdk/platform-tools:${HOME}/Development/sdks/android-sdk/build-tools:${HOME}/Development/sdks/android-sdk/build-tools/34.0.0"
-  export ANDROID_SDK_HOME=${HOME}/Development/sdks/.android
-  #export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:${HOME}/Development/sdks/android/emulator/lib64/qt/lib:${HOME}/Development/sdks/android/emulator/lib64
-
-  if [[ -d "${HOME}/Development/sdks/android" ]]; then 
-    export ANDROID_HOME; ANDROID_HOME=${HOME}/Development/sdks/android-sdk
-    LOCALPATH=${LOCALPATH}:${ANDROID_HOME}/platform-tools
+# Android SDK. Honour an ANDROID_HOME already exported (e.g. from office/);
+# otherwise: the legacy ~/Development/sdks layout wins if present (some machines
+# still use it), then the per-OS default install location.
+if [[ -z "$ANDROID_HOME" ]]; then
+  if [[ -d "${HOME}/Development/sdks/android-sdk" ]]; then
+    export ANDROID_HOME="${HOME}/Development/sdks/android-sdk"
+    export ANDROID_AVD_HOME="${HOME}/Development/sdks/.android"
+    export ANDROID_SDK_HOME="${HOME}/Development/sdks/.android"
+  elif [[ "$(uname)" == "Darwin" && -d "${HOME}/Library/Android/sdk" ]]; then
+    export ANDROID_HOME="${HOME}/Library/Android/sdk"
+  elif [[ -d "${HOME}/Android/Sdk" ]]; then
+    export ANDROID_HOME="${HOME}/Android/Sdk"
   fi
+fi
 
-  export PATH=$PATH:$LOCALPATH:$ANDROID_PATH
-
+if [[ -n "$ANDROID_HOME" && -d "$ANDROID_HOME" ]]; then
+  export ANDROID_SDK="$ANDROID_HOME"
+  export ANDROID_SDK_ROOT="$ANDROID_HOME"
+  export ANDROID_AVD_HOME="${ANDROID_AVD_HOME:-$HOME/.android/avd}"
+  export ANDROID_SDK_HOME="${ANDROID_SDK_HOME:-$HOME/.android}"
+  export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$ANDROID_HOME/build-tools:$ANDROID_HOME/build-tools/34.0.0"
 fi

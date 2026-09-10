@@ -203,10 +203,8 @@ preflight_linux() {
     exit 1
   fi
   [[ $EUID -eq 0 ]] && return 0
-  if sudo -n true 2>/dev/null; then return 0; fi
-  log_err "This script needs root or non-interactive sudo for dnf installs on Linux."
-  log_err "Run 'sudo -v' first (or run as root), then re-run."
-  exit 1
+  [[ $DRY_RUN -eq 1 ]] && return 0
+  log_info "Linux package steps use sudo — you will be prompted for your password."
 }
 
 #: ── Argument parsing ───────────────────────────────────────────────────────
@@ -280,6 +278,29 @@ ensure_brew() {
   _brew_shellenv || log_warn "brew installed but not on PATH; open a new shell to use it"
 }
 
+#: macOS: `brew bundle` the repo Brewfile — system bits mise does not own (gpg,
+#: casks, fonts). mise handles every CLI it can; see packages/README.md.
+install_brew_bundle() {
+  local brewfile="${DOT_DIR}/Brewfile"
+  [[ -f "$brewfile" ]] || { log_ok "no Brewfile"; return 0; }
+  command -v brew >/dev/null 2>&1 || { log_warn "brew not available; skipping Brewfile"; return 1; }
+  if [[ $DRY_RUN -eq 1 ]]; then dry "brew bundle --file=$brewfile"; return 0; fi
+  retry "brew bundle" brew bundle --file="$brewfile"
+}
+
+#: Fedora: dnf-install the system packages listed in packages/fedora.txt
+#: (one per line, '#' comments). Interactive sudo — prompts for the password.
+install_dnf_packages() {
+  local list="${DOT_DIR}/packages/fedora.txt"
+  [[ -f "$list" ]] || { log_ok "no packages/fedora.txt"; return 0; }
+  local pkgs
+  pkgs=$(sed 's/#.*//' "$list" | tr -s '[:space:]' '\n' | grep -v '^$' | tr '\n' ' ')
+  [[ -n "$pkgs" ]] || { log_ok "packages/fedora.txt empty"; return 0; }
+  if [[ $DRY_RUN -eq 1 ]]; then dry "sudo dnf install -y $pkgs"; return 0; fi
+  # shellcheck disable=SC2086
+  retry "dnf packages" sudo dnf install -y $pkgs
+}
+
 _omz_install() {
   curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | RUNZSH=no sh
 }
@@ -317,17 +338,6 @@ ensure_zsh_completions() {
   retry "zsh-completions" git clone https://github.com/zsh-users/zsh-completions "$ZSH_COMPLETIONS_DIR"
 }
 
-FZF_PATH="${HOME}/.fzf"
-_fzf_install() {
-  git clone --depth 1 https://github.com/junegunn/fzf.git "$FZF_PATH" || { rm -rf "$FZF_PATH"; return 1; }
-  "$FZF_PATH/install" --all >/dev/null 2>&1 || { rm -rf "$FZF_PATH"; return 1; }
-}
-install_fzf() {
-  if [[ -x "$FZF_PATH/bin/fzf" ]]; then log_ok "fzf present"; return 0; fi
-  if [[ $DRY_RUN -eq 1 ]]; then dry "install fzf"; return 0; fi
-  log_info "installing fzf..."
-  retry "fzf" _fzf_install
-}
 
 CARGO_HOME="${HOME}/Development/sdks/.cargo"
 RUSTUP_HOME="${HOME}/Development/sdks/rustup"
@@ -426,8 +436,8 @@ ensure_mkcert() {
       fi
       ;;
     linux)
-      #: sudo -n fails fast (no hang) if the credential cache expired mid-run.
-      retry "mkcert" sudo -n dnf install -y mkcert nss-tools
+      #: nss-tools is also listed in packages/fedora.txt; dnf is idempotent.
+      retry "mkcert" sudo dnf install -y mkcert nss-tools
       ;;
     *)
       log_warn "mkcert: unsupported OS '$OS'; skipping"
@@ -541,7 +551,12 @@ main() {
   step optional "alacritty-themes submodule" init_submodule config/alacritty/themes
 
   #: macOS package manager
-  [[ "$OS" == "mac" ]] && step optional "homebrew" ensure_brew
+  if [[ "$OS" == "mac" ]]; then
+    step optional "homebrew"    ensure_brew
+    step optional "brew bundle" install_brew_bundle
+  elif [[ "$OS" == "linux" ]]; then
+    step optional "dnf packages" install_dnf_packages
+  fi
 
   #: shell bootstrap — oh-my-zsh is the one critical prerequisite
   step critical "oh-my-zsh"       ensure_ohmyzsh
@@ -550,7 +565,6 @@ main() {
   step optional "zshrc.local"     ensure_zshrc_local
 
   #: tool bootstraps
-  step optional "fzf"      install_fzf
   step optional "rustup"   install_rust
   step optional "vim-plug" install_vimplug
 

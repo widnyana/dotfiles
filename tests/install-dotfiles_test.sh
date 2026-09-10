@@ -94,6 +94,7 @@ EOF
 
   cat > "$STUBS/brew" <<'EOF'
 #!/usr/bin/env bash
+echo "brew $*" >> "$SANDBOX/ctl/brew_log"
 [[ -e "$SANDBOX/ctl/brew_pkg_fail" ]] && exit 1
 exit 0
 EOF
@@ -187,6 +188,9 @@ new_sandbox() {
   : > "$FIXTURE/vim/vimrc"
   : > "$FIXTURE/vendor/oh-my-zsh/dot-zshrc"
   : > "$FIXTURE/vendor/oh-my-zsh/dot-zshrc.local.example"
+  mkdir -p "$FIXTURE/packages"
+  printf 'brew "gnupg"\n'   > "$FIXTURE/Brewfile"
+  printf 'zsh\ngnupg2\n'    > "$FIXTURE/packages/fedora.txt"
 }
 
 # run_installer [args...] — invokes the installer in the current sandbox env.
@@ -234,14 +238,26 @@ assert_rc "unsupported platform exits 1" "$rc" 1
 assert_match "reports unsupported platform" "$out" "Unsupported platform"
 
 
-echo "== AE4: Linux without sudo stops before mutation =="
+echo "== AE4: Linux without dnf stops before mutation =="
+
+new_sandbox
+# drop the dnf stub from PATH so preflight_linux fails the dnf check
+RP_PATH="$(mktemp -d)"; CLEANUP_DIRS+=("$RP_PATH")
+for s in "$STUBS"/*; do [[ "$(basename "$s")" == "dnf" ]] || ln -s "$s" "$RP_PATH/"; done
+TEST_UNAME="Linux 6.5.0" out="$(run_installer 2>&1)"; rc=$?
+assert_rc "linux no-dnf exits 1" "$rc" 1
+assert_match "explains dnf requirement" "$out" "dnf"
+assert_absent "no config touched (git)" "$(cfg git)"
+assert_absent "no config touched (ghostty)" "$(cfg ghostty)"
+
+echo "== Linux: interactive sudo proceeds, dnf-installs packages =="
 
 new_sandbox
 TEST_UNAME="Linux 6.5.0" out="$(run_installer 2>&1)"; rc=$?
-assert_rc "linux no-sudo exits 1" "$rc" 1
-assert_match "explains sudo requirement" "$out" "sudo"
-assert_absent "no config touched (git)" "$(cfg git)"
-assert_absent "no config touched (ghostty)" "$(cfg ghostty)"
+assert_rc "linux run exits 0 (no cached sudo needed)" "$rc" 0
+assert_match "prompts about sudo" "$out" "prompted for your password"
+assert_match "dnf installs fedora.txt packages" "$(cat "$SANDBOX/ctl/dnf_log" 2>/dev/null)" "install -y.*zsh"
+assert_absent "no Brewfile step on linux" "$SANDBOX/ctl/brew_log"
 
 
 echo "== AE5: --dry-run previews without mutating =="
@@ -289,6 +305,7 @@ assert_symlink_to "$(cfg nixpkgs)"  "$FIXTURE/config/nixpkgs"  "nixpkgs linked"
 assert_symlink_to "$(cfg starship.toml)"        "$FIXTURE/config/starship.toml"        "starship linked"
 assert_symlink_to "$(cfg electron-flags.conf)"  "$FIXTURE/config/electron-flags.conf"  "electron flags linked"
 assert_exists "alacritty themes populated" "$FIXTURE/config/alacritty/themes/.populated"
+assert_match "brew bundle ran on mac" "$(cat "$SANDBOX/ctl/brew_log" 2>/dev/null)" "bundle --file="
 
 
 echo "== re-run is a no-op (already healthy) =="
@@ -407,11 +424,11 @@ assert_absent "run stopped before linking ghostty" "$(cfg ghostty)"
 echo "== AE2: non-critical failure is reported, run continues =="
 
 new_sandbox
-touch "$SANDBOX/ctl/fzf_fail"
+touch "$SANDBOX/ctl/vimplug_fail"
 TEST_UNAME="Darwin 25.0.0" out="$(run_installer 2>&1)"; rc=$?
 assert_rc "non-critical failure exits 0" "$rc" 0
-assert_match "fzf failure printed inline" "$out" "fzf"
-assert_match "fzf listed in summary" "$out" "re-run"
+assert_match "vim-plug failure printed inline" "$out" "vim-plug"
+assert_match "failure listed in summary" "$out" "re-run"
 assert_exists "independent work continued (ghostty)" "$(cfg ghostty)"
 
 

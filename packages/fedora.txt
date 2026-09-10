@@ -1,0 +1,10 @@
+# Fedora system packages — dnf-installed by bin/install-dotfiles.sh
+# (install_dnf_packages). One package per line; '#' starts a comment.
+#
+# Rule: mise owns every CLI it can install (see config/mise/config.toml). This
+# list is only for system components mise should NOT own. See packages/README.md.
+
+zsh
+gnupg2
+pinentry
+nss-tools          # also ensured by the mkcert step; dnf is idempotent

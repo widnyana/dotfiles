@@ -76,4 +76,4 @@ export PATH=${FINAL_PATH}
 export FPATH="$FPATH:${_DOT_DIR}/completions/"
 
 #: clean up
-unset _BOXES _DOT_DIR FINAL_PATH
+unset _DOT_DIR FINAL_PATH

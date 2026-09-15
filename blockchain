@@ -1,1 +1,7 @@
 export PATH="$HOME/.local/share/solana/install/active_release/bin:$PATH"
+
+
+export AVM_HOME="${HOME}/Development/sdks/avm"
+
+export COLOSSEUM_COPILOT_API_BASE="https://copilot.colosseum.com/api/v1"
+

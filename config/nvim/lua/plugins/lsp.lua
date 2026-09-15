@@ -19,6 +19,19 @@ return {
     opts = {
       inlay_hints = { enabled = true },
       servers = {
+        -- Global LSP keymaps configuration
+        ["*"] = {
+          keys = {
+            {
+              "gd",
+              function()
+                -- DO NOT REUSE WINDOW
+              end,
+              desc = "Goto Definition",
+              has = "definition",
+            },
+          },
+        },
 
         biome = {
           root_dir = require("lspconfig").util.root_pattern("biome.json"),
@@ -32,7 +45,6 @@ return {
           }),
           validate = { enable = true },
         },
-
 
         -- LUA
         lua_ls = {
@@ -198,8 +210,6 @@ return {
             },
           },
         },
-
-
       },
       setup = {},
       dependencies = {

@@ -77,3 +77,7 @@ asdf_compat = false                       # set to true to ensure .tool-versions
 http_timeout = '10'                      # set the timeout for http requests in seconds, see `MISE_HTTP_TIMEOUT`
 experimental = true
 idiomatic_version_file_enable_tools = []
+lockfile = true
+
+[settings.npm]
+package_manager = "bun"

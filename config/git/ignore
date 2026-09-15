@@ -4,6 +4,7 @@
 .envrc.prod
 .envrc.staging
 .env
+.env.*
 .vscode
 node_modules
 sample-data
@@ -12,6 +13,8 @@ junkdata
 *.tfplan
 *.out
 test.py
+.wakatime-project
+.trash/**
 
 # should be manually updated
 .obsidian/workspace.json

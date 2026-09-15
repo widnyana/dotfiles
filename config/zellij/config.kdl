@@ -194,7 +194,17 @@ keybinds {
                 move_to_focused_tab true
             }
         }
+
+        // quickly searching and switching between tabs
+        bind "Ctrl u" {
+            LaunchOrFocusPlugin "file:~/.config/zellij/plugins/room.wasm" {
+                floating true
+                ignore_case true
+                quick_jump true
+            }
+        }
     }
+
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
     }
@@ -274,9 +284,9 @@ plugins {
         mode_pane "#[bg=$teal,fg=$crust,bold] PANE#[bg=$surface0,fg=teal]"
         mode_tab "#[bg=$teal,fg=$crust,bold] TAB#[bg=$surface0,fg=$teal]"
         mode_scroll "#[bg=$flamingo,fg=$crust,bold] SCROLL#[bg=$surface0,fg=$flamingo]"
-        mode_enter_search "#[bg=$flamingo,fg=$crust,bold] ENT-SEARCH#[bg=$surfaco,fg=$flamingo]"
-        mode_search "#[bg=$flamingo,fg=$crust,bold] SEARCHARCH#[bg=$surfac0,fg=$flamingo]"
-        mode_resize "#[bg=$yellow,fg=$crust,bold] RESIZE#[bg=$surfac0,fg=$yellow]"
+        mode_enter_search "#[bg=$flamingo,fg=$crust,bold] ENT-SEARCH#[bg=$surface0,fg=$flamingo]"
+        mode_search "#[bg=$flamingo,fg=$crust,bold] SEARCHARCH#[bg=$surface0,fg=$flamingo]"
+        mode_resize "#[bg=$yellow,fg=$crust,bold] RESIZE#[bg=$surface0,fg=$yellow]"
         mode_rename_tab "#[bg=$yellow,fg=$crust,bold] RENAME-TAB#[bg=$surface0,fg=$yellow]"
         mode_rename_pane "#[bg=$yellow,fg=$crust,bold] RENAME-PANE#[bg=$surface0,fg=$yellow]"
         mode_move "#[bg=$yellow,fg=$crust,bold] MOVE#[bg=$surface0,fg=$yellow]"
@@ -308,7 +318,7 @@ plugins {
 
         command_host_command "uname -n"
         command_host_format "{stdout}"
-        command_host_interval "0"
+        command_host_interval "3600"
         command_host_rendermode "static"
 
         command_user_command "whoami"
@@ -341,7 +351,7 @@ plugins {
 }
 
 load_plugins {
-    "https://github.com/dj95/zjstatus/releases/download/v0.20.2/zjframes.wasm" {
+    "https://github.com/dj95/zjstatus/releases/download/v0.23.0/zjframes.wasm" {
         hide_frame_for_single_pane       "false"
         hide_frame_except_for_search     "false"
         hide_frame_except_for_scroll     "false"
@@ -513,7 +523,6 @@ styled_underlines true
 // Default: false
 //
 disable_session_metadata false
-
 
 // Whether to show release notes on first version run
 show_release_notes true

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MODE=$1
+MODE="${1:-home}"
 DNSD="/etc/systemd/resolved.conf.d"
 
 if [[ $EUID -eq 0 ]]; then

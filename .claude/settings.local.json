@@ -1,3 +1,6 @@
 {
-  "spinnerTipsEnabled": true
+  "spinnerTipsEnabled": true,
+  "enabledPlugins": {
+    "design-thinking@eyay-toolkits": true
+  }
 }

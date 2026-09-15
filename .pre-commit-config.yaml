@@ -1,0 +1,22 @@
+# Secret-leak prevention: runs on `git commit` and `git push`.
+# gitleaks scans staged content; sensitive-paths blocks force-added
+# gitignored files; detect-private-key is a last-resort net.
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.1
+    hooks:
+      - id: gitleaks
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: detect-private-key
+
+  - repo: local
+    hooks:
+      - id: sensitive-paths
+        name: block force-added sensitive paths
+        entry: bin/check-sensitive-paths.sh
+        language: system
+        pass_filenames: false
+        always_run: true

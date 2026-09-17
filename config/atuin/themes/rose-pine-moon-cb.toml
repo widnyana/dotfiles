@@ -1,0 +1,22 @@
+## Rosé Pine Moon (dark, softer) — colorblind-safe atuin theme.
+## Atuin themes are foreground-only, and Moon differs from the main variant
+## mainly in BACKGROUND (which atuin takes from the terminal, not the theme).
+## So to read visibly different from rose-pine-cb, this variant leans on Moon's
+## deeper pine blue and a dimmer time column instead of main's cyan foam.
+## Still deuteran/protan-safe: duration ok/fail = cool pine / warm gold (never
+## pine-vs-love). Match highlight = iris, distinct from the gold selected row.
+## atuin 18.22 meaning->element:
+##   Base=command  Guidance=time  AlertInfo=duration ok
+##   AlertError=duration fail + selected row  AlertWarn=match highlight
+## Pair with `[ui] syntax_highlight = false` in config.toml.
+[theme]
+name = "rose-pine-moon-cb"
+
+[colors]
+Base = "#e0def4"        # text  — commands
+Guidance = "#6e6a86"    # muted — time column (dimmer than main's subtle)
+AlertInfo = "#3e8fb0"   # pine  — duration ok (deep blue, not cyan)
+AlertError = "#f6c177"  # gold  — duration fail / selected (warm)
+AlertWarn = "#c4a7e7"   # iris  — match highlight
+Annotation = "#6e6a86"  # muted
+Important = "#3e8fb0"   # pine

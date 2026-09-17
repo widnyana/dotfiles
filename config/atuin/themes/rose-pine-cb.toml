@@ -1,0 +1,18 @@
+## Rosé Pine (main, dark) — colorblind-safe atuin theme.
+## Deuteran/protan-safe: duration ok/fail use the foam(cool)/gold(warm) pair,
+## never the pine(green)/love(red) pair. Match highlight uses iris so it never
+## collides with the gold selected-row color. atuin 18.22 meaning->element:
+##   Base=command  Guidance=time  AlertInfo=duration ok
+##   AlertError=duration fail + selected row  AlertWarn=match highlight
+## Pair with `[ui] syntax_highlight = false` in config.toml.
+[theme]
+name = "rose-pine-cb"
+
+[colors]
+Base = "#e0def4"        # text  — commands
+Guidance = "#908caa"    # subtle — time column
+AlertInfo = "#9ccfd8"   # foam  — duration ok (cool)
+AlertError = "#f6c177"  # gold  — duration fail / selected (warm)
+AlertWarn = "#c4a7e7"   # iris  — match highlight
+Annotation = "#908caa"  # subtle
+Important = "#9ccfd8"   # foam

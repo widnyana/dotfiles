@@ -169,6 +169,7 @@ keybinds {
         bind "j" { MoveFocus "Down"; SwitchToMode "Normal"; }
         bind "k" { MoveFocus "Up"; SwitchToMode "Normal"; }
         bind "o" { FocusNextPane; }
+        bind "s" { SwitchToMode "Session"; }
         bind "d" { Detach; }
         bind "Space" { NextSwapLayout; }
         bind "x" { CloseFocus; SwitchToMode "Normal"; }
@@ -217,9 +218,8 @@ keybinds {
     shared_except "scroll" "locked" {
         bind "Ctrl s" { SwitchToMode "Scroll"; }
     }
-    shared_except "session" "locked" {
-        bind "Ctrl o" { SwitchToMode "Session"; }
-    }
+    // Session mode moved to the tmux prefix (Ctrl a, then s) so bare Ctrl o
+    // passes through to apps like atuin (ctrl-o = inspect).
     shared_except "tab" "locked" {
         bind "Ctrl t" { SwitchToMode "Tab"; }
     }

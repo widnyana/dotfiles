@@ -1,0 +1,20 @@
+## Low-eye-strain, deuteranopia-safe atuin theme. Neutral/cool, no pink.
+## Success/fail durations use the colorblind-safe blue/amber pair (not red/green).
+## Meaning->element mapping (atuin 18.22):
+##   Base       -> command text (single color; syntax_highlight is off)
+##   Guidance   -> "N ago" time column
+##   AlertInfo  -> duration, exit 0
+##   AlertError -> duration, exit != 0  AND selected-row command
+##   AlertWarn  -> fuzzy-match highlighted characters
+## Values are hex or palette-named colors.
+[theme]
+name = "wid"
+
+[colors]
+Base = "#b3bac4"        # commands — neutral cool grey
+Guidance = "#78899c"    # time column — muted steel, recedes
+AlertInfo = "#7fa0bf"   # duration ok — steel blue
+AlertError = "#e6b36a"  # duration failed / selected row — bright amber so selection pops
+AlertWarn = "#d0b45c"   # match highlight — soft gold
+Annotation = "#78899c"  # unused by list; match Guidance
+Important = "#c49a5e"

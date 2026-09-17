@@ -38,7 +38,7 @@ When you press a `Ctrl + <key>` like `Ctrl+t` or `Ctrl+p`, you enter a **mode** 
 | `Ctrl p` | Pane | split, focus, close, fullscreen, float panes |
 | `Ctrl t` | Tab | new / close / switch / rename tabs, fuzzy jump |
 | `Ctrl s` | Scroll | scroll back, search, copy |
-| `Ctrl o` | Session | detach, session & plugin managers |
+| `Ctrl a` `s` | Session | detach, session & plugin managers (moved off `Ctrl o` — freed for atuin inspect) |
 | `Ctrl n` | Resize | grow / shrink the focused pane |
 | `Ctrl h` | Move | reorder the focused pane |
 | `Ctrl a` | Tmux | tmux-style chords (`"` `%` `c` `,` …) † |
@@ -199,8 +199,9 @@ Reached from Pane mode `r`. Type the new name, then:
 | `Ctrl c` | back to Normal |
 | `Esc` | undo the rename → Pane |
 
-### Session — prefix `Ctrl o`
-`Ctrl o` toggles Session.
+### Session — prefix `Ctrl a` `s`
+`Ctrl a` then `s` enters Session (moved off `Ctrl o`, which now passes through
+to apps — e.g. atuin `ctrl-o` inspect).
 
 | key | does |
 | --- | --- |
@@ -225,6 +226,7 @@ A tmux-style layer: press `Ctrl a`, release, then a tmux chord. Matches stock tm
 | `p` | previous tab |
 | `n` | next tab |
 | `o` | focus next pane |
+| `s` | enter Session mode |
 | `arrows` or `h j k l` | move focus |
 | `d` | detach |
 | `Space` | next swap layout |

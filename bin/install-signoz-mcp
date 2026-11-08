@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#──────────────────────────────────────────────────────────────────────────────
+# Damarseta · Infrastructure with Intent. Aligned. Reliable.
+# Copyright (c) 2025 wid@damarseta.id · https://damarseta.id
+#──────────────────────────────────────────────────────────────────────────────
+# Context: tooling
+# Purpose: Install/replace the latest SigNoz MCP server binary into ~/.local/bin
+
+set -euo pipefail
+# shellcheck source=SCRIPTDIR/../common/colors
+source ~/.dotfiles/common/colors
+
+REPO="SigNoz/signoz-mcp-server"
+DEST="$HOME/.local/bin"
+
+os=$(uname -s | tr '[:upper:]' '[:lower:]')
+case "$os" in
+  darwin | linux) ;;
+  *) echo "unsupported OS: $os" >&2; exit 1 ;;
+esac
+
+case "$(uname -m)" in
+  x86_64) arch=amd64 ;;
+  arm64 | aarch64) arch=arm64 ;;
+  *) echo "unsupported arch: $(uname -m)" >&2; exit 1 ;;
+esac
+
+url="https://github.com/${REPO}/releases/latest/download/signoz-mcp-server_${os}_${arch}.tar.gz"
+tmp=$(mktemp -d)
+trap 'rm -rf "$tmp"' EXIT
+
+echo -e "Downloading ${BROWN}${url}${NC} ..."
+curl -fsSL "$url" | tar xz -C "$tmp"
+
+bin=$(find "$tmp" -type f -name signoz-mcp-server | head -1)
+[[ -n $bin ]] || { echo "signoz-mcp-server binary not found in archive" >&2; exit 1; }
+
+install -d "$DEST"
+install -m 0755 "$bin" "$DEST/signoz-mcp-server"
+[[ $os == darwin ]] && xattr -d com.apple.quarantine "$DEST/signoz-mcp-server" 2>/dev/null || true
+
+echo -e "${PURPLE}Installed:${NC} $DEST/signoz-mcp-server"
+"$DEST/signoz-mcp-server" --version 2>/dev/null || true

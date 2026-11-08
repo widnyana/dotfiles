@@ -48,5 +48,17 @@ source $ZSH/oh-my-zsh.sh
 autoload -U +X bashcompinit && bashcompinit -i
 autoload -U +X compinit && compinit -i
 
+# Custom make completion (targets only, no files/dirs): completions/_make.
+# Rebound explicitly because omz's compinit runs before loader.zsh prepends
+# the dotfiles dir to fpath, so the system _make wins on first scan.
+fpath=("$HOME/.dotfiles/completions" $fpath)
+autoload -Uz "$HOME/.dotfiles/completions/_make"
+compdef _make make
+
 # Machine-local overrides (git-ignored; seeded from dot-zshrc.local.example)
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
+# REA analysis providers
+export GHIDRA_INSTALL_DIR=/opt/homebrew/Cellar/ghidra/12.1.3/libexec
+export REA_KUNA_COMMAND=/Users/wid/.local/share/rea/bin/kuna
+export REA_JADX_MCP_JAR=/Users/wid/.local/share/rea/bin/jadx-headless-mcp-0.7.1-all.jar

@@ -1,4 +1,5 @@
 # Font
+font-family = "FiraCode Nerd Font Mono"
 font-size = 10
 adjust-cell-height = 10%
 bold-is-bright = true

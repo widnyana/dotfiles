@@ -1,0 +1,29 @@
+#compdef make
+#
+# Custom make completion: complete only targets parsed from the Makefile in
+# the current directory. Never falls back to file or directory completion.
+#
+# Not parsed: targets indented with tabs (recipes), dot-targets (.PHONY etc.),
+# variable assignments (VAR := x), pattern rules (%.o: %.c).
+
+_make() {
+  local -a targets
+  local mkf
+  for mkf in GNUmakefile makefile Makefile; do
+    [[ -f $mkf ]] && break
+  done
+  [[ -f $mkf ]] || return 0
+
+  targets=( $(awk '
+    /^\t/ { next }
+    /^[[:space:]]*#/ { next }
+    /^[[:space:]]*[[:alnum:]_][[:alnum:]_.-]*[[:space:]]*:[^=]/ ||
+    /^[[:space:]]*[[:alnum:]_][[:alnum:]_.-]*[[:space:]]*:$/ {
+      sub(/[[:space:]]*:.*$/, "", $0)
+      n = split($0, a, /[[:space:]]+/)
+      for (i = 1; i <= n; i++) print a[i]
+    }' $mkf 2>/dev/null | sort -u) )
+  [[ -n $targets ]] || return 0
+
+  _describe -t targets 'make target' targets
+}

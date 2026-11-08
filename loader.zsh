@@ -78,7 +78,8 @@ FINAL_PATH=$(python3 ${_DOT_DIR}/bin/_pathnodupe.py 2>/dev/null)
 [[ -n "$FINAL_PATH" ]] && export PATH=${FINAL_PATH}
 
 ## Completions
-export FPATH="$FPATH:${_DOT_DIR}/completions/"
+## prepended so custom completions (e.g. _make) shadow the system ones
+export FPATH="${_DOT_DIR}/completions:$FPATH"
 
 #: clean up
 unset _DOT_DIR FINAL_PATH

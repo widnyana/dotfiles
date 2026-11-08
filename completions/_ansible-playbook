@@ -24,6 +24,18 @@ for g in sorted(k for k in d if k not in ("_meta", "all")):
   (( $#hosts )) && compadd -J hosts -X '-- inventory hosts --' -a hosts
 }
 
+# Offer `<x>_target_hosts=` for the playbook already on the command line.
+_ansible-playbook_extra_vars() {
+  local pb w
+  local -a vars
+  for w in $words; do
+    [[ $w == *.yml && -f $w ]] && { pb=$w; break; }
+  done
+  [[ -n $pb ]] || return 1
+  vars=(${(f)"$(grep -Eh '^[[:space:]-]*hosts:' $pb | grep -Eo '[a-z0-9_]+_target_hosts' | sort -u)"})
+  (( $#vars )) && compadd -S= -X '-- extra vars --' -a vars
+}
+
 _ansible-playbook() {
   if [[ ${words[CURRENT-1]} == (-l|--limit) ]]; then
     compset -P '*,'
@@ -32,6 +44,8 @@ _ansible-playbook() {
     _ansible-playbook_target_hosts
   elif compset -P '--limit=*,' || compset -P '--limit='; then
     _ansible-playbook_target_hosts
+  elif [[ ${words[CURRENT-1]} == (-e|--extra-vars) ]]; then
+    _ansible-playbook_extra_vars
   else
     _files -g '*.yml'
   fi

@@ -6,6 +6,7 @@
 .env
 .env.*
 .vscode
+.omp
 node_modules
 sample-data
 temp

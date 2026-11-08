@@ -64,7 +64,6 @@ zoxide = "0.10.0"
 [plugins]
 
 [settings]
-always_keep_download = false             # deleted after install by default
 always_keep_install = false              # deleted on failure by default
 jobs = 8
 not_found_auto_install = true

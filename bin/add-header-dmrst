@@ -9,7 +9,9 @@ set -euo pipefail
 YEAR=$(date +%Y)
 TAGLINE="Damarseta · Infrastructure with Intent. · Aligned. Reliable."
 COPYRIGHT="Copyright (c) ${YEAR} wid@damarseta.id · https://damarseta.id"
-MARKER="${TAGLINE}"
+# Stable across tagline changes: every header carries the copyright holder. Check only
+# the top of the file, so an email used deeper in code is not mistaken for a header.
+MARKER="wid@damarseta.id"
 
 PURPOSE=""
 CONTEXT=""
@@ -53,7 +55,7 @@ inject_header() {
     return
   fi
 
-  if grep -Fq "$MARKER" "$file"; then
+  if head -n 15 "$file" | grep -Fq "$MARKER"; then
     echo "Skip: Header already present in $file"
     return
   fi

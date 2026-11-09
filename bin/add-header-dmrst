@@ -7,7 +7,7 @@ set -euo pipefail
 # ──────────────────────────────────────────────────────────────────────────────
 
 YEAR=$(date +%Y)
-TAGLINE="Damarseta · Infrastructure with Intent. Aligned. Reliable."
+TAGLINE="Damarseta · Infrastructure with Intent. · Aligned. Reliable."
 COPYRIGHT="Copyright (c) ${YEAR} wid@damarseta.id · https://damarseta.id"
 MARKER="${TAGLINE}"
 

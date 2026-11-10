@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# omp-meta7 on the latest DeepSeek flash model (OpenRouter "latest" alias).
+# Usage: omp-meta7-ds <prompt-file.md> [extra omp args...]
+set -euo pipefail
+export OMP_META7_MODEL=openrouter/~deepseek/deepseek-flash-latest
+exec "$(dirname "$0")/omp-meta7" "$@"

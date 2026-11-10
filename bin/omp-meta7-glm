@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+# omp-meta7 on the latest z.ai GLM flash model (OpenRouter "latest" alias).
+# Usage: omp-meta7-glm <prompt-file.md> [extra omp args...]
+set -euo pipefail
+export OMP_META7_MODEL=openrouter/~z-ai/glm-flash-latest
+exec "$(dirname "$0")/omp-meta7" "$@"

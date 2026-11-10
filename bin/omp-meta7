@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# Run omp with the meta7 system prompt and a prompt file, like the old claude command:
+#   claude --allowedTools "..." --system-prompt-file meta7.prompt < prompt.md
+# Usage: omp-meta7 <prompt-file.md> [extra omp args...]
+# Non-interactive (process the prompt and exit): OMP_META7_PRINT=1 omp-meta7 <prompt-file.md>
+# Model: OMP_META7_MODEL=<omp model id> (empty = omp default). See omp-meta7-ds and omp-meta7-glm.
+set -euo pipefail
+
+prompt_file=${1:?usage: omp-meta7 <prompt-file.md> [extra omp args...]}
+shift
+[ -f "$prompt_file" ] || { echo "omp-meta7: prompt file not found: $prompt_file" >&2; exit 1; }
+
+system_prompt=/Users/wid/.dotfiles/agents/meta7.prompt
+[ -f "$system_prompt" ] || { echo "omp-meta7: system prompt not found: $system_prompt" >&2; exit 1; }
+
+# Tool mapping from claude: Agent -> task, Task* -> todo, WebSearch -> web_search.
+# WebFetch has no separate omp tool; read accepts URLs.
+args=(--tools "bash,read,write,edit,glob,grep,task,todo,web_search")
+[ -z "${OMP_META7_MODEL:-}" ] || args+=(--model "$OMP_META7_MODEL")
+[ -z "${OMP_META7_PRINT:-}" ] || args=(-p "${args[@]}")
+
+# --system-prompt takes text, not a path.
+exec omp "${args[@]}" --system-prompt "$(cat "$system_prompt")" "$@" "@${prompt_file}"

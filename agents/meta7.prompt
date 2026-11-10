@@ -99,9 +99,9 @@ SCRATCHS_ROOT   : <from SETTINGS_FILE — default ./.harness/scratchs>
 REF_ROOT        : <from SETTINGS_FILE — default ./.harness/ref>
 PROVNESS_ROOT   : <from SETTINGS_FILE — default ./.harness/provness>
 PROVNESS_PATH   : <PROVNESS_ROOT>
-STATE_FILE      : <IMPL_ROOT>/.<NN>.state.graph (impl mode: NN from the loaded impl filename)
-                  <IMPL_ROOT>/.state.graph      (pipeline mode: no run number)
-                  One state file per run — parallel sessions of different .NN.impl files never share state.
+STATE_FILE      : <IMPL_ROOT>/.<stem>.state.graph (impl mode: stem of the loaded impl filename, e.g. .01.impl → .01.state.graph, .init.impl → .init.state.graph)
+                  <IMPL_ROOT>/.state.graph       (pipeline mode: no run)
+                  One state file per run — parallel sessions of different .impl files never share state.
 CONTEXT_PATH    : <resolved in Step 0a from trigger; default <CTX_ROOT>/.<project_name>.context>
 CURRENT_NAME    : <derived from CONTEXT_PATH stem in Step 0b>
 PROMPT_PATH     : ~/.dotfiles/agents/meta7.prompt
@@ -259,11 +259,20 @@ do not summarize context. Run 0a → 0b → 0c → 0d → 0e in sequence, then e
 
 ### 0a. Parse trigger and CONTEXT_PATH
 
-MODE detection (before trigger parse):
-  If stdin contains `MIGRATION_MAP:`                          → MODE = migration → jump to §Migration Mode
-  Else if stdin begins with `## State Model`
-       and contains `FR_COVERAGE:`                           → MODE = impl      → jump to §Impl Mode
-  Else                                                       → MODE = pipeline  → continue below
+MODE detection (before trigger parse), by content, not by extension:
+  0. `RESTART` / `RESTART FROM N`   → MODE from the run's STATE_FILE (impl when present,
+                                      else pipeline); resume, do not reclassify.
+  1. stdin contains `MIGRATION_MAP:` → MODE = migration → jump to §Migration Mode.
+  2. empty payload with no CONTEXT/NAME/REFS → pipeline via the documented fallback context.
+  3. score the payload:
+       +1  a State Model block with `CURRENT_NAME` and `PROJECT_REPO` lines
+       +1  at least one delegation unit: `AGENT SUBGRAPH`, or `NODE_ID` with `RETURN`/`RETRY`
+       +1  a terminal marker: `## Completion`, `## Gate Wave`, or a wave-graph block
+  4. score >= 2                                  → MODE = impl      → jump to §Impl Mode
+  5. score <= 1 and the trigger names CONTEXT, NAME, or REFS → MODE = pipeline → continue below
+  6. score <= 1 otherwise                        → MODE = bootstrap → jump to §Bootstrap Mode
+     score == 1 records "ambiguous, wrapped"; wrapping is recoverable, executing a malformed
+     plan is not.
 
 Migration mode: the coordinator executes the migration plan from the .NN.impl file.
 Pipeline waves (WAVE 1–8) do not run. Impl gate scopes apply with migration adaptations
@@ -330,14 +339,21 @@ If CONTEXT_PATH resolves to an existing file:
     CONTEXT       — the full CONTEXT block
     EXTRA_REFS    — the EXTRA_REFS field
 
-Else if trigger contains NAME=<name> and REFS=<path>:
-  CURRENT_NAME = NAME value
-  EXTRA_REFS   = REFS value
-  CONTEXT      = payload text (if present) | "" (empty → pure open exploration)
-  Write synthesized context to <CTX_ROOT>/.<CURRENT_NAME>.context
-  so future runs resolve via file.
+Else if a payload task is present (non-empty stdin text that is not an impl file —
+see §Mode Detection):
+  CURRENT_NAME — inferred from the repo root directory name (fallback: `default`)
+  EXTRA_REFS   — the repo root (cwd), if it looks like a project (has a manifest,
+                 .git, or docs); else null (greenfield)
+  CONTEXT      — the payload text as the task, plus a short auto-derived summary of
+                 the repo's own agent docs (AGENTS.md/CLAUDE.md, top-level doc
+                 headings) as project facts. Never decrypt secrets; read committed
+                 docs only.
+  AUTO_BOOTSTRAP: write the synthesized context to <CTX_ROOT>/.<CURRENT_NAME>.context
+  and log `CONTEXT_AUTO_BOOTSTRAPPED: <path>` in the Step 0 output. Future runs
+  resolve via the file; the user may edit it between runs. This replaces the old
+  HALT — a bare task payload is a legitimate trigger.
 
-Else:
+Else (no CONTEXT_PATH, no NAME/REFS, no payload):
   HALT — cannot derive CURRENT_NAME or project scope.
 
 After EXTRA_REFS is set:
@@ -559,6 +575,42 @@ Status transitions:
 
 ---
 
+## Bootstrap Mode
+
+Activated by Step 0a when the payload is a raw prompt (score <= 1) and the trigger names no
+CONTEXT, NAME, or REFS. Bootstrap turns that prompt into a coordinator plan, then runs the
+plan in impl mode. No research, design, or proof waves run.
+
+### Procedure
+
+1. Stem: CURRENT_NAME from context when present, else the repository directory name;
+   lowercased, `[a-z0-9-]`, separators collapsed. Named stems only; the numeric predecessor
+   rule does not apply.
+2. The harness does the deterministic parts: read, score, stem, source hash, collision check,
+   write, re-score, state.
+3. The agent writes the plan content only: one work unit per independent deliverable named in
+   the payload, the payload quoted verbatim as TASK, executable checks from the project
+   toolchain, a commit rule, a completion block. It invents no scope, no files, no FR ids, no
+   invariants.
+4. Required sections, in order: Identity; State Model with CURRENT_NAME, PROJECT_REPO,
+   TOOLCHAIN, STATE_FILE, SOURCE, SOURCE_SHA256, DERIVED: true; Step 0 preflight; Work Units
+   (one or more, each with TASK, RETURN/STATUS, RETRY); Verification (a command or N/A with a
+   reason); Commit; Completion.
+5. Write `.harness/impl/.<stem>.impl`. Collision: same SOURCE_SHA256 → resume the existing
+   file; different hash → `.<stem>-<hash8>.impl`. Never overwrite.
+6. Validate by re-scoring the written file: it must reach score >= 2. A missing section is
+   rewritten once, then HALT naming the section.
+7. Execute the written file in impl mode: same State Model, same P-VALIDATION, same gate wave,
+   one commit per unit. Emit the bootstrap graph as the Step 0 output, then proceed.
+
+### Prohibitions
+
+- No research or design waves.
+- No scope expansion beyond the payload's deliverables.
+- No invented requirements, files, FR ids, or invariants.
+- No write outside IMPL_ROOT.
+- The payload is quoted, not paraphrased.
+
 ## Impl Mode
 
 Activated when MODE = impl (Step 0a). Directory roots (CTX_ROOT, IMPL_ROOT etc.) are
@@ -610,7 +662,7 @@ TOOLCHAIN       : <cargo | npm | …>
 ENV             : <platform notes>
 DEV_SHELL       : <nix develop command>
 PROVNESS_ROOT   : <absolute path to provness workspace>
-STATE_FILE      : <IMPL_ROOT>/.<NN>.state.graph  (NN = the loaded impl file's number; resolved via Step 0-)
+STATE_FILE      : <IMPL_ROOT>/.<stem>.state.graph  (stem of the loaded impl filename; resolved via Step 0-)
 
 FR_COVERAGE:
   FR-N → <crate/module> (<description>)
@@ -691,10 +743,11 @@ claude --model <model> \
 # --allowedTools derived from TASK blocks in the impl file
 ```
 
-Impl sequencing rule: .NN.impl files execute sequentially by number. .(NN).impl MUST NOT
+Impl sequencing rule: numbered .NN.impl files execute sequentially by number. .(NN).impl MUST NOT
 begin until .(NN-1).impl has reached terminal state. At Step 0 (before emitting the
 implementation graph): the coordinator reads <IMPL_ROOT>/.(NN-1).state.graph (absent file =
-treated as terminal; pipeline-mode runs have no state file) and checks that all nodes from
+treated as terminal; pipeline-mode runs and named non-numeric impl runs have no numeric
+predecessor - skip the check) and checks that all nodes from
 .(NN-1).impl have status ∈ {done, failed,
 skipped}. If not terminal: HALT with "predecessor impl not terminal — .(NN-1).impl must
 complete before .(NN).impl begins." A session MUST NOT run the same .NN.impl concurrently
@@ -738,7 +791,7 @@ TOOLCHAIN       : <cargo | npm | … | absent>
 ENV             : <platform notes>
 DEV_SHELL       : <nix develop command | absent>
 PROVNESS_ROOT   : <absolute path to provness workspace>
-STATE_FILE      : <IMPL_ROOT>/.<NN>.state.graph  (NN = the loaded impl file's number; resolved via Step 0-)
+STATE_FILE      : <IMPL_ROOT>/.<stem>.state.graph  (stem of the loaded impl filename; resolved via Step 0-)
 
 MIGRATION_MAP:
   SOURCES:        [source/path, ...]
@@ -799,8 +852,8 @@ Claude sessions. The coordinator writes it at Step 0, updates it after every nod
 completion, and reads it at the start of every session to restore runtime state without
 relying on context-window memory.
 
-Path: `<IMPL_ROOT>/.<NN>.state.graph`  (IMPL_ROOT resolved via Step 0-; one file per
-run, keyed by the loaded impl file's number — parallel runs never share state.
+Path: `<IMPL_ROOT>/.<stem>.state.graph`  (IMPL_ROOT resolved via Step 0-; one file per
+run, keyed by the loaded impl file's stem — parallel runs never share state.
 Pipeline-mode runs write `.state.graph` — one per repo, pipeline waves are strictly serialized.)
 Append-only within the run: a run never rewrites its own earlier entries and never
 touches another run's state file.

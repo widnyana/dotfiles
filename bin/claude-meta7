@@ -27,6 +27,9 @@ esac
 prompt_file=$1
 shift
 
+# System prompt path: CLAUDE_META7_PROMPT wins when set. Change the default below if the
+# dotfiles tree lives elsewhere on this machine, or export the variable per run instead of
+# editing the script.
 system_prompt=${CLAUDE_META7_PROMPT:-$HOME/.dotfiles/agents/meta7.prompt}
 [ -r "$system_prompt" ] || die "system prompt not readable: $system_prompt"
 

@@ -1,18 +1,40 @@
 #!/usr/bin/env bash
-# omp-meta7 on the latest DeepSeek flash model (OpenRouter "latest" alias).
 # Usage: omp-meta7-ds <prompt-file.md|-> [extra omp args...]
-# An explicit OMP_META7_MODEL wins over the default below.
+# Env:
+#   OMP_META7_MODEL   overrides the default DeepSeek flash model below
+# Portability: this wrapper prefers the sibling omp-meta7 in its own directory and falls
+# back to PATH. On a machine with a different layout, keep both scripts in one directory
+# or put omp-meta7 on PATH. The default model id below is an OpenRouter alias; edit it
+# for another provider.
 set -euo pipefail
 
-self=${BASH_SOURCE[0]}
-while [ -L "$self" ]; do
-  target=$(readlink "$self")
-  case $target in
-    /*) self=$target ;;
-    *) self=$(cd -P -- "$(dirname -- "$self")" && pwd)/$target ;;
-  esac
-done
-script_dir=$(cd -P -- "$(dirname -- "$self")" && pwd)
+prog=${0##*/}
+
+usage() {
+  if [ "$1" -eq 0 ]; then
+    printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog"
+  else
+    printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog" >&2
+  fi
+  exit "$1"
+}
+
+die() {
+  printf '%s: %s\n' "$prog" "$*" >&2
+  exit 1
+}
+
+[ $# -gt 0 ] || usage 2
+case $1 in
+  -h | --help) usage 0 ;;
+esac
+
+script_dir=$(cd -P -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)
+launcher=$script_dir/omp-meta7
+if [ ! -x "$launcher" ]; then
+  launcher=$(command -v omp-meta7 || true)
+fi
+[ -n "$launcher" ] && [ -x "$launcher" ] || die "omp-meta7 not found beside $prog or in PATH"
 
 export OMP_META7_MODEL=${OMP_META7_MODEL:-openrouter/~deepseek/deepseek-flash-latest}
-exec "$script_dir/omp-meta7" "$@"
+exec "$launcher" "$@"

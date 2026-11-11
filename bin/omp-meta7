@@ -1,17 +1,27 @@
 #!/usr/bin/env bash
-# Run omp with the meta7 system prompt.
 # Usage: omp-meta7 <prompt-file.md|-> [extra omp args...]
 #   "-" reads the prompt from stdin.
 # Env:
-#   OMP_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
+#   OMP_META7_PROMPT   system prompt path
+#                      (default: <script-dir>/../agents/meta7.prompt,
+#                       then $HOME/.dotfiles/agents/meta7.prompt)
 #   OMP_META7_MODEL    omp model id (empty = omp default)
-#   OMP_META7_PRINT    non-empty and not 0/false/no = one-shot print mode (-p)
+#   OMP_META7_PRINT    non-empty and not 0/false/no/off = one-shot print mode (-p)
+# Portability: the system prompt is resolved as <script-dir>/../agents/meta7.prompt,
+# falling back to $HOME/.dotfiles/agents/meta7.prompt. On a machine with a different
+# layout, keep that tree shape, set OMP_META7_PROMPT, or edit default_prompt below.
+# The tool list and model id are passed through to omp and may need adjusting for
+# other providers.
 set -euo pipefail
 
 prog=${0##*/}
 
 usage() {
-  printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog" >&2
+  if [ "$1" -eq 0 ]; then
+    printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog"
+  else
+    printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog" >&2
+  fi
   exit "$1"
 }
 
@@ -20,36 +30,65 @@ die() {
   exit 1
 }
 
+resolve_self() {
+  local self=$1 target
+  while [ -L "$self" ]; do
+    target=$(readlink "$self") || exit 1
+    case $target in
+      /*) self=$target ;;
+      *) self=$(cd -P -- "$(dirname -- "$self")" && pwd -P)/$target ;;
+    esac
+  done
+  printf '%s\n' "$self"
+}
+
+readable_file() {
+  [ -r "$1" ] && [ ! -d "$1" ]
+}
+
+self=$(resolve_self "${BASH_SOURCE[0]}")
+script_dir=$(cd -P -- "$(dirname -- "$self")" && pwd -P)
+default_prompt=$script_dir/../agents/meta7.prompt
+
 [ $# -gt 0 ] || usage 2
 case $1 in
   -h | --help) usage 0 ;;
+  --) shift ;;
 esac
+[ $# -gt 0 ] || usage 2
 
 prompt_file=$1
 shift
 
-system_prompt=${OMP_META7_PROMPT:-$HOME/.dotfiles/agents/meta7.prompt}
-[ -r "$system_prompt" ] || die "system prompt not readable: $system_prompt"
+if [ -n "${OMP_META7_PROMPT:-}" ]; then
+  system_prompt=$OMP_META7_PROMPT
+elif readable_file "$default_prompt"; then
+  system_prompt=$default_prompt
+elif [ -n "${HOME:-}" ] && readable_file "$HOME/.dotfiles/agents/meta7.prompt"; then
+  system_prompt=$HOME/.dotfiles/agents/meta7.prompt
+else
+  system_prompt=
+fi
+[ -n "$system_prompt" ] || die "system prompt not found; set OMP_META7_PROMPT"
+readable_file "$system_prompt" || die "system prompt not readable: $system_prompt"
 
 command -v omp >/dev/null 2>&1 || die "omp not found in PATH"
 
-# Tool mapping from claude: Agent -> task, Task* -> todo, WebSearch -> web_search.
-# WebFetch has no separate omp tool; read accepts URLs.
 args=(--tools "bash,read,write,edit,glob,grep,task,todo,web_search")
 if [ -n "${OMP_META7_MODEL:-}" ]; then
   args+=(--model "$OMP_META7_MODEL")
 fi
 case ${OMP_META7_PRINT:-} in
-  '' | 0 | false | no) ;;
+  '' | 0 | false | no | off) ;;
   *) args=(-p "${args[@]}") ;;
 esac
 
+system_prompt_text=$(<"$system_prompt")
+
 if [ "$prompt_file" = "-" ]; then
-  exec omp "${args[@]}" --system-prompt "$(<"$system_prompt")" "$@"
+  exec omp "${args[@]}" --system-prompt "$system_prompt_text" "$@"
 fi
 
 [ -f "$prompt_file" ] || die "prompt file not found: $prompt_file"
-prompt_dir=$(cd -- "$(dirname -- "$prompt_file")" && pwd -P)
-prompt_path=$prompt_dir/${prompt_file##*/}
-
-exec omp "${args[@]}" --system-prompt "$(<"$system_prompt")" "$@" "@${prompt_path}"
+prompt_dir=$(cd -P -- "$(dirname -- "$prompt_file")" && pwd -P)
+exec omp "${args[@]}" --system-prompt "$system_prompt_text" "$@" "@$prompt_dir/${prompt_file##*/}"

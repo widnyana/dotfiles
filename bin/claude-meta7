@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Run Claude Code with the meta7 system prompt.
-# Usage: claude-meta7 <prompt-file.md|-> [extra claude args...]
-#   "-" reads the prompt from stdin.
+# Usage: claude-meta7 PROMPT [claude args...]
+#   PROMPT  path to a prompt file, or - to read stdin
+#   args    passed through to claude
 # Env:
 #   CLAUDE_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
 #   CLAUDE_META7_MODEL    claude model id (empty = claude default)
@@ -9,8 +10,18 @@ set -euo pipefail
 
 prog=${0##*/}
 
+usage_text() {
+  printf 'usage: %s PROMPT [claude args...]\n' "$prog"
+  printf '  PROMPT  path to a prompt file, or - to read stdin\n'
+  printf '  args    passed through to claude\n'
+}
+
 usage() {
-  printf 'usage: %s <prompt-file.md|-> [extra claude args...]\n' "$prog" >&2
+  if [ "$1" -eq 0 ]; then
+    usage_text
+  else
+    usage_text >&2
+  fi
   exit "$1"
 }
 

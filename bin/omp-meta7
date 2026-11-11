@@ -1,23 +1,55 @@
 #!/usr/bin/env bash
-# Run omp with the meta7 system prompt and a prompt file, like the old claude command:
-#   claude --allowedTools "..." --system-prompt-file meta7.prompt < prompt.md
-# Usage: omp-meta7 <prompt-file.md> [extra omp args...]
-# Non-interactive (process the prompt and exit): OMP_META7_PRINT=1 omp-meta7 <prompt-file.md>
-# Model: OMP_META7_MODEL=<omp model id> (empty = omp default). See omp-meta7-ds and omp-meta7-glm.
+# Run omp with the meta7 system prompt.
+# Usage: omp-meta7 <prompt-file.md|-> [extra omp args...]
+#   "-" reads the prompt from stdin.
+# Env:
+#   OMP_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
+#   OMP_META7_MODEL    omp model id (empty = omp default)
+#   OMP_META7_PRINT    non-empty and not 0/false/no = one-shot print mode (-p)
 set -euo pipefail
 
-prompt_file=${1:?usage: omp-meta7 <prompt-file.md> [extra omp args...]}
-shift
-[ -f "$prompt_file" ] || { echo "omp-meta7: prompt file not found: $prompt_file" >&2; exit 1; }
+prog=${0##*/}
 
-system_prompt=/Users/wid/.dotfiles/agents/meta7.prompt
-[ -f "$system_prompt" ] || { echo "omp-meta7: system prompt not found: $system_prompt" >&2; exit 1; }
+usage() {
+  printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog" >&2
+  exit "$1"
+}
+
+die() {
+  printf '%s: %s\n' "$prog" "$*" >&2
+  exit 1
+}
+
+[ $# -gt 0 ] || usage 2
+case $1 in
+  -h | --help) usage 0 ;;
+esac
+
+prompt_file=$1
+shift
+
+system_prompt=${OMP_META7_PROMPT:-$HOME/.dotfiles/agents/meta7.prompt}
+[ -r "$system_prompt" ] || die "system prompt not readable: $system_prompt"
+
+command -v omp >/dev/null 2>&1 || die "omp not found in PATH"
 
 # Tool mapping from claude: Agent -> task, Task* -> todo, WebSearch -> web_search.
 # WebFetch has no separate omp tool; read accepts URLs.
 args=(--tools "bash,read,write,edit,glob,grep,task,todo,web_search")
-[ -z "${OMP_META7_MODEL:-}" ] || args+=(--model "$OMP_META7_MODEL")
-[ -z "${OMP_META7_PRINT:-}" ] || args=(-p "${args[@]}")
+if [ -n "${OMP_META7_MODEL:-}" ]; then
+  args+=(--model "$OMP_META7_MODEL")
+fi
+case ${OMP_META7_PRINT:-} in
+  '' | 0 | false | no) ;;
+  *) args=(-p "${args[@]}") ;;
+esac
 
-# --system-prompt takes text, not a path.
-exec omp "${args[@]}" --system-prompt "$(cat "$system_prompt")" "$@" "@${prompt_file}"
+if [ "$prompt_file" = "-" ]; then
+  exec omp "${args[@]}" --system-prompt "$(<"$system_prompt")" "$@"
+fi
+
+[ -f "$prompt_file" ] || die "prompt file not found: $prompt_file"
+prompt_dir=$(cd -- "$(dirname -- "$prompt_file")" && pwd -P)
+prompt_path=$prompt_dir/${prompt_file##*/}
+
+exec omp "${args[@]}" --system-prompt "$(<"$system_prompt")" "$@" "@${prompt_path}"

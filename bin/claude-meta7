@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Run Claude Code with the meta7 system prompt.
+# Usage: claude-meta7 <prompt-file.md|-> [extra claude args...]
+#   "-" reads the prompt from stdin.
+# Env:
+#   CLAUDE_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
+#   CLAUDE_META7_MODEL    claude model id (empty = claude default)
+set -euo pipefail
+
+prog=${0##*/}
+
+usage() {
+  printf 'usage: %s <prompt-file.md|-> [extra claude args...]\n' "$prog" >&2
+  exit "$1"
+}
+
+die() {
+  printf '%s: %s\n' "$prog" "$*" >&2
+  exit 1
+}
+
+[ $# -gt 0 ] || usage 2
+case $1 in
+  -h | --help) usage 0 ;;
+esac
+
+prompt_file=$1
+shift
+
+system_prompt=${CLAUDE_META7_PROMPT:-$HOME/.dotfiles/agents/meta7.prompt}
+[ -r "$system_prompt" ] || die "system prompt not readable: $system_prompt"
+
+command -v claude >/dev/null 2>&1 || die "claude not found in PATH"
+
+args=(
+  --allowedTools "Bash,Read,Write,Edit,Glob,Grep,Agent,TaskCreate,TaskUpdate,TaskGet,TaskList,WebFetch,WebSearch"
+  --system-prompt-file "$system_prompt"
+)
+if [ -n "${CLAUDE_META7_MODEL:-}" ]; then
+  args+=(--model "$CLAUDE_META7_MODEL")
+fi
+
+if [ "$prompt_file" = "-" ]; then
+  exec claude "${args[@]}" "$@"
+fi
+
+[ -f "$prompt_file" ] || die "prompt file not found: $prompt_file"
+exec claude "${args[@]}" "$@" < "$prompt_file"

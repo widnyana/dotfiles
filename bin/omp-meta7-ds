@@ -1,6 +1,18 @@
 #!/usr/bin/env bash
 # omp-meta7 on the latest DeepSeek flash model (OpenRouter "latest" alias).
-# Usage: omp-meta7-ds <prompt-file.md> [extra omp args...]
+# Usage: omp-meta7-ds <prompt-file.md|-> [extra omp args...]
+# An explicit OMP_META7_MODEL wins over the default below.
 set -euo pipefail
-export OMP_META7_MODEL=openrouter/~deepseek/deepseek-flash-latest
-exec "$(dirname "$0")/omp-meta7" "$@"
+
+self=${BASH_SOURCE[0]}
+while [ -L "$self" ]; do
+  target=$(readlink "$self")
+  case $target in
+    /*) self=$target ;;
+    *) self=$(cd -P -- "$(dirname -- "$self")" && pwd)/$target ;;
+  esac
+done
+script_dir=$(cd -P -- "$(dirname -- "$self")" && pwd)
+
+export OMP_META7_MODEL=${OMP_META7_MODEL:-openrouter/~deepseek/deepseek-flash-latest}
+exec "$script_dir/omp-meta7" "$@"

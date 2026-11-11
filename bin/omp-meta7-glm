@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
-# Usage: omp-meta7-glm <prompt-file.md|-> [extra omp args...]
+# Usage: omp-meta7-glm PROMPT [omp args...]
+#   PROMPT  path to a prompt file, or - to read stdin
+#   args    passed through to omp
 # Env:
 #   OMP_META7_MODEL   overrides the default GLM flash model below
 # Portability: this wrapper prefers the sibling omp-meta7 in its own directory and falls
@@ -13,11 +15,17 @@ set -euo pipefail
 
 prog=${0##*/}
 
+usage_text() {
+  printf 'usage: %s PROMPT [omp args...]\n' "$prog"
+  printf '  PROMPT  path to a prompt file, or - to read stdin\n'
+  printf '  args    passed through to omp\n'
+}
+
 usage() {
   if [ "$1" -eq 0 ]; then
-    printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog"
+    usage_text
   else
-    printf 'usage: %s <prompt-file.md|-> [extra omp args...]\n' "$prog" >&2
+    usage_text >&2
   fi
   exit "$1"
 }

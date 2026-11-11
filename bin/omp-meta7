@@ -10,8 +10,14 @@
 # Portability: the system prompt is resolved as <script-dir>/../agents/meta7.prompt,
 # falling back to $HOME/.dotfiles/agents/meta7.prompt. On a machine with a different
 # layout, keep that tree shape, set OMP_META7_PROMPT, or edit default_prompt below.
-# The tool list and model id are passed through to omp and may need adjusting for
-# other providers.
+#
+# Model: this launcher has no model default. Set OMP_META7_MODEL to an id your omp
+# provider or router serves, or leave it empty for the omp default. To pin one, edit
+# the OMP_META7_MODEL branch below, or export the id before calling (a per-run export
+# wins over nothing else and affects every wrapper that later reads it).
+#
+# Tools: the --tools list below is passed to omp verbatim; change it if your omp build
+# exposes different tool names.
 set -euo pipefail
 
 prog=${0##*/}

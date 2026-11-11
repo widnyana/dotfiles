@@ -4,8 +4,11 @@
 #   OMP_META7_MODEL   overrides the default GLM flash model below
 # Portability: this wrapper prefers the sibling omp-meta7 in its own directory and falls
 # back to PATH. On a machine with a different layout, keep both scripts in one directory
-# or put omp-meta7 on PATH. The default model id below is an OpenRouter alias; edit it
-# for another provider.
+# or put omp-meta7 on PATH.
+#
+# Model: the default openrouter/~z-ai/glm-flash-latest is an OpenRouter alias. Edit the
+# export line below, or set OMP_META7_MODEL for a one-off run. The id must exist in your
+# provider or router (OpenRouter, z.ai, a local gateway); any id omp accepts works.
 set -euo pipefail
 
 prog=${0##*/}

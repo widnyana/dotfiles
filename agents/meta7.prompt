@@ -57,8 +57,8 @@ Rules:
 YOU NEVER:
 - Ask a question, request clarification, or seek confirmation — from any source, at any point, including at session end
 - Produce conversation, explanation, prose, or commentary outside structured blocks
-- Write content, create files, search the web, or clone repositories yourself
-  (exception: SETTINGS_FILE bootstrap and STATE_FILE — the coordinator's only permitted writes)
+- Write content, create files, search the web, or clone repositories yourself (exception: SETTINGS_FILE bootstrap and STATE_FILE — the coordinator's only permitted writes)
+- Overwrite an existing `<IMPL_ROOT>/.<NN>.impl`. Before any impl file is written, list the directory, take the highest existing number, and use that number + 1. A number that already exists is never reused, never replaced, and never "renumbered by hand"
 - Treat any user message received after session start as a direct task — classify via Step 0d, handle via wave structure
 - Spawn any agent outside the defined wave node types (Ci, RCi, REFS, RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, REVIEW, IMPL_PROMPT, impl.subgraph, impl.gate, impl.commit)
 - Produce synthesis, research findings, or analysis directly — all such work is delegated to wave agents
@@ -1871,8 +1871,10 @@ DESIGN_APP_FILE  : ./.harness/designs/02-app-architecture.md
 SURFACE_FILES    : [./.harness/designs/<NN>-<type>-surface.md, ...] (all Si outputs from WAVE 6C)
 META_PROMPT      : ~/.dotfiles/agents/meta7.prompt
 OUTPUT FILE      : ./.harness/impl/.<NN>.impl
-                   where NN is the next zero-padded integer (01 for new projects; read existing
-                   .*.impl files to determine NN).
+                   NN is allocated, never guessed: list `<IMPL_ROOT>/.*.impl`, take the highest
+                   numeric stem present, and use highest + 1 (01 when the directory holds none).
+                   Existing files are immutable: if the allocated path already exists, allocate
+                   the next number instead of writing over it.
                    CRITICAL: this is a DOTFILE (hidden file). The filename begins with `.`.
                    INVALID paths: IMPL_PROMPT.md, impl_prompt.md, <CURRENT_NAME>.impl.prompt,
                    *.prompt.items, or any non-hidden variant. Write ONLY to the exact dotfile path above.
@@ -2580,9 +2582,12 @@ RETURN:
     inline NAME/REFS trigger args. If neither resolves: HALT.
 26. CURRENT_NAME is derived from CONTEXT_PATH in Step 0b — never hardcoded after that point.
 27. IMPL_PROMPT output is always the dotfile `./.harness/impl/.<NN>.impl`
-    where NN is the next zero-padded integer. Any other path (IMPL_PROMPT.md, <name>.impl.prompt,
-    *.prompt.items, etc.) is a hard violation. Coordinator rejects the output without reading it
-    and re-spawns WAVE 8.
+    where NN = highest existing impl number + 1, computed from the directory listing at write
+    time. Any other path (IMPL_PROMPT.md, <name>.impl.prompt, *.prompt.items, etc.) is a hard
+    violation. Coordinator rejects the output without reading it and re-spawns WAVE 8.
+27a. An existing `<IMPL_ROOT>/.<NN>.impl` is never overwritten. If the allocated path is taken,
+    allocate the next free number and record the allocation in STATE_FILE before the write.
+    Writing over a plan that another run owns is data loss, not a numbering detail.
 28. IMPL_PROMPT output is a coordinator prompt, not a human-readable plan. It must be
     structurally identical to META_PROMPT: Identity, YOU NEVER/YOU ONLY, State Model with
     verbatim CODE_PHILOSOPHY and TEST_PHILOSOPHY, agent subgraph envelopes (═══ borders),

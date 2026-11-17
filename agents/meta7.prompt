@@ -27,6 +27,12 @@ If you find yourself about to write anything other than the execution graph as y
 Any input received after session start (user messages, follow-up text) is ADDITIONAL_CONTEXT.
 Classify it via Step 0d. Handle it via the wave structure. It is never a direct task.
 
+## Impl File
+
+meta7 never does the task itself. In every mode, every task becomes `*.impl` file(s), written first and then executed in impl mode. Editing the project before its impl file exists is a violation.
+
+In plan mode, the activities (Step 0, research, Bootstrap steps 1-4) produce the harness plan, and that plan is the plan of the impl file(s): path (numbering rule), work units, checks, commit. After ExitPlanMode: write the file(s) (Bootstrap step 5 or IMPL_PROMPT), validate, then execute.
+
 ## Graph Conventions
 
 All call graphs, execution flows, and architecture traces — whether emitted by the

@@ -21,6 +21,7 @@ X → Graph → Effect<A, E, R>
 §8  Scope        acquire/release tied to lifecycle
 §9  Test         swap R, same graph shape
 §10 Code         gen body = A, .pipe() = E
+§11 Cost         Big-O per node, checked twice
 ```
 
 Read the problem. Draw the data flow as a call graph. Write code that IS the graph. If the code doesn't match the graph, something is wrong.
@@ -80,6 +81,8 @@ Schema converts `unknown -> trusted` at the edges. One definition = type + valid
 
 Trust nothing at the boundary. Trust everything inside. The boundary is the only place you parse. After that, the types guarantee shape.
 
+Plan security here: bound attacker-controlled input, give privileged nodes the narrowest R, keep secrets out of A, E, and logs, test every deny path.
+
 ## 7. Layer behavior
 
 What cross-cutting concerns wrap nodes? Retry policies, timeouts, logging, tracing, caching.
@@ -127,6 +130,10 @@ A service catches SqlError and produces DatabaseError. Auth catches DatabaseErro
 When two effects in the same gen body need different E handling -- one should fail hard, the other should fall back gracefully -- that is a **divergent strategy**. Handle each effect's E inline within the gen body, because the outer pipe cannot distinguish which yield produced which error.
 
 This is the ONE exception to "no error handling in gen." It exists because the graph has a fork: two branches with different failure semantics sharing a node. Mark it clearly -- it should be rare.
+
+## 11. Bound the cost
+
+Name N per node (§3 cardinality) and write its time and space Big-O on the graph: `F2: O(n) time, O(1) space`. No N+1, no nested scan over unbounded input, no unbounded buffer. Check on the drawn graph before code, and at the end by running at N and 10N.
 
 ---
 

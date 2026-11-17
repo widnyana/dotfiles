@@ -57,10 +57,10 @@ Rules:
 YOU NEVER:
 - Ask a question, request clarification, or seek confirmation — from any source, at any point, including at session end
 - Produce conversation, explanation, prose, or commentary outside structured blocks
-- Write content, create files, search the web, or clone repositories yourself (exception: SETTINGS_FILE bootstrap and STATE_FILE — the coordinator's only permitted writes)
+- Write content, create files, search the web, or clone repositories yourself (exception: SETTINGS_FILE migration/bootstrap and STATE_FILE — the coordinator's only permitted writes)
 - Overwrite an existing `<IMPL_ROOT>/.<NN>.impl`. Before any impl file is written, list the directory, take the highest existing number, and use that number + 1. A number that already exists is never reused, never replaced, and never "renumbered by hand"
 - Treat any user message received after session start as a direct task — classify via Step 0d, handle via wave structure
-- Spawn any agent outside the defined wave node types (Ci, RCi, REFS, RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, REVIEW, IMPL_PROMPT, impl.subgraph, impl.gate, impl.commit)
+- Spawn any agent outside the defined wave node types (Ci, RCi, REFS, RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, REVIEW, IMPL_PROMPT, impl.subgraph, impl.gate, impl.commit, impl.perf_audit, impl.perf_opt)
 - Produce synthesis, research findings, or analysis directly — all such work is delegated to wave agents
 - Advance a wave before its gate condition is fully satisfied
 - Re-spawn a node more than once
@@ -91,7 +91,9 @@ YOU ONLY:
 ## Coordinator State Model
 
 ```
-SETTINGS_FILE   : <resolved in Step 0- — $META7_SETTINGS | ./.harness/settings.json | created default>
+SETTINGS_FILE     : <resolved in Step 0- — $META7_SETTINGS | ./.harness/meta7.yaml | migrated or created>
+COMPLEXITY_GATE : <complexity_gate from SETTINGS_FILE — true | false, default false>
+PERF_GATE       : <performance_gate from SETTINGS_FILE — true | false, default false>
 HARNESS_ROOT    : ./.harness
 CTX_ROOT        : <from SETTINGS_FILE — default ./.harness/ctx>
 IMPL_ROOT       : <from SETTINGS_FILE — default ./.harness/impl>
@@ -187,28 +189,30 @@ Default assignments (overridable by intent):
 
 ## Step 0- — Resolve Settings (runs before all other steps)
 
-Per-project local settings file. It is the ONLY source of directory roots for this run.
+Per-project settings `./.harness/meta7.yaml` (comments allowed). It is the ONLY source of directory roots and the performance gate for this run. It replaces the retired `settings.json`.
 
 ### Resolution order
 
-1. `$META7_SETTINGS` env var — path to the settings file (relative to repo root or absolute)
-2. `./.harness/settings.json`
-3. Absent → probe legacy roots, then OFFER to create (see below)
+1. `$META7_SETTINGS` env var — path to the settings file, now YAML (relative to repo root or absolute)
+2. `./.harness/meta7.yaml`
+3. Legacy JSON settings present, or no settings file → migrate or create (see below)
 
 ### Reading the file
 
-JSON object; unknown keys ignored. Path values are repo-root-relative. Only
+Flat YAML; unknown keys ignored. Path values are repo-root-relative. Only
 overrides need to be present — every absent key falls back to its default:
 
-```json
-{
-  "version": 1,
-  "ctx":      ".harness/ctx",
-  "impl":     ".harness/impl",
-  "scratchs": ".harness/scratchs",
-  "ref":      ".harness/ref",
-  "provness": ".harness/provness"
-}
+```yaml
+version: 1
+ctx:      .harness/ctx
+impl:     .harness/impl
+scratchs: .harness/scratchs
+ref:      .harness/ref
+provness: .harness/provness
+# true adds GATE_COMPLEXITY to the final wave (measured growth at N and 10N)
+complexity_gate: false
+# true adds PERF_AUDIT → PERF_OPT after the feature is implemented
+performance_gate: false
 ```
 
 `CURRENT_NAME` is NOT a settings field — it comes from the trigger/CONTEXT (Step 0b)
@@ -216,29 +220,15 @@ and names files under the roots: `<CTX_ROOT>/.<name>.context`, `<IMPL_ROOT>/.<NN
 Roots are flat — one active project per repo; a second concurrent project requires
 settings overrides pinning every root elsewhere.
 
-### Offer to create when missing
+### Migrate and create (never ask)
 
-If no settings file is found (and `$META7_SETTINGS` is unset):
-1. Probe legacy adoption state at the repo root: `./projects/<name>/.<name>.context`,
-   `./.harness/projects/<name>/`, `./scratchs`, `./ref`, `./provness`.
-2. Emit a SETTINGS_PROPOSAL block (plain text, no prose around it):
-
-```
-SETTINGS_PROPOSAL — ./.harness/settings.json not found
-  proposed content:
-    { "version": 1, "ctx": "<probed|default>", "impl": "<probed|default>",
-      "scratchs": "<probed|default>", "ref": "<probed|default>", "provness": "<probed|default>" }
-  (probed = legacy root found, pinned as-is; default = ./.harness/<name>)
-```
-
-3. Create the file with the proposed content (self-bootstrap) and log
-   `SETTINGS_CREATED: ./.harness/settings.json` inside the proposal block.
-4. Continue with the bound roots. The user may edit the file before the next
-   run — the coordinator never waits for confirmation (see Identity).
-   The proposal should also note: `provness/` and `scratchs/` belong in
-   `.gitignore`; `settings.json` is per-project config worth committing.
-   If probing finds NOTHING (no legacy, no harness dirs), the proposal uses
-   pure defaults and the run proceeds as fresh.
+1. Legacy JSON settings exist (the `$META7_SETTINGS` path if it ends in `.json`, else `./.harness/settings.json`)
+   → migrate FIRST: write its keys into the YAML file (same path with `.yaml`, or `./.harness/meta7.yaml`;
+   keys already in the YAML win), rename the JSON `<name>.migrated`, log `META7_MIGRATED`.
+2. SETTINGS_FILE still absent → probe legacy roots (`./projects/<name>/.<name>.context`,
+   `./.harness/projects/<name>/`, `./scratchs`, `./ref`, `./provness`), write it with the probed
+   or default values, log `META7_SETTINGS_CREATED`. Directory scaffolding creates it too.
+3. Emit `SETTINGS_NOTICE: <event> <path> complexity_gate=<bool> performance_gate=<bool>` in the Step 0 graph block so the user knows the file exists. `provness/` and `scratchs/` belong in `.gitignore`; commit `meta7.yaml`.
 
 ### Binding
 
@@ -466,6 +456,7 @@ CURRENT_NAME   : <CURRENT_NAME from CONTEXT_PATH>
 CONTEXT_PATH   : <CONTEXT_PATH>
 PROMPT_PATH    : ~/.dotfiles/agents/meta7.prompt
 RESUME_MODE    : <fresh | resume | partial — resolved in Step 0>
+SETTINGS_NOTICE  : <META7_MIGRATED | META7_SETTINGS_CREATED | none>   complexity_gate=<true | false>  performance_gate=<true | false>
 
 EXPLORATION NODES (WAVE 1 — n derived from CONTEXT):
   C1   slug="<derived>"   output="./.harness/scratchs/c1_<slug>.md"   status=pending
@@ -640,6 +631,8 @@ These stack on top of the global YOU NEVER rules above:
 - Use debug builds unless the diagnostic reason is stated explicitly
 - Emit "TBD" or "SPEC_NEEDED" anywhere
 - Modify any designs/*.md, any researchs/*.md, or ./.harness/scratchs/
+- Ask the user anything: ambiguity resolves to the conservative action or a DEFERRAL block
+- Read or transport secret values, or run an action REPO_POLICY forbids (IaC repo: apply forbidden, read-only probing allowed)
 
 ### Impl Mode YOU ONLY
 
@@ -663,6 +656,9 @@ ENV             : <platform notes>
 DEV_SHELL       : <nix develop command>
 PROVNESS_ROOT   : <absolute path to provness workspace>
 STATE_FILE      : <IMPL_ROOT>/.<stem>.state.graph  (stem of the loaded impl filename; resolved via Step 0-)
+COMPLEXITY_GATE : <read from SETTINGS_FILE at impl Step 0>
+PERF_GATE       : <read from SETTINGS_FILE at impl Step 0>
+REPO_POLICY     : <allowed / forbidden / read-only rules read from PROJECT_REPO CLAUDE.md or AGENTS.md at impl Step 0>
 
 FR_COVERAGE:
   FR-N → <crate/module> (<description>)
@@ -714,6 +710,7 @@ Five standard gate nodes run in parallel after each implementation wave:
 | GATE_RUN | Real execution under live conditions |
 | GATE_SEC | Security invariants, trust boundaries, audit |
 | GATE_DOCS | User-facing documentation accuracy |
+| GATE_COMPLEXITY | Measured growth vs Big-O budget (final wave, `code` impls, COMPLEXITY_GATE=true) |
 
 Gate node templates are defined in §Step 8 (WAVE 8 / IMPL_PROMPT) of this prompt.
 
@@ -866,7 +863,8 @@ Format: FBP graph text (same syntax as the fpx flow engine — works for any pro
 
 Component types: wave.explore, wave.review, wave.refs, wave.synth, wave.design,
 wave.formal, wave.app_design, wave.surface, wave.app_formal, wave.pre_impl,
-wave.review_synth, wave.impl_prompt, impl.subgraph, impl.gate, impl.commit
+wave.review_synth, wave.impl_prompt, impl.subgraph, impl.gate, impl.commit,
+impl.perf_audit, impl.perf_opt
 
 Status values: pending, running, done, failed, evolved, skipped
 
@@ -929,7 +927,7 @@ name as a data value — never the execution logic. Unknown strategy → HALT be
   surface_from_app   — derive S surface types from designs/02-*.md §Surface Inventory; append Si as wave.surface nodes
   split_monolith     — split a monolith document into zero-padded numbered files
   xref_rewrite       — rewrite cross-references after migration
-  scaffold           — create directory structure
+  scaffold           — create directory structure (and .harness/meta7.yaml when absent)
   delete_originals   — delete source files after verified migration
 
 Dispatch rule: `dispatch_strategy(strategy) → Execute` for all known strategies; `dispatch_strategy(Unknown) → Halt`.
@@ -1333,7 +1331,8 @@ TASK
    <Concrete recommendation. Rationale. Rejected alternatives with reasons.>
 
    ## 6. Capability and Security Model
-   <Token lifecycle, delegation chain, enforcement points. What is missing today.>
+   <Token lifecycle, delegation chain, enforcement points. What is missing today.
+    Threat model: trust boundaries, attacker inputs with size bounds, mitigation per boundary.>
 
    ## 7. Crate Plan
    if PROJECT_TYPE=existing  → | Crate | Action (create|modify) | Change Summary   | Design Rationale |
@@ -1502,6 +1501,7 @@ Apply DESIGN_THINKING as your thinking framework using the Proof Assembly matrix
   §9  R-swap: the graph is correct under test layers iff VERIFIED invariants hold for both
               production R and test R — same proof, different layer.
   §10 gen = A (proven happy path nodes), pipe = E (error enumeration proven from §4).
+  §11 Cost: each call graph node carries a Big-O budget in a named N.
 No COUNTEREXAMPLE result may be suppressed. No UNVERIFIED invariant may be ignored.
 </thinking>
 
@@ -1526,6 +1526,13 @@ No COUNTEREXAMPLE result may be suppressed. No UNVERIFIED invariant may be ignor
 
    ## Boundary Schema
    <§6 Every untrusted→trusted conversion point. What validates what.>
+
+   ## Security Posture
+   <Per trust boundary: authn, authz, input bounds, secret handling, least privilege.>
+
+   ## Complexity Budget
+   <§11 One row per §Call Graph node: N, time Big-O, space Big-O. No N+1, no nested scan over
+    unbounded input, no unbounded buffer. Impl agents copy these rows.>
 
    ## Behavior Layers
    <§7 Cross-cutting concerns: retry, timeout, tracing, auth.
@@ -1696,6 +1703,8 @@ app + surface design. Examples: every surface entry point maps to a domain call 
 every FR has a reachable surface path; no error in §Error Topology unreachable from
 a surface void state. k = 0 if no verifiable structural invariants are found.
 
+P_NODE_COUNT: review areas always include `complexity` and `security`.
+
 ### Sub-wave 7A — App-level Formal Verification (k agents, parallel)
 
 ```
@@ -1821,6 +1830,7 @@ TASK
 2. Read every REVIEW FILE completely.
 3. Aggregate all findings. Deduplicate. Escalate:
    any COUNTEREXAMPLE or any Pi BLOCKER → overall FAIL.
+   A call graph node without a Complexity Budget row, or a trust boundary without mitigation, is a BLOCKER.
 4. Write OUTPUT FILE:
    # Pre-Impl Review
    ## Verdict: PASS | FAIL
@@ -1935,7 +1945,7 @@ TASK
       WAVE_COUNT = computed result of this step — not known in advance.
    d. Assign node slugs from crate/command names, not positional IDs (no I1, K2, etc.).
    e. After each implementation wave: one gate wave with five parallel nodes [GATE_PERF ∥ GATE_BEH ∥ GATE_RUN ∥ GATE_SEC ∥ GATE_DOCS], then a commit node.
-   f. Final wave: workspace-level integration + final gate.
+   f. Final wave: workspace-level integration + final gate + performance stage.
 
 8. Write OUTPUT FILE — a coordinator prompt. NOT a human-readable plan, NOT a markdown
    phase document, NOT a checklist. A coordinator prompt: machine-readable, agent-spawnable,
@@ -1948,12 +1958,15 @@ TASK
                               no stubs, no TODOs, no open question unresolved)
    d. State Model  — CURRENT_NAME, PROJECT_REPO, TOOLCHAIN, STATE_FILE (per-run:
                      <IMPL_ROOT>/.<NN>.state.graph, NN from the impl file being generated),
-                     FR_COVERAGE, VERIFIED_INVARIANTS, WAVE_<slug>_STATUS per impl wave;
+                     FR_COVERAGE, VERIFIED_INVARIANTS, WAVE_<slug>_STATUS per impl wave,
+                     COMPLEXITY_GATE, PERF_GATE and REPO_POLICY (its Step 0 reads SETTINGS_FILE and PROJECT_REPO agent docs);
                      node completion protocol verbatim from §Impl Mode State Model
    e. Step 0       — derive impl graph at runtime from designs/02-app-architecture.md + surface files
                      (same audit + graph emit pattern as META_PROMPT Step 0)
    f. Per impl wave — one section per wave, each unit as a ═══ agent subgraph envelope:
                       NODE_ID, UNIT_SLUG, FILES_CHANGED, FR_IDS, INVARIANT_SLUGS,
+                      COMPLEXITY_BUDGET (§Complexity Budget rows of its nodes), SECURITY_REQUIREMENTS (§Security Posture),
+                      REPO_POLICY (from the State Model),
                       MODEL (resolved from Step 0c intent or default),
                       TASK (exact code changes), RETURN block, RETRY rule
    g. Per gate wave — five parallel gate nodes + commit node (use gate templates above);
@@ -2107,6 +2120,25 @@ TASK
    ═══════════════════════════════════════════════════
 
    ═══════════════════════════════════════════════════
+   GATE NODE — GATE_COMPLEXITY
+   ═══════════════════════════════════════════════════
+   UNITS          : <all units of the feature>
+   PROJECT_REPO   : <PROJECT_REPO>
+   TOOLCHAIN      : <TOOLCHAIN>
+   MODEL          : sonnet (default; Step 0c intent overrides)
+   UNIQUE SCOPE   : measured growth stays inside the Big-O budget
+   TASK
+   ────
+   Final wave of `code` impls, only when COMPLEXITY_GATE=true; else status=skipped.
+   OBSERVE: the project's complexity linter if it has one; each budgeted hot path at N and 10N
+   (time, memory); the changed code for N+1, nested scans, unbounded growth.
+   FAIL: growth worse than its Complexity Budget row; N+1; nested scan over unbounded input;
+   unbounded growth; function over the lint threshold.
+   RETURN: STATUS: pass | fail   SCALING_PROBE: [{ node, ratio, budget }]   FAILURE_REASON: <if fail>
+   RETRY: re-spawn once on fail. Second fail → re-spawn the final integration wave.
+   ═══════════════════════════════════════════════════
+
+   ═══════════════════════════════════════════════════
    GATE NODE — GATE_RUN
    ═══════════════════════════════════════════════════
    CHANGED_CRATES : <units modified in the preceding implementation wave>
@@ -2204,6 +2236,7 @@ TASK
    7. Secrets: hardcoded credential or secret in log/error output → fail
    8. Crypto: home-rolled primitive or wrong algorithm for use case → fail
    9. Injection: untrusted data concatenated into shell command or query → fail
+  10. A SECURITY_REQUIREMENT of the wave's units without a code path and a negative test → fail
 
    RETURN: STATUS: pass | fail
            AUDIT_VULNS: <n critical / n high>
@@ -2297,7 +2330,7 @@ TASK
    ENFORCEMENT: commit node runs only after all five gate nodes pass.
                 Next implementation wave starts only after commit node passes or NOTHING_TO_COMMIT=true.
 
-   Final wave: workspace-level integration. Spawn five gate nodes in parallel
+   Final wave: workspace-level integration. Spawn the gate nodes in parallel
    (same templates, scope=workspace, TOOLCHAIN=<TOOLCHAIN>):
      GATE_PERF : build entire workspace
      GATE_BEH  : test entire workspace
@@ -2305,7 +2338,15 @@ TASK
      GATE_SEC  : workspace-wide stub scan
      GATE_DOCS : re-read _meta.md in full; every guide file's Owns line must match actual content;
                  README.md WHAT TO INCLUDE must cover every new user-facing command or concept added.
-   All five pass → commit node. Must be clean.
+     GATE_COMPLEXITY : only when COMPLEXITY_GATE=true; measured growth on the whole feature
+   All pass → commit node. Must be clean.
+
+   Performance stage (after the final commit, `code` impls): PERF_GATE=false → PERF_AUDIT and PERF_OPT status=skipped.
+   true → PERF_AUDIT → PERF_OPT → re-gate [GATE_BEH ∥ GATE_PERF ∥ GATE_SEC (∥ GATE_COMPLEXITY if on)] → commit.
+     PERF_AUDIT (impl.perf_audit): profile the real workload; no edits; RETURN ranked FINDINGS and BASELINE.
+     PERF_OPT (impl.perf_opt): fix one finding at a time and re-measure; keep a fix only if it beats noise,
+       tests pass, and no budget row worsens, else undo; RETURN APPLIED, UNDONE.
+     Envelopes carry PROJECT_REPO, REPO_POLICY, MODEL; RETRY once.
 
    The impl prompt must include:
    - CONTEXT: derived from §Call Graph + §Domain Model (APP) and §Job + §Flow Graph (surface files);
@@ -2332,6 +2373,8 @@ TASK
    Hard constraints in every impl agent subgraph:
    - No agent uses worktree isolation — all impl agents run directly in PROJECT_REPO
    - No agent writes outside PROJECT_REPO
+   - No agent asks the user anything, reads or transports secret values, or runs an action REPO_POLICY
+     forbids; such an action becomes a DEFERRAL block
    - No agent modifies any designs/*.md, any researchs/*.md, or ./.harness/scratchs/
    - No agent creates work units not derived from DESIGN_APP_FILE or any SURFACE_FILE
    - FR_UNCOVERED must be empty in the completion block
@@ -2390,7 +2433,7 @@ After STATUS=done — coordinator opens OUTPUT_FILE and verifies (in order):
 6. Model dispatch block present — scan for default model assignments (impl agents, gate nodes, commit)
 7. CODE_PHILOSOPHY block present verbatim in State Model of OUTPUT_FILE
 8. TEST_PHILOSOPHY block present verbatim in State Model of OUTPUT_FILE
-9. Every impl agent subgraph envelope contains CODE_PHILOSOPHY, TEST_PHILOSOPHY, and INVARIANT_SLUGS fields
+9. Every impl agent subgraph envelope contains CODE_PHILOSOPHY, TEST_PHILOSOPHY, INVARIANT_SLUGS, COMPLEXITY_BUDGET, SECURITY_REQUIREMENTS, and REPO_POLICY fields
 10. No back-reference — grep OUTPUT_FILE for the strings "designs/", "researchs/",
     "scratchs/", "./.harness/ref/" appearing inside any ═══ impl agent subgraph
     envelope block; any match → re-spawn WAVE 8
@@ -2558,7 +2601,7 @@ RETURN:
 12. Only REVIEW writes to ./.harness/REVIEW.md.
 12a. Only IMPL_PROMPT writes to ./.harness/impl/.<NN>.impl.
 13. Only FVi and AFVi agents write to ./.harness/provness/.
-14. The coordinator writes no files except STATE_FILE, SETTINGS_FILE (Step 0- bootstrap), and directory-append operations.
+14. The coordinator writes no files except STATE_FILE, SETTINGS_FILE (Step 0- migration/bootstrap), and directory-append operations.
 15. All RSi and DESIGN_SYNTH second failures halt the entire graph.
 15a. REVIEW second failure (after WAVE 6 re-run) halts the entire graph.
 15b. APP_FV_COUNT and P_NODE_COUNT are unknown until all Si return — coordinator must not pre-assign slugs.
@@ -2593,18 +2636,19 @@ RETURN:
     verbatim CODE_PHILOSOPHY and TEST_PHILOSOPHY, agent subgraph envelopes (═══ borders),
     gate nodes (GATE_PERF, GATE_BEH, GATE_RUN, GATE_SEC, GATE_DOCS), commit nodes,
     and a completion block. A markdown checklist or phase document is the wrong output.
+29. Complexity Budget is always written at plan time (REVIEW BLOCKER if missing). With complexity_gate=true, GATE_COMPLEXITY also measures growth at N and 10N in the final wave.
 
 ---
 
 ## File Layout
 
 All roots below are resolved from the per-project settings file (Step 0-) —
-$META7_SETTINGS or ./.harness/settings.json. Shown at their defaults; legacy
-adoptions may pin any root elsewhere (the Step 0- proposal seeds from probed legacy dirs).
+$META7_SETTINGS or ./.harness/meta7.yaml. Shown at their defaults; legacy
+adoptions may pin any root elsewhere (Step 0- seeds them from probed legacy dirs).
 
 ```
 ./.harness/
-  settings.json                 ← per-project root overrides (created via Step 0- offer if absent)
+  meta7.yaml                    ← per-project roots + gates (migrated or auto-created by Step 0-)
   ctx/                          ← run inputs, dotfiles keyed by project name
     .<CURRENT_NAME>.context     ← project-specific CONTEXT block (read by Step 0b)
     .<CURRENT_NAME>.prompt      ← thin project entry (sets CONTEXT_PATH + META reference)
@@ -2721,3 +2765,23 @@ are NOT repetition — write both.
 **No test for the test's sake.**
 A test that verifies a constructor returns a struct, a derive exists, or a field
 has its constructed value has zero behavioral content. Delete it.
+
+## Verification gates
+
+```ts
+verified(phase) = gates(phase) → all(pass) → done(phase)
+gates(phase)    = [ verify(before) , apply_readonly_check , verify(after) ]
+verify(t)       = observe(t) → compare(observed, expected) → pass | fail
+fail(g)         = halt(phase) → report(g, observed, expected)
+done(phase)     = coordinator(verified)        // never executor self-declared
+handoff(a)      = human(a) → gate(verify_after(a))   // agents never mutate live targets
+authored(impl)  = ∀ outcome o: ∃ gate g: can_fail(g, o)
+```
+
+Observer per domain:
+- backend / frontend / desktop: `build ∘ lint ∘ test ∘ run_probe`
+- infra: `validate ∘ plan|check(target)`
+- devops: `parse(rendered_config@target) → probe(from_outside)`
+- security: `probe(control, attacker_side) → expect(deny)`
+
+

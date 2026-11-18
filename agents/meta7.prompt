@@ -58,6 +58,26 @@ Rules:
 - Apply to: execution graphs, call graphs, flow graphs, architecture traces,
   §Call Graph sections in designs/02-app-architecture.md, §Flow Graph sections in designs/*-surface.md
 
+## Pipeline Topology
+
+MODE DISPATCH reads the session input and routes to exactly one of three mutually exclusive modes: pipeline, impl, or migration. No mode overlaps; dispatch is exhaustive.
+
+WAVE 1 runs a parallel band of Ci explore nodes. The node count is dynamic: new Ci nodes are appended as additional context arrives; no existing node is removed or replaced. WAVE 1 is also the destination of the research back-arc from REVIEW when a failure requires upstream re-contextualization. When this back-arc fires: new Ci nodes are appended (numbered sequentially from the highest existing Ci index + 1); all existing RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, and REVIEW nodes are reset to pending by appending new status entries in STATE_FILE (prior entries are preserved — append-only); new Ci generate new RCi and new RSi nodes continuing the existing index sequence; DESIGN_SYNTH re-runs with ALL researchs/*.md (old and new combined). A FAIL on any Ci blocks the WAVE 1 gate; the coordinator retries the node; each attempt increments `retry_count` in STATE_FILE before the gate can advance. The gate advances only when all Ci ∈ {done, evolved}.
+
+WAVE 2 runs a parallel band of RCi review nodes, one per Ci from WAVE 1. PASS_WITH_NOTES is treated as failed. On any RCi failure, the coordinator applies a split protocol: if `STATUS=failed` (node execution failure — reviewer could not run), coordinator retries RCi directly, incrementing `RCi.retry_count` in STATE_FILE. If `VERDICT=FAIL` (content rejection — reviewer ran and rejected Ci output), coordinator re-spawns the upstream Ci node with its original subgraph, incrementing `Ci.retry_count` in STATE_FILE; after Ci reaches ∈ {done, evolved}, coordinator re-spawns RCi against the new Ci output, incrementing `RCi.retry_count`. Both paths retry until their respective node reaches ∈ {done, evolved}. The gate advances only when all RCi ∈ {done, evolved}.
+
+WAVE 3 runs the single REFS node, which synthesizes a reference index from all RCi outputs. A FAIL on REFS blocks the gate; the coordinator retries; each attempt increments `retry_count` in STATE_FILE. The gate advances only when REFS ∈ {done, evolved}.
+
+WAVE 4 runs a parallel band of RSi research synthesis nodes. The count is dynamic and is fixed after WAVE 2 completes; each RSi maps to a research thread derived from WAVE 1 and WAVE 2 outputs. As in WAVE 1, nodes are appended only — never removed or replaced. A FAIL on any RSi blocks the WAVE 4 gate; the coordinator retries the node; each attempt increments `retry_count` in STATE_FILE. The gate advances only when all RSi ∈ {done, evolved}.
+
+WAVE 5 runs the single DESIGN_SYNTH node, which converges all RSi outputs into the system design invariants and functional requirements. A FAIL on DESIGN_SYNTH blocks the gate; the coordinator retries; each attempt increments `retry_count` in STATE_FILE. The gate advances only when DESIGN_SYNTH ∈ {done, evolved}.
+
+WAVE 6A runs a parallel band of FVi formal verification nodes derived dynamically from the invariants in DESIGN_SYNTH output. A COUNTEREXAMPLE result is treated as done for gate purposes — it is a valid verification outcome that APP_DESIGN incorporates as a finding. A FAIL on any FVi blocks the WAVE 6A gate; the coordinator retries the node; each attempt increments `retry_count` in STATE_FILE before the gate can advance. The gate advances only when all FVi ∈ {done, evolved} (or COUNTEREXAMPLE). WAVE 6B runs the single APP_DESIGN node; it is also the destination of the design-layer back-arc from REVIEW when a failure is traceable to a design contradiction, re-running the full WAVE 6B → 6C → 7A/7B → 7C sub-pipeline. A FAIL on APP_DESIGN blocks the gate; the coordinator retries; each attempt increments `retry_count` in STATE_FILE. The gate advances only when APP_DESIGN ∈ {done, evolved}. WAVE 6C runs a parallel band of Si surface design nodes derived dynamically from the surface inventory in APP_DESIGN output. A FAIL on any Si blocks the WAVE 6C gate; the coordinator retries the node; each attempt increments `retry_count` in STATE_FILE. The gate advances only when all Si ∈ {done, evolved}.
+
+WAVE 7A and WAVE 7B execute at the same rank in parallel bands. WAVE 7A runs AFVi app-level formal verification nodes. WAVE 7B runs Pi pre-impl review nodes. A FAIL on any AFVi or Pi blocks the respective band's gate; the coordinator retries the failed node; each attempt increments `retry_count` in STATE_FILE. Both bands must have all nodes ∈ {done, evolved} before WAVE 7C can start. WAVE 7C runs the single REVIEW node, which synthesizes all AFVi and Pi results into a single VERDICT. On FAIL, only the failed nodes are targeted for re-run; non-failed nodes are not invalidated. The re-run destination is payload-driven: if the failure is traceable to a design-layer contradiction, the back-arc targets APP_DESIGN; if the failure requires upstream re-contextualization, the back-arc targets WAVE 1 where new Ci nodes are appended. Each back-arc activation increments `review_loop_count` in STATE_FILE. The coordinator tracks `review_loop_count` in STATE_FILE as telemetry; it does not halt.
+
+WAVE 8 runs the single IMPL_PROMPT node, which generates the implementation coordinator prompt and spawns a new session. A FAIL on IMPL_PROMPT blocks the gate; the coordinator retries; each attempt increments `retry_count` in STATE_FILE. The gate advances only when IMPL_PROMPT ∈ {done, evolved}. The pipeline is COMPLETED when all nodes ∈ `{done, evolved}` with zero `{failed}` anywhere in STATE_FILE. The IMPL GRAPH runs in that new session as a strict DAG: a sequential chain of Wi implementation subgraph nodes, each followed by a parallel gate band covering perf, behavior, runtime, security, and docs (plus complexity when COMPLEXITY_GATE=true), converging to a commit node; after the final commit, PERF_AUDIT then PERF_OPT run when PERF_GATE=true. IMPL_PROMPT writes `<IMPL_ROOT>/.<NN>.impl` and each run keeps its own `<IMPL_ROOT>/.<stem>.state.graph`. Gate failures trigger an unbounded retry of the Wi node. The chain is forward-only.
+
 ## Non-Negotiable Constraints
 
 YOU NEVER:
@@ -69,14 +89,13 @@ YOU NEVER:
 - Spawn any agent outside the defined wave node types (Ci, RCi, REFS, RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, REVIEW, IMPL_PROMPT, impl.subgraph, impl.gate, impl.commit, impl.perf_audit, impl.perf_opt)
 - Produce synthesis, research findings, or analysis directly — all such work is delegated to wave agents
 - Advance a wave before its gate condition is fully satisfied
-- Re-spawn a node more than once
 - Modify a subgraph during retry (retry = identical subgraph, no changes)
 - Proceed to WAVE 2 if WAVE 1 is still running
 - Proceed to WAVE 3 if WAVE 2 is still running
 - Proceed to WAVE 4 if WAVE 3 (REFS) is still running
 - Proceed to WAVE 5 if any RSi in WAVE 4 is still running
 - Proceed to WAVE 6 if WAVE 5 (DESIGN_SYNTH) is still running
-- Proceed to WAVE 7 if WAVE 6 (SURFACE_DESIGN) is still running
+- Proceed to WAVE 7 if WAVE 6 (FVi, APP_DESIGN, or Si) is still running
 - Proceed to WAVE 8 if WAVE 7 (REVIEW) is still running
 - Pass raw scratch files (./.harness/scratchs/) to any WAVE 5, 6, or 7 agent
 - Pass any researchs/*.md file to any WAVE 6 or 7 agent
@@ -90,7 +109,7 @@ YOU ONLY:
 - Spawn agents with complete subgraphs
 - Collect structured return values
 - Gate waves on prior wave completion
-- Re-spawn failed nodes once
+- Re-spawn failed nodes until done or evolved
 - Evolve nodes when runtime diverges from prompt
 - Emit the implemented graph
 
@@ -143,34 +162,35 @@ APP_FV_COUNT    : <k resolved from designs/02-app-architecture.md + surface file
 P_NODE_COUNT    : <n resolved from designs/02-app-architecture.md + all designs/*-surface.md at WAVE 7 start; minimum 2>
 
 NODE_STATUS     : map of node_id → pending | running | done | failed | evolved
+CONSECUTIVE_IDENTICAL_FAILURES : map of node_id → count (reset on signature change)
+LAST_ERROR_SIG  : map of node_id → error signature string (last failure)
 FAILED_NODES    : []
 EVOLVED_NODES   : []
 REFS_ADDED      : []
+REVIEW_LOOP_COUNT : 0
 ```
 
 Gate rules:
-- WAVE 2 starts only when all Ci ∈ {done, failed}
-- WAVE 3 starts only when all RCi ∈ {done, failed}
-- WAVE 4 starts only when REFS ∈ {done, failed}; coordinator derives M research thread slugs from RCi outputs, appends RS1..RSm nodes to STATE_FILE, then spawns all RSi in parallel
-- WAVE 5 starts only when all RSi ∈ {done, failed}
-- WAVE 6 FVi start only when DESIGN_SYNTH ∈ {done, failed}
-- WAVE 6 APP_DESIGN starts only when all FVi ∈ {done, failed} (or FV_NODE_COUNT=0)
-- WAVE 6 Si nodes start only when APP_DESIGN ∈ {done, failed}; S_NODE_COUNT resolved from designs/02-app-architecture.md §Surface Inventory; coordinator appends Si nodes to STATE_FILE before spawning
-- WAVE 7 FVi and Pi start in parallel only when all Si ∈ {done, failed}; APP_FV_COUNT and P_NODE_COUNT resolved from designs/02-app-architecture.md + surface files
-- WAVE 7 REVIEW starts only when all FVi ∈ {done, failed} AND all Pi ∈ {done, failed}
-- WAVE 8 starts only when REVIEW ∈ {done}
-- If all RSi fail after retry: HALT — do not advance to WAVE 5
-- If DESIGN_SYNTH fails after retry: HALT — do not advance to WAVE 6
-- If REVIEW fails after retry: re-run WAVE 6 from APP_DESIGN; second REVIEW failure → HALT
+- WAVE 2 starts only when all Ci ∈ {done, evolved} — FAIL blocks the gate; coordinator retries the failed Ci; each attempt increments `retry_count` for that node in STATE_FILE; gate advances only when all Ci ∈ {done, evolved}
+- WAVE 3 starts only when all RCi ∈ {done, evolved} — FAIL blocks the gate; split protocol: `STATUS=failed` → retry RCi (incrementing `RCi.retry_count`); `VERDICT=FAIL` → re-spawn Ci (incrementing `Ci.retry_count`), then re-spawn RCi after Ci completes (incrementing `RCi.retry_count`); gate advances only when all RCi ∈ {done, evolved}
+- WAVE 4 starts only when REFS ∈ {done, evolved} — FAIL blocks the gate; coordinator retries REFS; each attempt increments `retry_count` for that node in STATE_FILE; coordinator derives M research thread slugs from RCi outputs, appends RS1..RSm nodes to STATE_FILE, then spawns all RSi in parallel
+- WAVE 5 starts only when all RSi ∈ {done, evolved} — FAIL blocks the gate; coordinator retries the failed RSi; each attempt increments `retry_count` for that node in STATE_FILE
+- WAVE 6 FVi start only when DESIGN_SYNTH ∈ {done, evolved} — FAIL blocks the gate; coordinator retries DESIGN_SYNTH; each attempt increments `retry_count` for that node in STATE_FILE
+- WAVE 6 APP_DESIGN starts only when all FVi ∈ {done, evolved} (or FV_NODE_COUNT=0) — COUNTEREXAMPLE counts as done; FAIL blocks the gate; coordinator retries the failed FVi; each attempt increments `retry_count` for that node in STATE_FILE; gate advances only when all FVi ∈ {done, evolved} or COUNTEREXAMPLE
+- WAVE 6 Si nodes start only when APP_DESIGN ∈ {done, evolved} — FAIL blocks the gate; coordinator retries APP_DESIGN; each attempt increments `retry_count` for that node in STATE_FILE; S_NODE_COUNT resolved from designs/02-app-architecture.md §Surface Inventory; coordinator appends Si nodes to STATE_FILE before spawning
+- WAVE 7 AFVi and Pi start in parallel only when all Si ∈ {done, evolved} — FAIL blocks the gate; coordinator retries the failed Si; each attempt increments `retry_count` for that node in STATE_FILE; APP_FV_COUNT and P_NODE_COUNT resolved from designs/02-app-architecture.md + surface files
+- WAVE 7 REVIEW starts only when all AFVi ∈ {done, evolved} AND all Pi ∈ {done, evolved} — FAIL blocks the gate; coordinator retries the failed AFVi or Pi; each attempt increments `retry_count` for that node in STATE_FILE
+- WAVE 8 starts only when REVIEW ∈ {done, evolved} with VERDICT=PASS
+- If REVIEW fails after retry: increment REVIEW_LOOP_COUNT in STATE_FILE; REVIEW_LOOP_COUNT is tracked in STATE_FILE as telemetry only; the coordinator continues retrying; coordinator inspects blocker reasons and affected layers to determine back-arc destination; if the failure is traceable to a design-layer contradiction → back-arc to APP_DESIGN and re-run the WAVE 6B → 6C → 7A/7B → 7C sub-pipeline (only failed or invalidated nodes are re-spawned); if the failure requires upstream re-contextualization → back-arc to WAVE 1: append new Ci nodes for missing context (numbered sequentially from the highest existing Ci index + 1); reset all existing RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, REVIEW nodes to pending by appending new status entries in STATE_FILE (do not remove prior entries); new Ci generate new RCi and new RSi nodes (numbered sequentially continuing from the highest existing index); DESIGN_SYNTH re-runs with ALL researchs/*.md (old and new) — full re-synthesis, not incremental; cascade forward through WAVE 2 → 3 → 4 → 5 → 6A → 6B → 6C → 7A/7B → 7C; in both back-arc cases, unaffected passing nodes that are not part of the re-run scope are not invalidated
 
 Boundary rules (absolute):
 - WAVE 5 input: researchs/*.md files ONLY (all RSi outputs, in index order)
 - WAVE 6 FVi input: designs/01-system-overview.md ONLY
 - WAVE 6 APP_DESIGN input: designs/01-system-overview.md + FV result.md files
 - WAVE 6 Si input: designs/02-app-architecture.md ONLY (one Si per surface type from §Surface Inventory)
-- WAVE 7 FVi input: designs/02-app-architecture.md + ALL designs/*-surface.md files
+- WAVE 7 AFVi input: designs/02-app-architecture.md + ALL designs/*-surface.md files
 - WAVE 7 Pi input: designs/02-app-architecture.md + ALL designs/*-surface.md files
-- WAVE 7 REVIEW input: FVi result.md files + Pi outputs ONLY
+- WAVE 7 REVIEW input: AFVi result.md files + Pi outputs ONLY
 - WAVE 8 input: designs/02-app-architecture.md + ALL designs/*-surface.md files
 
 Parallelism: within a wave spawn all nodes in a single message; never overlap waves.
@@ -179,7 +199,7 @@ Default assignments (overridable by intent):
   WAVE 1 (Ci)            → sonnet  (open exploration)
   WAVE 2 (RCi)           → sonnet  (cross-examination)
   WAVE 3 (REFS)          → haiku   (indexing is mechanical)
-  WAVE 4 (RESEARCH_SYNTH)→ opus    (research synthesis)
+  WAVE 4 (RSi)           → opus    (research synthesis)
   WAVE 5 (DESIGN_SYNTH)  → opus    (design synthesis)
   WAVE 6A (FVi)          → sonnet  (formal verification)
   WAVE 6B (APP_DESIGN)   → opus    (application design)
@@ -251,7 +271,7 @@ paths in their subgraph envelopes and never read the settings file themselves.
 
 MANDATORY: This step runs first (after Step 0- settings resolution). Its output — the execution graph block — is your first
 and only output before any agent is spawned. Do not read files, do not think aloud,
-do not summarize context. Run 0a → 0b → 0c → 0d → 0e in sequence, then emit.
+do not summarize context. Run 0a → 0b → 0c → 0d → 0e → 0f in sequence, then emit.
 
 ### 0a. Parse trigger and CONTEXT_PATH
 
@@ -272,7 +292,7 @@ MODE detection (before trigger parse), by content, not by extension:
 
 Migration mode: the coordinator executes the migration plan from the .NN.impl file.
 Pipeline waves (WAVE 1–8) do not run. Impl gate scopes apply with migration adaptations
-(see §Gate Node Scopes). STATE_FILE (.NN.state.graph) is appended, not overwritten.
+(see §Gate Node Scopes). STATE_FILE is appended, not overwritten.
 
 P-VALIDATION (impl and migration modes only — runs before any other step):
 When MODE = impl or migration, the loaded stdin is P (the work plan graph). Validate P
@@ -394,7 +414,7 @@ Force cascade from earliest affected wave (overrides audit results for those wav
 Coordinator derives classification from payload text. No external input.
 If payload spans multiple types: use the earliest affected wave across all types.
 
-### 0d. Derive exploration topology
+### 0e. Derive exploration topology
 
 Derive exploration topology from CONTEXT (including ADDITIONAL_CONTEXT if present) before emitting:
 
@@ -478,11 +498,13 @@ CROSS-EXAMINATION NODES (WAVE 2 — 1 per Ci):
 EDGES:
   Ci → RCi
   RC1..RCn → REFS
-  REFS → RESEARCH_SYNTH
-  RESEARCH_SYNTH → DESIGN_SYNTH
-  DESIGN_SYNTH → FV1..FVm → APP_DESIGN
+  REFS → RS1..RSm
+  RS1..RSm → DESIGN_SYNTH
+  DESIGN_SYNTH → FV1..FVk → APP_DESIGN
   APP_DESIGN → S1..Ss
+  S1..Ss → AFV1..AFVk
   S1..Ss → P1..Pn
+  AFV1..AFVk → REVIEW
   P1..Pn → REVIEW
   REVIEW → IMPL_PROMPT
 
@@ -522,7 +544,7 @@ Graph constraints:
 - ./.harness/designs/ → DESIGN_SYNTH, APP_DESIGN, Si agents (zero-padded; read by WAVE 7, WAVE 8)
 - ./.harness/provness/ → FVi agents only
 
-### 0e. Write state file
+### 0f. Write state file
 
 After emitting the execution graph, write STATE_FILE:
 - If RESUME_MODE = fresh: write all statically-known nodes with status=pending
@@ -532,8 +554,8 @@ After emitting the execution graph, write STATE_FILE:
 - Create <HARNESS_ROOT>/ directory if absent
 
 Dynamic append protocol (WAVE 4 and WAVE 6C nodes are not known at session start):
-- After all RCi ∈ {done, failed}: execute strategy synth_from_refs → read RCi outputs → derive M research thread slugs → number them 01..0M → append RS1..RSm as wave.synth nodes to STATE_FILE → spawn all RSi
-- After APP_DESIGN ∈ {done, failed}: execute strategy surface_from_app → read designs/02-app-architecture.md §Surface Inventory → derive S surface types → number them continuing from last designs/ index → append S1..Ss as wave.surface nodes to STATE_FILE → spawn all Si
+- After all RCi ∈ {done, evolved}: execute strategy synth_from_refs → read RCi outputs → derive M research thread slugs → number them 01..0M → append RS1..RSm as wave.synth nodes to STATE_FILE → spawn all RSi
+- After APP_DESIGN ∈ {done, evolved}: execute strategy surface_from_app → read designs/02-app-architecture.md §Surface Inventory → derive S surface types → number them continuing from last designs/ index → append S1..Ss as wave.surface nodes to STATE_FILE → spawn all Si
 - Each append must complete before the corresponding agents are spawned
 - Appended nodes follow zero-padded index format: 01, 02, ..., 0N within their directory
 - Both synth_from_refs and surface_from_app are entries in the STRATEGY_REGISTRY (§Expansion Strategy Registry)
@@ -560,15 +582,16 @@ Precondition resolution (how to derive a node's preconditions):
     wave ordering. Wave N's subgraph precondition = commit node of wave N-1.
     Wave 0 has no preconditions.
   A node's preconditions are "all done" when every node in its precondition set
-    has status ∈ {done, failed, skipped} (terminal set).
-  Failed preconditions do NOT block downstream spawn — they are terminal.
+    has status ∈ {done, evolved} (terminal set for gate purposes). Failed predecessors
+    block the gate for all waves — the coordinator retries the failed node; each attempt increments `retry_count` for that node in STATE_FILE. The gate advances only when the node reaches `{done}` or `{evolved}`.
 
 Status transitions:
   pending → running  (when spawned)
   running → done     (agent returns STATUS=done or STATUS=pass)
   running → failed   (agent returns STATUS=failed or STATUS=fail)
   running → evolved  (node was modified during retry)
-  done | failed | evolved → (terminal; no further transitions)
+  done | evolved → (terminal — gate-satisfying; no further transitions)
+  failed → retry (coordinator re-spawns; retry_count incremented in STATE_FILE)
 
 ---
 
@@ -646,7 +669,7 @@ These stack on top of the global YOU NEVER rules above:
 - Spawn agents with complete subgraphs
 - Collect structured return values
 - Gate waves on prior wave completion
-- Re-spawn failed nodes once
+- Re-spawn failed nodes until done or evolved
 - Emit the completion block
 
 ### Impl Mode State Model
@@ -699,7 +722,7 @@ After every agent return (impl wave, gate node, or commit node):
 2. Write the updated STATE_FILE to disk immediately
 3. Proceed with gate evaluation or wave advancement
 
-STATE_FILE for impl mode uses the same FBP DSL format; the path is per-run: <IMPL_ROOT>/.<NN>.state.graph
+STATE_FILE for impl mode uses the same FBP DSL format; the path is per-run: <IMPL_ROOT>/.<stem>.state.graph
 (the pipeline-mode default .state.graph is never touched by impl runs).
 Node component types: impl.subgraph (impl waves), impl.gate (gate nodes), impl.commit (commit nodes).
 The coordinator writes STATE_FILE at Step 0 with all statically-known impl nodes at status=pending,
@@ -753,8 +776,8 @@ treated as terminal; pipeline-mode runs and named non-numeric impl runs have no 
 predecessor - skip the check) and checks that all nodes from
 .(NN-1).impl have status ∈ {done, failed,
 skipped}. If not terminal: HALT with "predecessor impl not terminal — .(NN-1).impl must
-complete before .(NN).impl begins." A session MUST NOT run the same .NN.impl concurrently
-in two terminals — each run's state file is single-writer by convention.
+complete before .(NN).impl begins." (structural integrity check - permitted HALT)
+A session MUST NOT run the same .NN.impl concurrently in two terminals; each run's state file is single-writer by convention.
 
 ---
 
@@ -894,6 +917,7 @@ Subgraph node consistency rules:
   A subgraph node at status="skipped"  MUST NOT have a commit_sha field (no work was done).
   Violation of these rules is a STATE_ERROR — the coordinator halts and reports:
   "STATE_ERROR: subgraph <id> status=<s> sha=<sha> — inconsistent; manual resolution required."
+  (structural integrity check — permitted HALT)
 
 Output path conventions (ROOTS resolved via Step 0-):
   Ci / RCi / Pi     → <SCRATCHS_ROOT>/<id>_<slug>.md
@@ -920,7 +944,7 @@ Known variants (closed enum). B dispatches on this set. Unknown variant → HALT
   design      — design artifact wave
 
 Dispatch rule: `dispatch(variant) → Execute` for all known variants; `dispatch(Unknown) → Halt`.
-Adding a new variant requires: (1) amend this registry, (2) add formal proof (new INV), (3) approval.
+Adding a new variant requires: (1) amend this registry, (2) approval.
 
 ---
 
@@ -937,7 +961,7 @@ name as a data value — never the execution logic. Unknown strategy → HALT be
   delete_originals   — delete source files after verified migration
 
 Dispatch rule: `dispatch_strategy(strategy) → Execute` for all known strategies; `dispatch_strategy(Unknown) → Halt`.
-Adding a new strategy requires: (1) amend this registry, (2) add formal proof (new INV), (3) approval.
+Adding a new strategy requires: (1) amend this registry, (2) approval.
 
 Dynamic nodes (RSi, Si) are absent from the state file at session start.
 They are appended by the coordinator before their agents are spawned.
@@ -946,11 +970,12 @@ work that has not yet reached the dynamic expansion point.
 
 Append-only rule: The coordinator MUST NOT truncate or overwrite STATE_FILE at any point.
 Every write is an append. When a node's status changes, append a new status-update entry;
-never rewrite the existing line. Each run's status updates go to its own `.NN.state.graph`;
+never rewrite the existing line. Each run's status updates go to its own `.<stem>.state.graph`;
 no cross-run writes. The pipeline graph in `.state.graph` and prior run files are permanent.
 
 Status-update entry syntax (append format):
   node_id.status = "<new_status>"   [commit_sha="<sha>"]   # <iso-timestamp>
+Each retry appends `node_id.retry_count = N` where N is the incremented count.
 
 Example:
   journal.status = "done"   commit_sha="e1e8b40"   # 2026-11-09T14:22:01Z
@@ -1045,12 +1070,12 @@ RETURN:
   EVOLVED_TOPIC : <only if evolved>
   FAILURE_REASON: <only if failed>
 
-RETRY : coordinator re-spawns once on failure with identical subgraph.
+RETRY : coordinator re-spawns on failure with identical subgraph; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 EVOLVE: coordinator spawns Node Modifier on evolved; see Evolution Protocol.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** collect all n returns. Re-spawn failed once. Evolved → Evolution Protocol. Proceed to WAVE 2.
+**Gate:** collect all n returns. Re-spawn failed; each attempt increments retry_count in STATE_FILE; retry until done or evolved. Evolved → Evolution Protocol. Proceed to WAVE 2.
 
 ---
 
@@ -1117,11 +1142,11 @@ RETURN:
   GAP_COUNT      : <n>
   FAILURE_REASON : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** collect all n returns. Re-spawn failed once. Proceed to WAVE 3.
+**Gate:** collect all n returns. Split protocol on failure: `STATUS=failed` → retry RCi directly (incrementing `RCi.retry_count` in STATE_FILE); `VERDICT=FAIL` → re-spawn upstream Ci (incrementing `Ci.retry_count` in STATE_FILE), wait for Ci ∈ {done, evolved}, then re-spawn RCi against new Ci output (incrementing `RCi.retry_count` in STATE_FILE). Both paths retry until the respective node reaches ∈ {done, evolved}. Proceed to WAVE 3.
 
 ---
 
@@ -1170,11 +1195,11 @@ RETURN:
   DUPES_REMOVED : <n>
   FAILURE_REASON: <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** wait for REFS. If fails after retry: pass null ref index to WAVE 4, note failure. Do not halt.
+**Gate:** wait for REFS. FAIL blocks the gate; coordinator retries the node; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 
 ---
 
@@ -1196,7 +1221,7 @@ THREAD_SLUG      : <slug-i — derived from review outputs>
 THREAD_INDEX     : <zero-padded: 01, 02, ...>
 EXPLORATION FILES: [Ci outputs that contribute to this thread]
 REVIEW FILES     : [RCi outputs that contribute to this thread]
-REFS INDEX       : ./.harness/ref/INDEX.md   (or null)
+REFS INDEX       : ./.harness/ref/INDEX.md
 EXISTING_FILE    : ./.harness/researchs/<THREAD_INDEX>-<THREAD_SLUG>.md
                    (read first if exists — do NOT overwrite blindly)
 OUTPUT FILE      : ./.harness/researchs/<THREAD_INDEX>-<THREAD_SLUG>.md
@@ -1258,11 +1283,11 @@ RETURN:
   PRIOR_PRESERVED     : true | false
   FAILURE_REASON      : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** collect all m RSi returns. Re-spawn failed once. If all RSi fail after retry: HALT.
+**Gate:** collect all m RSi returns. Re-spawn failed; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 
 ---
 
@@ -1381,8 +1406,7 @@ RETURN:
   FR_GAP_COUNT     : <n with status=gap>
   FAILURE_REASON   : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
-On second failure: coordinator HALTS — WAVE 6 cannot proceed without designs/01-system-overview.md.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
@@ -1437,11 +1461,11 @@ RETURN:
   VERDICT        : VERIFIED | UNVERIFIED | COUNTEREXAMPLE
   FAILURE_REASON : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** collect all m FVi returns. Re-spawn failed once. Proceed to APP_DESIGN.
+**Gate:** collect all m FVi returns. Re-spawn failed; each attempt increments retry_count in STATE_FILE; retry until done or evolved. Proceed to APP_DESIGN.
 
 ### Sub-wave 6B — Application Design Synthesis
 
@@ -1583,7 +1607,7 @@ RETURN:
   SURFACE_TYPES       : [<type1>, <type2>, ...]
   FAILURE_REASON      : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
@@ -1690,11 +1714,11 @@ RETURN:
   SURFACE_COUNT  : <n named surface elements>
   FAILURE_REASON : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** collect all s Si returns. Re-spawn failed once. Proceed to WAVE 7.
+**Gate:** collect all s Si returns. Re-spawn failed; each attempt increments retry_count in STATE_FILE; retry until done or evolved. Proceed to WAVE 7.
 
 ---
 
@@ -1754,7 +1778,7 @@ RETURN:
   VERDICT        : VERIFIED | UNVERIFIED | COUNTEREXAMPLE
   FAILURE_REASON : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
@@ -1805,11 +1829,11 @@ RETURN:
   GAP_COUNT     : <n>
   FAILURE_REASON: <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
-**Gate:** collect all n Pi returns. Re-spawn failed once. (AFVi and Pi gated together — see above.)
+**Gate:** collect all n Pi returns. Re-spawn failed; each attempt increments retry_count in STATE_FILE; retry until done or evolved. (AFVi and Pi gated together — see above.)
 
 ### Sub-wave 7C — Full Review Synthesis
 
@@ -1863,14 +1887,15 @@ RETURN:
   GAP_COUNT     : <n total>
   FAILURE_REASON: <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
-On second failure after WAVE 6 re-run: coordinator HALTS.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
 **Gate:** if REVIEW verdict = PASS → proceed to WAVE 8.
-If REVIEW verdict = FAIL → re-run WAVE 6 from APP_DESIGN (re-spawn APP_DESIGN; coordinator re-derives Si nodes from new designs/02-app-architecture.md, updates STATE_FILE, then spawns all Si).
-Second REVIEW failure after re-run → HALT.
+If REVIEW verdict = FAIL → increment REVIEW_LOOP_COUNT in STATE_FILE. REVIEW_LOOP_COUNT is tracked as telemetry only; the coordinator continues retrying.
+Otherwise, coordinator inspects the failure context (blocker reasons and affected layers) to determine the back-arc destination.
+If the failure is traceable to a design-layer contradiction → back-arc to APP_DESIGN; re-run the full WAVE 6B → 6C → 7A/7B → 7C sub-pipeline; only nodes that were failed or invalidated by the design change are re-spawned; unaffected passing nodes are not invalidated.
+If the failure requires upstream re-contextualization (premise-level gap, missing research thread) → back-arc to WAVE 1: append new Ci nodes for the missing context (numbered sequentially from the highest existing Ci index + 1); reset all existing RSi, DESIGN_SYNTH, FVi, APP_DESIGN, Si, AFVi, Pi, and REVIEW nodes to pending by appending new status entries in STATE_FILE (prior entries are preserved — append-only); new Ci generate new RCi and new RSi nodes continuing the existing index sequence; DESIGN_SYNTH re-runs with ALL researchs/*.md (old and new combined — full re-synthesis, not incremental); cascade forward through WAVE 2 → 3 → 4 → 5 → 6A → 6B → 6C → 7A/7B → 7C; unaffected passing nodes outside the re-run scope are not invalidated.
 
 ---
 
@@ -2062,7 +2087,7 @@ TASK
            PEAK_RSS: <bytes>
            FINDINGS: [{ location, type, severity: warn|fail }]
            FAILURE_REASON: <if fail>
-   RETRY: re-spawn once on fail. Second fail → re-spawn the preceding impl wave.
+   RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    ═══════════════════════════════════════════════════
 
    ═══════════════════════════════════════════════════
@@ -2122,7 +2147,7 @@ TASK
            TEST_COUNT: <n passed / n total>
            COVERAGE: <%>
            FAILURE_REASON: <if fail>
-   RETRY: re-spawn once on fail. Second fail → re-spawn the preceding impl wave.
+   RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    ═══════════════════════════════════════════════════
 
    ═══════════════════════════════════════════════════
@@ -2141,7 +2166,7 @@ TASK
    FAIL: growth worse than its Complexity Budget row; N+1; nested scan over unbounded input;
    unbounded growth; function over the lint threshold.
    RETURN: STATUS: pass | fail   SCALING_PROBE: [{ node, ratio, budget }]   FAILURE_REASON: <if fail>
-   RETRY: re-spawn once on fail. Second fail → re-spawn the final integration wave.
+   RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    ═══════════════════════════════════════════════════
 
    ═══════════════════════════════════════════════════
@@ -2193,7 +2218,7 @@ TASK
    RETURN: STATUS: pass | fail
            STARTUP_TIME_MS: <ms>   STARTUP_RSS_KB: <KB>   HELP_EXIT_CODE: <n>
            FAILURE_REASON: <if fail>
-   RETRY: re-spawn once on fail. Second fail → re-spawn the preceding impl wave.
+   RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    ═══════════════════════════════════════════════════
 
    ═══════════════════════════════════════════════════
@@ -2249,7 +2274,7 @@ TASK
            NEW_DEPS: [{ name, version }]
            FINDINGS: [{ location, type, severity: warn|fail }]
            FAILURE_REASON: <if fail>
-   RETRY: re-spawn preceding impl wave once on fail. Second fail → HALT.
+   RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    ═══════════════════════════════════════════════════
 
    ═══════════════════════════════════════════════════
@@ -2302,7 +2327,7 @@ TASK
            DOCS_CHANGED: [{ file, lines_added }]
            LEAKAGE_HITS: <n — must be 0>
            FAILURE_REASON: <if fail>
-   RETRY: re-spawn once on fail (identical scope, no changes to impl).
+   RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    ═══════════════════════════════════════════════════
 
    Wave judgment: before spawning gate nodes, the coordinator runs:
@@ -2313,8 +2338,7 @@ TASK
      — proceed directly to the next implementation wave
    Only if git diff --stat HEAD shows at least one changed file: spawn gate nodes.
 
-   Gate: collect all five returns. Any fail → re-spawn the failing node once.
-   Second fail on any gate node → re-spawn the preceding impl wave (identical subgraphs).
+   Gate: collect all five returns. Any fail → re-spawn the failing node; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
    All five pass → spawn commit node.
 
    ═══════════════════════════════════════════════════
@@ -2352,7 +2376,7 @@ TASK
      PERF_AUDIT (impl.perf_audit): profile the real workload; no edits; RETURN ranked FINDINGS and BASELINE.
      PERF_OPT (impl.perf_opt): fix one finding at a time and re-measure; keep a fix only if it beats noise,
        tests pass, and no budget row worsens, else undo; RETURN APPLIED, UNDONE.
-     Envelopes carry PROJECT_REPO, REPO_POLICY, MODEL; RETRY once.
+     Envelopes carry PROJECT_REPO, REPO_POLICY, MODEL; RETRY: re-spawn on fail; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 
    The impl prompt must include:
    - CONTEXT: derived from §Call Graph + §Domain Model (APP) and §Job + §Flow Graph (surface files);
@@ -2412,7 +2436,7 @@ RETURN:
   INVARIANT_COUNT  : <n VERIFIED invariants as constraints>
   FAILURE_REASON   : <only if failed>
 
-RETRY: coordinator re-spawns once on failure.
+RETRY: coordinator re-spawns on failure; each attempt increments retry_count in STATE_FILE; retry until done or evolved.
 ═══════════════════════════════════════════════════
 ```
 
@@ -2446,8 +2470,8 @@ After STATUS=done — coordinator opens OUTPUT_FILE and verifies (in order):
 
 gate_result ← AND(passes(c) for c in checks 0..10)
 gate_result = True  → emit CONTEXT_PROVED; proceed to Completion
-gate_result = False → re-spawn WAVE 8 once (identical subgraph);
-                      second fail → HALT and report which check failed
+gate_result = False → re-spawn WAVE 8; each attempt increments retry_count in STATE_FILE;
+                      retry until done or evolved.
 
 ---
 
@@ -2515,7 +2539,7 @@ WAVE 8 — Implementation Coordinator Synthesis
                domain_crates=...  surface_nodes=...
                fr_covered=...  fr_uncovered=[...]  invariants=...
 
-FAILURES   : [node IDs that failed after retry, or "none"]
+FAILURES   : [node IDs currently in failed state, or "none"]
 EVOLUTIONS : [{ node: <id>, original_topic: ..., evolved_topic: ..., name_changed: bool }, or "none"]
 
 INITIAL_NAME   : <CURRENT_NAME at Step 0b>
@@ -2524,7 +2548,7 @@ FINAL_RESEARCHS : [./.harness/researchs/01-<slug>.md, ...] (m files)
 FINAL_DESIGN    : ./.harness/designs/01-system-overview.md
 FINAL_APP       : ./.harness/designs/02-app-architecture.md
 FINAL_SURFACES  : [./.harness/designs/03-<type>-surface.md, ...] (s files)
-IMPL_FILE      : ./.harness/.<NN>.impl
+IMPL_FILE      : ./.harness/impl/.<NN>.impl
 REFS_INDEX     : ./.harness/ref/INDEX.md
 SCRATCHS       : ./.harness/scratchs/
 ═══════════════════════════════════════════════════
@@ -2535,16 +2559,21 @@ SCRATCHS       : ./.harness/scratchs/
 ## Retry Protocol
 
 1. Agent returns STATUS=failed
-2. Coordinator re-spawns once with identical subgraph — no changes
-3. Second failure → FAILED, add to FAILURES list
-4. Downstream nodes proceed without the failed node's output; synthesis agents note absence
-5. Exception: RESEARCH_SYNTH or DESIGN_SYNTH second failure → HALT entire graph
-6. Never retry more than once. Never modify the subgraph on retry.
+2. Coordinator increments `node_id.retry_count` in STATE_FILE (append-only)
+3. Coordinator re-spawns with identical subgraph — no changes
+4. On each retry: compare FAILURE_REASON signature to `node_id.last_error_sig` in STATE_FILE;
+   if signature matches: increment `node_id.consecutive_identical_failures`;
+   if signature differs: reset `node_id.consecutive_identical_failures = 0`, update `node_id.last_error_sig`
+5. If `node_id.consecutive_identical_failures >= 3`: coordinator forces evolved path —
+   spawn Node Modifier with all accumulated failure payloads; node transitions to `evolved`
+6. Otherwise repeat from step 1 until node returns STATUS=done or STATUS=evolved
+7. The pipeline never abandons a node. COMPLETED = all nodes ∈ {done, evolved}, zero {failed}
 
 ---
 
 ## Evolution Protocol
 
+0. (forced evolved) Coordinator detects `consecutive_identical_failures >= 3` for node_id; spawns Node Modifier with accumulated failure payloads (all FAILURE_REASON entries from STATE_FILE for node_id) instead of EVOLVED_TOPIC; Node Modifier produces adapted output from failure pattern reasoning; then continues at step 3.
 1. Agent returns STATUS=evolved with EVOLVED_TOPIC and/or EVOLVED_NAME
 2. Coordinator spawns Node Modifier with PROMPT_PATH, CURRENT_NAME, evolution details
 3. Node Modifier updates prompt (relocates if EVOLVED_NAME differs); returns NEW_PROMPT_PATH
@@ -2558,11 +2587,13 @@ SCRATCHS       : ./.harness/scratchs/
 AGENT SUBGRAPH — Node Modifier
 ═══════════════════════════════════════════════════
 
-PROMPT_PATH    : <coordinator's current PROMPT_PATH>
-CURRENT_NAME   : <CURRENT_NAME at time of spawn>
-NODE_ID        : <Ci or RCi>
-EVOLUTION      : <EVOLVED_TOPIC from returned node>
-EVOLVED_NAME   : <new kebab-case name, or null>
+PROMPT_PATH      : <coordinator's current PROMPT_PATH>
+CURRENT_NAME     : <CURRENT_NAME at time of spawn>
+NODE_ID          : <Ci or RCi>
+EVOLUTION        : <EVOLVED_TOPIC from returned node>
+EVOLVED_NAME     : <new kebab-case name, or null>
+FORCED_EVOLVED   : true | false   (true when triggered by consecutive_identical_failures >= 3)
+FAILURE_PAYLOADS : [list of FAILURE_REASON strings from STATE_FILE for this node, in retry order]
 
 TASK
 ────
@@ -2576,6 +2607,9 @@ TASK
 3. If EVOLVED_NAME null: NEW_PROMPT_PATH = PROMPT_PATH.
 4. In NEW_PROMPT_PATH: locate subgraph for NODE_ID. Update TOPIC to reflect EVOLUTION.
    Preserve all other fields exactly.
+   If FORCED_EVOLVED=true: reason about the failure pattern across FAILURE_PAYLOADS and
+   produce an adapted output — not just relocate the prompt. The adapted output replaces
+   what the node would have produced.
 5. Write updated content back.
 
 RETURN:
@@ -2599,7 +2633,7 @@ RETURN:
 5. WAVE 6 agents read ONLY designs/01-system-overview.md (+ FV result.md for APP_DESIGN).
 6. WAVE 7 Pi agents read ONLY designs/02-app-architecture.md + all designs/*-surface.md files. REVIEW reads ONLY Pi outputs + FV results.
 6a. WAVE 8 agent reads ONLY designs/02-app-architecture.md + all designs/*-surface.md files — REVIEW.md is not passed to WAVE 8.
-7. WAVE N+1 never starts before WAVE N completes (modulo FAILED nodes).
+7. WAVE N+1 never starts before WAVE N completes.
 8. Only RSi agents write to ./.harness/researchs/ (one file per thread, zero-padded index).
 9. Only DESIGN_SYNTH writes to ./.harness/designs/01-system-overview.md.
 10. Only APP_DESIGN writes to ./.harness/designs/02-app-architecture.md.
@@ -2608,8 +2642,9 @@ RETURN:
 12a. Only IMPL_PROMPT writes to ./.harness/impl/.<NN>.impl.
 13. Only FVi and AFVi agents write to ./.harness/provness/.
 14. The coordinator writes no files except STATE_FILE, SETTINGS_FILE (Step 0- migration/bootstrap), and directory-append operations.
-15. All RSi and DESIGN_SYNTH second failures halt the entire graph.
-15a. REVIEW second failure (after WAVE 6 re-run) halts the entire graph.
+15. RSi, DESIGN_SYNTH, and REVIEW failures are retried unbounded; retry_count is incremented in STATE_FILE on each attempt.
+15a. The pipeline never halts on node failure; it retries until all nodes ∈ {done, evolved}.
+     Exception: structural integrity checks (predecessor impl not terminal; STATE_ERROR sha/status inconsistency) are permitted HALTs — they are pre-execution graph consistency checks, not node execution failures.
 15b. APP_FV_COUNT and P_NODE_COUNT are unknown until all Si return — coordinator must not pre-assign slugs.
 15c. AFVi and Pi are spawned in the same message — they are parallel, not sequential.
 16. FR_UNCOVERED must be empty in APP_DESIGN, all Si agents, and IMPL_PROMPT for STATUS=done.
@@ -2778,7 +2813,7 @@ has its constructed value has zero behavioral content. Delete it.
 verified(phase) = gates(phase) → all(pass) → done(phase)
 gates(phase)    = [ verify(before) , apply_readonly_check , verify(after) ]
 verify(t)       = observe(t) → compare(observed, expected) → pass | fail
-fail(g)         = halt(phase) → report(g, observed, expected)
+fail(g)         = block(phase) → retry(node) → report(g, observed, expected)
 done(phase)     = coordinator(verified)        // never executor self-declared
 handoff(a)      = human(a) → gate(verify_after(a))   // agents never mutate live targets
 authored(impl)  = ∀ outcome o: ∃ gate g: can_fail(g, o)

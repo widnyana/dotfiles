@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+openssl rand 256 | LC_ALL=C tr -dc 'A-Za-z0-9!@#$%^&*_-+=' | head -c 32; echo

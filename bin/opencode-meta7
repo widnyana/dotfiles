@@ -1,0 +1,64 @@
+#!/usr/bin/env bash
+# Run opencode with the meta7 system prompt.
+# Usage: opencode-meta7 PROMPT [opencode args...]
+#   PROMPT  path to a prompt file, or - to read stdin
+#   args    passed through to `opencode run`
+# Env:
+#   OPENCODE_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
+#   OPENCODE_META7_MODEL    opencode model as provider/model (empty = opencode default)
+# opencode has no system prompt flag, so an agent named meta7 is injected through
+# OPENCODE_CONFIG_CONTENT. Tool permissions come from the user's opencode config.
+set -euo pipefail
+
+prog=${0##*/}
+
+usage_text() {
+  printf 'usage: %s PROMPT [opencode args...]\n' "$prog"
+  printf '  PROMPT  path to a prompt file, or - to read stdin\n'
+  printf '  args    passed through to opencode run\n'
+}
+
+usage() {
+  if [ "$1" -eq 0 ]; then
+    usage_text
+  else
+    usage_text >&2
+  fi
+  exit "$1"
+}
+
+die() {
+  printf '%s: %s\n' "$prog" "$*" >&2
+  exit 1
+}
+
+[ $# -gt 0 ] || usage 2
+case $1 in
+  -h | --help) usage 0 ;;
+esac
+
+prompt_file=$1
+shift
+
+system_prompt=${OPENCODE_META7_PROMPT:-$HOME/.dotfiles/agents/meta7.prompt}
+[ -r "$system_prompt" ] || die "system prompt not readable: $system_prompt"
+
+command -v opencode >/dev/null 2>&1 || die "opencode not found in PATH"
+
+if [ "$prompt_file" = "-" ]; then
+  message=$(cat)
+else
+  [ -f "$prompt_file" ] || die "prompt file not found: $prompt_file"
+  message=$(<"$prompt_file")
+fi
+[ -n "$message" ] || die "prompt is empty"
+
+args=(run --agent meta7)
+if [ -n "${OPENCODE_META7_MODEL:-}" ]; then
+  args+=(--model "$OPENCODE_META7_MODEL")
+fi
+
+OPENCODE_CONFIG_CONTENT=$(printf '{"agent":{"meta7":{"mode":"primary","prompt":"{file:%s}"}}}' "$system_prompt")
+export OPENCODE_CONFIG_CONTENT
+
+exec opencode "${args[@]}" "$@" "$message"

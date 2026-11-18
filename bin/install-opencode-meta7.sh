@@ -24,7 +24,7 @@ main() {
   command -v opencode >/dev/null 2>&1 || echo "install-opencode-meta7: warning: opencode not in PATH" >&2
 
   tmp=$(mktemp -d)
-  trap 'rm -rf "$tmp"' EXIT
+  trap 'rm -rf "'"$tmp"'"' EXIT
 
   git clone -q --depth 1 --branch "$ref" --filter=blob:none --sparse "$repo" "$tmp/src"
   git -C "$tmp/src" sparse-checkout set --no-cone /agents/ /bin/opencode-meta7

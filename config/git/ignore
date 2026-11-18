@@ -5,6 +5,7 @@
 .envrc.staging
 .env
 .env.*
+.harness/
 .vscode
 .omp
 node_modules

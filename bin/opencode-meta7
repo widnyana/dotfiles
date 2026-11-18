@@ -5,7 +5,8 @@
 #   args    passed through to opencode
 # Env:
 #   OPENCODE_META7_CONFIG   opencode config defining the meta7 agent
-#                           (default: $HOME/.dotfiles/agents/opencode-meta7.jsonc)
+#                           (default: <script-dir>/../agents/opencode-meta7.jsonc,
+#                            then $HOME/.dotfiles/agents/opencode-meta7.jsonc)
 #   OPENCODE_META7_MODEL    opencode model as provider/model (empty = opencode default)
 #   OPENCODE_META7_RUN      non-empty and not 0/false/no/off = one-shot `opencode run` (no steering)
 # opencode has no system prompt flag, so the meta7 prompt is the prompt of an agent named
@@ -36,6 +37,21 @@ die() {
   exit 1
 }
 
+resolve_self() {
+  local self=$1 target
+  while [ -L "$self" ]; do
+    target=$(readlink "$self") || exit 1
+    case $target in
+      /*) self=$target ;;
+      *) self=$(cd -P -- "$(dirname -- "$self")" && pwd -P)/$target ;;
+    esac
+  done
+  printf '%s\n' "$self"
+}
+
+self=$(resolve_self "${BASH_SOURCE[0]}")
+script_dir=$(cd -P -- "$(dirname -- "$self")" && pwd -P)
+
 [ $# -gt 0 ] || usage 2
 case $1 in
   -h | --help) usage 0 ;;
@@ -44,7 +60,13 @@ esac
 prompt_file=$1
 shift
 
-config=${OPENCODE_META7_CONFIG:-$HOME/.dotfiles/agents/opencode-meta7.jsonc}
+if [ -n "${OPENCODE_META7_CONFIG:-}" ]; then
+  config=$OPENCODE_META7_CONFIG
+elif [ -r "$script_dir/../agents/opencode-meta7.jsonc" ]; then
+  config=$script_dir/../agents/opencode-meta7.jsonc
+else
+  config=$HOME/.dotfiles/agents/opencode-meta7.jsonc
+fi
 [ -r "$config" ] || die "opencode config not readable: $config"
 
 command -v opencode >/dev/null 2>&1 || die "opencode not found in PATH"

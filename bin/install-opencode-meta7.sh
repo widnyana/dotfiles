@@ -9,15 +9,26 @@
 #   OPENCODE_META7_REPO  git url         (default: https://github.com/widnyana/dotfiles.git)
 #   OPENCODE_META7_REF   branch or tag   (default: main)
 #   OPENCODE_META7_HOME  install dir     (default: ${XDG_DATA_HOME:-$HOME/.local/share}/opencode-meta7)
-#   OPENCODE_META7_BIN   symlink dir     (default: $HOME/.local/bin)
+#   OPENCODE_META7_BIN   symlink dir     (default: first of ~/.local/bin, ~/bin, /opt/homebrew/bin,
+#                                         /usr/local/bin that is on $PATH and writable; else ~/.local/bin)
 # Requires git and curl-fetched bash. Re-running replaces the install. ~/.config/opencode is not touched.
 set -euo pipefail
+
+pick_bin_dir() {
+  local dir
+  for dir in "$HOME/.local/bin" "$HOME/bin" /opt/homebrew/bin /usr/local/bin; do
+    case :$PATH: in
+      *":$dir:"*) [ -d "$dir" ] && [ -w "$dir" ] && { printf '%s\n' "$dir"; return; } ;;
+    esac
+  done
+  printf '%s\n' "$HOME/.local/bin"
+}
 
 main() {
   local repo=${OPENCODE_META7_REPO:-https://github.com/widnyana/dotfiles.git}
   local ref=${OPENCODE_META7_REF:-main}
   local home_dir=${OPENCODE_META7_HOME:-${XDG_DATA_HOME:-$HOME/.local/share}/opencode-meta7}
-  local bin_dir=${OPENCODE_META7_BIN:-$HOME/.local/bin}
+  local bin_dir=${OPENCODE_META7_BIN:-$(pick_bin_dir)}
   local tmp stage
 
   command -v git >/dev/null 2>&1 || { echo "install-opencode-meta7: git not found" >&2; exit 1; }

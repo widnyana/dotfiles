@@ -2,10 +2,11 @@
 # Run opencode with the meta7 system prompt.
 # Usage: opencode-meta7 PROMPT [opencode args...]
 #   PROMPT  path to a prompt file, or - to read stdin
-#   args    passed through to `opencode run`
+#   args    passed through to opencode
 # Env:
 #   OPENCODE_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
 #   OPENCODE_META7_MODEL    opencode model as provider/model (empty = opencode default)
+#   OPENCODE_META7_RUN      non-empty and not 0/false/no/off = one-shot `opencode run` (no steering)
 # opencode has no system prompt flag, so an agent named meta7 is injected through
 # OPENCODE_CONFIG_CONTENT, which only a --standalone run reads (the background service
 # ignores it). Tool permissions come from the user's opencode config.
@@ -16,7 +17,7 @@ prog=${0##*/}
 usage_text() {
   printf 'usage: %s PROMPT [opencode args...]\n' "$prog"
   printf '  PROMPT  path to a prompt file, or - to read stdin\n'
-  printf '  args    passed through to opencode run\n'
+  printf '  args    passed through to opencode\n'
 }
 
 usage() {
@@ -54,7 +55,10 @@ else
 fi
 [ -n "$message" ] || die "prompt is empty"
 
-args=(run --standalone --agent meta7)
+case ${OPENCODE_META7_RUN:-} in
+  '' | 0 | false | no | off) args=(mini --standalone --agent meta7) tail=(--prompt "$message") ;;
+  *) args=(run --standalone --agent meta7) tail=("$message") ;;
+esac
 if [ -n "${OPENCODE_META7_MODEL:-}" ]; then
   args+=(--model "$OPENCODE_META7_MODEL")
 fi
@@ -62,4 +66,4 @@ fi
 OPENCODE_CONFIG_CONTENT=$(printf '{"agent":{"meta7":{"mode":"primary","prompt":"{file:%s}"}}}' "$system_prompt")
 export OPENCODE_CONFIG_CONTENT
 
-exec opencode "${args[@]}" "$@" "$message"
+exec opencode "${args[@]}" "$@" "${tail[@]}"

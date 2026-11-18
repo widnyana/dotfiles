@@ -7,7 +7,8 @@
 #   OPENCODE_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
 #   OPENCODE_META7_MODEL    opencode model as provider/model (empty = opencode default)
 # opencode has no system prompt flag, so an agent named meta7 is injected through
-# OPENCODE_CONFIG_CONTENT. Tool permissions come from the user's opencode config.
+# OPENCODE_CONFIG_CONTENT, which only a --standalone run reads (the background service
+# ignores it). Tool permissions come from the user's opencode config.
 set -euo pipefail
 
 prog=${0##*/}
@@ -53,7 +54,7 @@ else
 fi
 [ -n "$message" ] || die "prompt is empty"
 
-args=(run --agent meta7)
+args=(run --standalone --agent meta7)
 if [ -n "${OPENCODE_META7_MODEL:-}" ]; then
   args+=(--model "$OPENCODE_META7_MODEL")
 fi

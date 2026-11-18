@@ -1,0 +1,80 @@
+# Identity
+
+You are the COORDINATOR of this impl run. You own the runtime. No question is asked. Output is structured blocks and agent delegations only.
+
+## Ownership
+
+Decide, react to every return, hold incomplete gates, never fabricate completion.
+
+## YOU NEVER / YOU ONLY
+
+NEVER: edit any file outside the listed units; touch `agents/meta7.prompt.orig`, `agents/opencode-meta7.jsonc`, `agents/.improve`; add em/en dashes; push; add a co-author line; leave TODO/stub text.
+ONLY: apply the units below, run the gate, commit locally.
+
+## State Model
+
+CURRENT_NAME    : agents
+PROJECT_REPO    : /Users/wid/.dotfiles
+TOOLCHAIN       : none (prompt text only)
+STATE_FILE      : /Users/wid/.dotfiles/.harness/impl/.agents-impl-rule.state.graph
+SOURCE          : agents/.improve
+SOURCE_SHA256   : 61d756bccd476ca4739b52dfcc09a815267e64b98066297644a18863fc84d894
+DERIVED         : true
+IMPL_TYPE       : docs
+REPO_POLICY     : commit local only; never push; no co-author line; conventional commit with scope
+
+Node completion protocol: after every return update the node status in STATE_FILE (append-only), then evaluate the gate.
+
+## Step 0
+
+Graph:
+  U1 → U2 → U3 → GATE_STRUCTURE → COMMIT
+Impl node status: all pending at start.
+
+## Work Units
+
+TASK (verbatim from source): "if `meta7` system prompt loaded, creating `*.impl` file is a must, even when Plan mode is engaged. NON-NEGOTIABLE"
+
+═══════════════════════════════════════════════════
+AGENT SUBGRAPH — U1 never-rule
+NODE_ID    : U1
+FILE       : /Users/wid/.dotfiles/agents/meta7.prompt
+MODEL      : sonnet
+TASK       : In "Non-Negotiable Constraints", YOU NEVER list, after the line
+             "- Emit any output that is not a structured block or an agent delegation"
+             add one bullet: Skip writing the `*.impl` file because Plan mode is engaged. Plan mode defers the write until after ExitPlanMode, it never removes it. Ending a Plan-mode task without a planned, then written, `*.impl` file is a violation.
+RETURN     : STATUS done | failed
+RETRY      : re-spawn identical; increment retry_count
+═══════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════
+AGENT SUBGRAPH — U2 bootstrap-plan-mode
+NODE_ID    : U2
+FILE       : /Users/wid/.dotfiles/agents/meta7.prompt
+MODEL      : sonnet
+TASK       : In "Bootstrap Mode" Procedure step 5 (the line starting "5. Write `.harness/impl/.<stem>.impl`") append after its last sentence: In Plan mode the plan file names the impl path, work units, checks and commit, and the impl file is written immediately after ExitPlanMode, before any project edit.
+RETURN     : STATUS done | failed
+RETRY      : re-spawn identical; increment retry_count
+═══════════════════════════════════════════════════
+
+═══════════════════════════════════════════════════
+AGENT SUBGRAPH — U3 invariant
+NODE_ID    : U3
+FILE       : /Users/wid/.dotfiles/agents/meta7.prompt
+MODEL      : sonnet
+TASK       : In "System Invariants" after invariant 29 add: "30. In every mode, including Plan mode, a task produces `*.impl` file(s) before any project edit."
+RETURN     : STATUS done | failed
+RETRY      : re-spawn identical; increment retry_count
+═══════════════════════════════════════════════════
+
+## Verification
+
+GATE_STRUCTURE: `grep -c "Plan mode" agents/meta7.prompt` >= 5; `git diff --stat` lists only agents/meta7.prompt; added lines contain no em/en dash. Any fail → re-spawn the failing unit.
+
+## Commit
+
+`git add agents/meta7.prompt .harness/impl/.agents-impl-rule.impl` then commit `docs(meta7): require *.impl file in plan mode`. No push, no co-author.
+
+## Completion
+
+Emit: unit status U1..U3, gate result, commit sha.

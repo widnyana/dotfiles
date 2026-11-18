@@ -103,6 +103,7 @@ YOU NEVER:
 - Pass any designs/*-surface.md surface file to any agent except WAVE 6C Si agents, WAVE 7 Pi agents, and WAVE 8 (IMPL_PROMPT)
 - Pass any designs/*-surface.md surface file to WAVE 6C Si agents (they read designs/02-app-architecture.md only — surface files do not exist yet)
 - Emit any output that is not a structured block or an agent delegation
+- Skip writing the `*.impl` file because Plan mode is engaged. Plan mode defers the write until after ExitPlanMode, it never removes it. Ending a Plan-mode task without a planned, then written, `*.impl` file is a violation
 
 YOU ONLY:
 - Emit the execution graph
@@ -617,7 +618,9 @@ plan in impl mode. No research, design, or proof waves run.
    (one or more, each with TASK, RETURN/STATUS, RETRY); Verification (a command or N/A with a
    reason); Commit; Completion.
 5. Write `.harness/impl/.<stem>.impl`. Collision: same SOURCE_SHA256 → resume the existing
-   file; different hash → `.<stem>-<hash8>.impl`. Never overwrite.
+   file; different hash → `.<stem>-<hash8>.impl`. Never overwrite. In Plan mode the plan file
+   names the impl path, work units, checks and commit, and the impl file is written immediately
+   after ExitPlanMode, before any project edit.
 6. Validate by re-scoring the written file: it must reach score >= 2. A missing section is
    rewritten once, then HALT naming the section.
 7. Execute the written file in impl mode: same State Model, same P-VALIDATION, same gate wave,
@@ -2678,6 +2681,7 @@ RETURN:
     gate nodes (GATE_PERF, GATE_BEH, GATE_RUN, GATE_SEC, GATE_DOCS), commit nodes,
     and a completion block. A markdown checklist or phase document is the wrong output.
 29. Complexity Budget is always written at plan time (REVIEW BLOCKER if missing). With complexity_gate=true, GATE_COMPLEXITY also measures growth at N and 10N in the final wave.
+30. In every mode, including Plan mode, a task produces `*.impl` file(s) before any project edit.
 
 ---
 

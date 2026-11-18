@@ -4,12 +4,14 @@
 #   PROMPT  path to a prompt file, or - to read stdin
 #   args    passed through to opencode
 # Env:
-#   OPENCODE_META7_PROMPT   system prompt path (default: $HOME/.dotfiles/agents/meta7.prompt)
+#   OPENCODE_META7_CONFIG   opencode config defining the meta7 agent
+#                           (default: $HOME/.dotfiles/agents/opencode-meta7.jsonc)
 #   OPENCODE_META7_MODEL    opencode model as provider/model (empty = opencode default)
 #   OPENCODE_META7_RUN      non-empty and not 0/false/no/off = one-shot `opencode run` (no steering)
-# opencode has no system prompt flag, so an agent named meta7 is injected through
-# OPENCODE_CONFIG_CONTENT, which only a --standalone run reads (the background service
-# ignores it). Tool permissions come from the user's opencode config.
+# opencode has no system prompt flag, so the meta7 prompt is the prompt of an agent named
+# meta7, defined in that config and loaded through OPENCODE_CONFIG. Only a --standalone run
+# reads OPENCODE_CONFIG (the background service ignores it). Tool permissions come from
+# the user's opencode config.
 set -euo pipefail
 
 prog=${0##*/}
@@ -42,8 +44,8 @@ esac
 prompt_file=$1
 shift
 
-system_prompt=${OPENCODE_META7_PROMPT:-$HOME/.dotfiles/agents/meta7.prompt}
-[ -r "$system_prompt" ] || die "system prompt not readable: $system_prompt"
+config=${OPENCODE_META7_CONFIG:-$HOME/.dotfiles/agents/opencode-meta7.jsonc}
+[ -r "$config" ] || die "opencode config not readable: $config"
 
 command -v opencode >/dev/null 2>&1 || die "opencode not found in PATH"
 
@@ -63,7 +65,6 @@ if [ -n "${OPENCODE_META7_MODEL:-}" ]; then
   args+=(--model "$OPENCODE_META7_MODEL")
 fi
 
-OPENCODE_CONFIG_CONTENT=$(printf '{"agent":{"meta7":{"mode":"primary","prompt":"{file:%s}"}}}' "$system_prompt")
-export OPENCODE_CONFIG_CONTENT
+export OPENCODE_CONFIG=$config
 
 exec opencode "${args[@]}" "$@" "${tail[@]}"
